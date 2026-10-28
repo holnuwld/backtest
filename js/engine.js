@@ -210,14 +210,6 @@
       endIdx = totalDays - 1;
     }
 
-    const numDays = endIdx - startIdx + 1;
-    // Initial capital in KRW (default: 10,000,000 KRW)
-    const initialCapital = Math.max(1000, Number(config.initialCapital || 10000000));
-    const feeRate = Math.max(0, Number(config.feeRatePct ?? 0.05)) / 100.0;
-    const executionLag = Number(config.executionLag ?? 1) === 0 ? 0 : 1;
-    const cashYieldMode = config.cashYieldMode || "US3M";
-    const benchmarkTicker = config.benchmarkTicker || "SPX";
-
     // Feature toggles
     const rebalanceEnabled = config.rebalanceEnabled !== false;
     const rulesEnabled = config.rulesEnabled !== false;
@@ -239,6 +231,48 @@
         trackedTickersSet.add(r.action.fundingSource);
       }
     });
+
+    const benchmarkTicker = config.benchmarkTicker || "SPX";
+
+    // Bitcoin 2010-07-20 auto-protection: prevent 1970~2010 $0.08 flat-cash distortion
+    let hasBtc =
+      trackedTickersSet.has("BTC_KRW") ||
+      trackedTickersSet.has("BTC_USD") ||
+      benchmarkTicker === "BTC_KRW" ||
+      benchmarkTicker === "BTC_USD";
+
+    if (!hasBtc && rules.length > 0) {
+      hasBtc = rules.some((r) => {
+        const conds = r.conditions || [];
+        return conds.some(
+          (c) =>
+            c.left?.ticker === "BTC_KRW" ||
+            c.left?.ticker === "BTC_USD" ||
+            c.left?.ticker2 === "BTC_KRW" ||
+            c.left?.ticker2 === "BTC_USD" ||
+            (c.rightMode === "INDICATOR" &&
+              (c.rightIndicator?.ticker === "BTC_KRW" || c.rightIndicator?.ticker === "BTC_USD"))
+        );
+      });
+    }
+
+    let btcAdjustedNotice = null;
+    if (hasBtc && dates[startIdx] < "2010-07-20") {
+      let btcMinIdx = 0;
+      while (btcMinIdx < totalDays - 1 && dates[btcMinIdx] < "2010-07-20") btcMinIdx++;
+      if (btcMinIdx < endIdx) {
+        startIdx = btcMinIdx;
+        btcAdjustedNotice =
+          "비트코인(BTC)은 2010년 7월 20일 이전 실거래 데이터가 존재하지 않아(1970~2010 $0.08/24원 고정 왜곡 방지), 백테스트 시작일이 2010-07-20으로 자동 제한되었습니다.";
+      }
+    }
+
+    const numDays = endIdx - startIdx + 1;
+    // Initial capital in KRW (default: 10,000,000 KRW)
+    const initialCapital = Math.max(1000, Number(config.initialCapital || 10000000));
+    const feeRate = Math.max(0, Number(config.feeRatePct ?? 0.05)) / 100.0;
+    const executionLag = Number(config.executionLag ?? 1) === 0 ? 0 : 1;
+    const cashYieldMode = config.cashYieldMode || "US3M";
 
     const trackedTickers = Array.from(trackedTickersSet);
     const targetWeights = {};
@@ -823,7 +857,9 @@
         benchTotalReturnPct,
         benchCagrPct,
         benchMddPct,
+        btcAdjustedNotice: btcAdjustedNotice || null,
       },
+      btcAdjustedNotice: btcAdjustedNotice || null,
       series: {
         dates: simDates,
         equity: equityCurve,

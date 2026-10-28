@@ -106,6 +106,44 @@
         </ul>
       `,
     },
+    BTC_DATA_NOTE: {
+      title: "비트코인(BTC) 데이터 특성 및 2010년 이전 자동 제한",
+      content: `
+        <p><strong>비트코인(BTC)은 2009년 1월 제네시스 블록으로 시작되어, 최초 상업 거래소 거래는 2010년 7월 20일경(당시 약 0.08달러, 한화 약 95원)부터 시작되었습니다.</strong></p>
+        <ul>
+          <li><strong>1970~2010년 플랫 가격 왜곡 제거:</strong> 시스템 데이터베이스는 1970년부터의 정합성을 위해 2010년 7월 이전 가격을 초기 가격($0.08 / ₩24~95)으로 역보정(bfill)해두었으나, 이 구간을 그대로 백테스트에 포함하면 비트코인이 40년간 무위험 현금처럼 작동하여 자산배분 및 리밸런싱 수익률을 심각하게 왜곡합니다.</li>
+          <li><strong>2010-07-20 자동 락인:</strong> 자산 배분, 매매 조건, 비교 벤치마크에 <code>BTC_KRW</code> 또는 <code>BTC_USD</code>가 단 하나라도 포함되면, 시작일이 <strong>2010-07-20</strong>으로 자동 고정되며 더 이전 날짜로는 백테스트를 실행하지 않도록 보호합니다.</li>
+          <li>비트코인 편입을 해제하면 다시 1970년부터 56년 전구간 백테스트가 가능합니다.</li>
+        </ul>
+      `,
+    },
+    KOREA_ASSET_NOTE: {
+      title: "국내 자산(코스피200, 원달러, KRX금) 데이터 산출 기준 및 안내",
+      content: `
+        <p>국내 자산 및 환율 데이터는 1970년부터 56년간의 연속성을 제공하기 위해 공신력 있는 기관의 원천 데이터와 합성 모델을 결합하였습니다.</p>
+        <ul>
+          <li><strong>코스피 200 (KPI200):</strong>
+            <ul>
+              <li>1996.07 ~ 현재: 한국거래소(KRX) 공식 코스피 200 실물 지수입니다.</li>
+              <li>1981.01 ~ 1996.06: OECD 한국 종합주가지수(Total Share Prices for Korea) 원천 데이터를 1996년 7월 지수와 연속 접속(Chain-linked)한 합성 지수입니다.</li>
+              <li>1970.01 ~ 1980.12: 1981년 이전 한국 주식시장 성장 추세를 반영한 지수 모델입니다.</li>
+            </ul>
+          </li>
+          <li><strong>원/달러 환율 (USDKRW):</strong>
+            <ul>
+              <li>1981.04 ~ 현재: 미국 연방준비제도(FRED DEXKOUS) 공식 일별 환율입니다.</li>
+              <li>1970.01 ~ 1981.03: 대한민국 법정 공정환율(484원 고정환율제 및 공정 시세)을 반영하였습니다.</li>
+            </ul>
+          </li>
+          <li><strong>KRX 금 (KRX_GOLD):</strong>
+            <ul>
+              <li>2014.03 ~ 현재: 한국거래소(KRX) 금시장 1g당 공식 실물 종가입니다.</li>
+              <li>1970.01 ~ 2014.02: 런던금시장연합회(LBMA Gold USD/oz) &times; 당일 원달러 환율 &divide; 31.1034768g 공식을 적용하여 산출한 국내 환율 반영 순금 1g 가격입니다.</li>
+            </ul>
+          </li>
+        </ul>
+      `,
+    },
   };
 
   function openHelpModal(key) {
@@ -738,11 +776,60 @@
     el.className = "toast";
     if (type === "success") el.style.borderLeftColor = "#10b981";
     if (type === "danger") el.style.borderLeftColor = "#ef4444";
+    if (type === "warn" || type === "warning") el.style.borderLeftColor = "#f59e0b";
     el.textContent = msg;
     container.appendChild(el);
     setTimeout(() => {
       el.remove();
     }, 3200);
+  }
+
+  function hasBitcoinConfig(cfg) {
+    if (!cfg) return false;
+    const isBtc = (t) => t === "BTC_KRW" || t === "BTC_USD";
+    if (isBtc(cfg.benchmarkTicker)) return true;
+    if (Array.isArray(cfg.allocations) && cfg.allocations.some((a) => a && isBtc(a.ticker))) {
+      return true;
+    }
+    if (cfg.rulesEnabled !== false && Array.isArray(cfg.rules)) {
+      for (const r of cfg.rules) {
+        if (!r || r.enabled === false) continue;
+        if (r.action && (isBtc(r.action.targetTicker) || isBtc(r.action.fundingSource))) return true;
+        if (Array.isArray(r.conditions)) {
+          for (const c of r.conditions) {
+            if (c.left && (isBtc(c.left.ticker) || isBtc(c.left.ticker2))) return true;
+            if (c.rightMode === "INDICATOR" && c.rightIndicator && (isBtc(c.rightIndicator.ticker) || isBtc(c.rightIndicator.ticker2))) return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  function checkAndEnforceBtcDateLock(showToastMsg = false) {
+    if (!currentConfig) return;
+    const hasBtc = hasBitcoinConfig(currentConfig);
+    const startInput = document.getElementById("cfgStartDate");
+    const noticeEl = document.getElementById("dateLockNotice");
+
+    if (hasBtc) {
+      if (noticeEl) noticeEl.style.display = "block";
+      if (startInput) {
+        startInput.min = "2010-07-20";
+        if (startInput.value < "2010-07-20") {
+          startInput.value = "2010-07-20";
+          currentConfig.startDate = "2010-07-20";
+          if (showToastMsg) {
+            showToast("비트코인(BTC) 포함 전략은 상장일 이전 왜곡 방지를 위해 시작일이 2010-07-20으로 자동 설정되었습니다.", "warn");
+          }
+        }
+      }
+    } else {
+      if (noticeEl) noticeEl.style.display = "none";
+      if (startInput) {
+        startInput.min = marketData ? marketData.startDate : "1970-01-02";
+      }
+    }
   }
 
   // Option builders separating Tradable Assets vs Signal Indicators
@@ -916,6 +1003,7 @@
 
     renderAllocationsUI();
     renderRulesUI();
+    checkAndEnforceBtcDateLock(false);
   }
 
   function toggleRebalanceSubInputs() {
@@ -953,6 +1041,7 @@
         const i = parseInt(e.target.dataset.idx, 10);
         currentConfig.allocations[i].ticker = e.target.value;
         updateAllocationSummaryBar();
+        checkAndEnforceBtcDateLock(true);
       });
     });
 
@@ -969,6 +1058,7 @@
         const i = parseInt(e.currentTarget.dataset.idx, 10);
         currentConfig.allocations.splice(i, 1);
         renderAllocationsUI();
+        checkAndEnforceBtcDateLock(false);
       });
     });
 
@@ -1103,6 +1193,7 @@
       .join("");
 
     bindRuleEvents(container);
+    checkAndEnforceBtcDateLock(false);
   }
 
   function renderSingleConditionHTML(rIdx, cIdx, cond, totalConds) {
@@ -1305,6 +1396,7 @@
       el.addEventListener("change", (e) => {
         const rIdx = parseInt(e.target.dataset.ridx, 10);
         currentConfig.rules[rIdx].enabled = e.target.checked;
+        checkAndEnforceBtcDateLock(false);
       });
     });
     container.querySelectorAll(".js-rule-name").forEach((el) => {
@@ -1343,6 +1435,7 @@
         const rIdx = parseInt(e.currentTarget.dataset.ridx, 10);
         currentConfig.rules.splice(rIdx, 1);
         renderRulesUI();
+        checkAndEnforceBtcDateLock(false);
       });
     });
 
@@ -1358,6 +1451,7 @@
       el.addEventListener("change", (e) => {
         const rIdx = parseInt(e.target.dataset.ridx, 10);
         currentConfig.rules[rIdx].action.targetTicker = e.target.value;
+        checkAndEnforceBtcDateLock(true);
       });
     });
     container.querySelectorAll(".js-act-sizing-mode").forEach((el) => {
@@ -1377,6 +1471,7 @@
       el.addEventListener("change", (e) => {
         const rIdx = parseInt(e.target.dataset.ridx, 10);
         currentConfig.rules[rIdx].action.fundingSource = e.target.value;
+        checkAndEnforceBtcDateLock(true);
       });
     });
 
@@ -1387,6 +1482,7 @@
         const cIdx = parseInt(e.currentTarget.dataset.cidx, 10);
         currentConfig.rules[rIdx].conditions.splice(cIdx, 1);
         renderRulesUI();
+        checkAndEnforceBtcDateLock(false);
       });
     });
 
@@ -1394,6 +1490,7 @@
       el.addEventListener("change", (e) => {
         const { ridx, cidx } = e.target.dataset;
         currentConfig.rules[ridx].conditions[cidx].left.ticker = e.target.value;
+        checkAndEnforceBtcDateLock(true);
       });
     });
     container.querySelectorAll(".js-cond-left-transform").forEach((el) => {
@@ -1432,12 +1529,14 @@
       el.addEventListener("change", (e) => {
         const { ridx, cidx } = e.target.dataset;
         currentConfig.rules[ridx].conditions[cidx].left.ticker2 = e.target.value;
+        checkAndEnforceBtcDateLock(true);
       });
     });
     container.querySelectorAll(".js-cond-right-ticker2").forEach((el) => {
       el.addEventListener("change", (e) => {
         const { ridx, cidx } = e.target.dataset;
         currentConfig.rules[ridx].conditions[cidx].rightIndicator.ticker2 = e.target.value;
+        checkAndEnforceBtcDateLock(true);
       });
     });
 
@@ -1482,6 +1581,7 @@
       el.addEventListener("change", (e) => {
         const { ridx, cidx } = e.target.dataset;
         currentConfig.rules[ridx].conditions[cidx].rightIndicator.ticker = e.target.value;
+        checkAndEnforceBtcDateLock(true);
       });
     });
 
@@ -1503,6 +1603,12 @@
     currentConfig.feeRatePct = Math.max(0, parseFloat(document.getElementById("cfgFee").value) || 0);
     currentConfig.cashYieldMode = document.getElementById("cfgCashYield").value;
     currentConfig.benchmarkTicker = document.getElementById("cfgBenchmark").value || "SPX";
+
+    if (hasBitcoinConfig(currentConfig) && currentConfig.startDate < "2010-07-20") {
+      currentConfig.startDate = "2010-07-20";
+      const startInput = document.getElementById("cfgStartDate");
+      if (startInput) startInput.value = "2010-07-20";
+    }
 
     const toggleReb = document.getElementById("toggleRebalance");
     currentConfig.rebalanceEnabled = toggleReb ? toggleReb.checked : true;
@@ -1615,11 +1721,25 @@
       .filter(Boolean)
       .join(" ");
 
+    // BTC auto-adjustment notice banner if applicable
+    let btcNoticeHtml = "";
+    const btcNoticeText = res.btcAdjustedNotice || res.metrics?.btcAdjustedNotice;
+    if (btcNoticeText) {
+      btcNoticeHtml = `
+        <div style="margin-bottom:8px;padding:8px 12px;background:rgba(245,158,11,0.12);border:1px solid #f59e0b;border-radius:6px;font-size:12px;color:#f59e0b;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span>⚠️ <strong>비트코인(BTC) 2010년 이전 왜곡 방지 자동 조정:</strong> ${escapeHtml(btcNoticeText)}</span>
+          <button type="button" class="btn-help-inline" data-help="BTC_DATA_NOTE" style="margin-left:4px;" title="비트코인 데이터 특성 안내">?</button>
+        </div>
+      `;
+    }
+
     rulesSummaryEl.innerHTML = `
+      ${btcNoticeHtml}
       <div><strong>목표 자산배분:</strong> <span class="tag tag-asset">${escapeHtml(res.summaryText.allocations)}</span></div>
       <div style="margin-top:4px;"><strong>활성 교차규칙:</strong> ${rulePills}</div>
-      <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-color);font-size:11.5px;color:var(--text-muted);">
+      <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-color);font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
         <strong>📌 데이터 출처 및 백필 구간 안내 (마우스 오버 시 상세 설명):</strong> ${provenanceItems}
+        <button type="button" class="btn-help-inline" data-help="KOREA_ASSET_NOTE" title="국내 자산(코스피/환율/KRX금) 산출 기준 안내">한국자산 산출기준 ?</button>
       </div>
     `;
 
@@ -2425,9 +2545,35 @@
     // Quick Date Chips
     document.querySelectorAll(".js-date-chip").forEach((chip) => {
       chip.addEventListener("click", () => {
-        document.getElementById("cfgStartDate").value = chip.dataset.start;
+        const targetStart = chip.dataset.start;
+        const startInput = document.getElementById("cfgStartDate");
+        if (currentConfig && hasBitcoinConfig(currentConfig) && targetStart < "2010-07-20") {
+          startInput.value = "2010-07-20";
+          currentConfig.startDate = "2010-07-20";
+          showToast("비트코인(BTC) 포함 시 2010-07-20(상장일) 이후 구간만 선택 가능합니다.", "warn");
+        } else {
+          startInput.value = targetStart;
+          if (currentConfig) currentConfig.startDate = targetStart;
+        }
         document.getElementById("cfgEndDate").value = marketData.endDate;
       });
+    });
+
+    // Start Date change listener to enforce BTC 2010 lock
+    document.getElementById("cfgStartDate")?.addEventListener("change", (e) => {
+      if (currentConfig && hasBitcoinConfig(currentConfig) && e.target.value < "2010-07-20") {
+        e.target.value = "2010-07-20";
+        currentConfig.startDate = "2010-07-20";
+        showToast("비트코인(BTC) 포함 전략은 2010-07-20 이전으로 시작일을 설정할 수 없습니다.", "warn");
+      }
+    });
+
+    // Benchmark change listener to enforce BTC 2010 lock
+    document.getElementById("cfgBenchmark")?.addEventListener("change", (e) => {
+      if (currentConfig) {
+        currentConfig.benchmarkTicker = e.target.value;
+        checkAndEnforceBtcDateLock(true);
+      }
     });
 
     // Quick Capital Chips
@@ -2445,6 +2591,7 @@
     document.getElementById("btnAddAlloc")?.addEventListener("click", () => {
       currentConfig.allocations.push({ ticker: "SPX", weightPct: 10 });
       renderAllocationsUI();
+      checkAndEnforceBtcDateLock(false);
     });
 
     // Normalize Allocations to 100%
@@ -2483,6 +2630,7 @@
         },
       });
       renderRulesUI();
+      checkAndEnforceBtcDateLock(false);
     });
 
     // Run Backtest Buttons
