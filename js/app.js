@@ -1358,15 +1358,38 @@
     `;
     document.getElementById("kpiGrid").innerHTML = kpiHTML;
 
-    // Strategy Rules Summary
+    // Strategy Rules Summary & Data Provenance Notice
     const rulesSummaryEl = document.getElementById("resRulesSummary");
     const rulePills =
       res.summaryText.rules.length > 0
         ? res.summaryText.rules.map((r) => `<span class="tag tag-indicator">${escapeHtml(r)}</span>`).join(" ")
         : `<span class="tag">교차조건 없음 (Buy & Rebalance)</span>`;
+
+    // Collect all tickers referenced in allocations and active rules
+    const usedTickers = new Set(res.series.trackedTickers || []);
+    (res.configSnapshot.rules || []).forEach((r) => {
+      if (!r || !r.enabled) return;
+      (r.conditions || []).forEach((c) => {
+        if (c.left?.ticker) usedTickers.add(c.left.ticker);
+        if (c.left?.ticker2) usedTickers.add(c.left.ticker2);
+        if (c.rightMode === "INDICATOR" && c.rightIndicator?.ticker) usedTickers.add(c.rightIndicator.ticker);
+      });
+    });
+    const provenanceItems = Array.from(usedTickers)
+      .map((t) => {
+        const meta = catalogMap[t];
+        if (!meta) return "";
+        return `<span class="tag" title="${escapeHtml(meta.desc || "")}"><strong>${escapeHtml(meta.shortName)}</strong>: ${escapeHtml(meta.actualStart)}</span>`;
+      })
+      .filter(Boolean)
+      .join(" ");
+
     rulesSummaryEl.innerHTML = `
       <div><strong>목표 자산배분:</strong> <span class="tag tag-asset">${escapeHtml(res.summaryText.allocations)}</span></div>
       <div style="margin-top:4px;"><strong>활성 교차규칙:</strong> ${rulePills}</div>
+      <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-color);font-size:11.5px;color:var(--text-muted);">
+        <strong>📌 데이터 출처 및 백필 구간 안내 (마우스 오버 시 상세 설명):</strong> ${provenanceItems}
+      </div>
     `;
 
     renderMainCharts(res);
