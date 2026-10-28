@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>QuantCross Lab — 1970~현재 멀티에셋 교차조건 백테스터</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <!-- Sticky Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-logo">Q</div>
+        <div>
+          <div class="brand-title">QuantCross Backtester <span style="font-size:11px;font-weight:600;color:var(--accent);">1970~2026 Daily</span></div>
+          <div class="brand-sub">매매자산·시그널지표 분리 | 볼린저·이격도·RSI·MACD·금리차 교차조건 | 스코어보드</div>
+        </div>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <nav class="nav-tabs desktop-nav">
+        <button type="button" class="nav-tab-btn active" data-tab-target="tab-builder">⚙️ 전략 & 교차조건 설정</button>
+        <button type="button" class="nav-tab-btn" data-tab-target="tab-results">📊 백테스트 결과 & 차트</button>
+        <button type="button" class="nav-tab-btn" data-tab-target="tab-scoreboard">
+          🏆 스코어보드 <span class="badge-count js-sb-count">0</span>
+        </button>
+        <button type="button" class="nav-tab-btn" data-tab-target="tab-catalog">📁 자산/지표 DB & CSV 추가</button>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" id="btnRunQuick" class="btn btn-primary btn-sm">▶ 즉시 실행</button>
+        <button type="button" id="btnThemeToggle" class="btn btn-sm" title="다크/라이트 테마 전환">🌓 테마</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-container">
+    <!-- TAB 1: STRATEGY & CROSS-CONDITION BUILDER -->
+    <section id="tab-builder" class="tab-panel active">
+      <!-- Presets Card -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">✨ 원클릭 대표 교차전략 프리셋 (클릭 시 조건 자동 입력 & 실행)</div>
+            <div class="card-subtitle">장단기 금리차, 볼린저밴드 상하단 터치, RSI, 이격도, MACD, VIX/풋콜비율 등 대표 전략을 바로 테스트하고 수정할 수 있습니다.</div>
+          </div>
+        </div>
+        <div id="presetContainer" class="preset-scroll"></div>
+      </div>
+
+      <div class="builder-grid">
+        <!-- Left Column: Portfolio & Rebalancing Settings -->
+        <div>
+          <!-- Basic Period & Capital Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">1️⃣ 기본 백테스트 조건 (기간 · 시작금액 · 체결옵션)</div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:10px;">
+              <label class="form-label">전략 이름 (스코어보드 기록용)</label>
+              <input type="text" id="cfgName" class="form-control" value="10Y-2Y 금리차 & 나스닥/국채 스위칭" />
+            </div>
+
+            <div class="form-group" style="margin-bottom:6px;">
+              <label class="form-label">시작 금액 ($)</label>
+              <input type="number" id="cfgCapital" class="form-control" value="10000" min="100" step="1000" />
+            </div>
+            <div class="chip-group">
+              <span class="chip js-cap-chip" data-cap="10000">$10,000</span>
+              <span class="chip js-cap-chip" data-cap="50000">$50,000</span>
+              <span class="chip js-cap-chip" data-cap="100000">$100,000</span>
+              <span class="chip js-cap-chip" data-cap="1000000">$1,000,000</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">백테스트 시작일</label>
+                <input type="date" id="cfgStartDate" class="form-control" value="1980-01-02" min="1970-01-02" max="2026-12-31" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">백테스트 종료일</label>
+                <input type="date" id="cfgEndDate" class="form-control" value="2026-10-27" min="1970-01-02" max="2026-12-31" />
+              </div>
+            </div>
+
+            <div class="chip-group">
+              <span class="chip js-date-chip" data-start="1970-01-02">1970~ (전체 56년)</span>
+              <span class="chip js-date-chip" data-start="1980-01-02">1980~ (볼커 금리인상기~)</span>
+              <span class="chip js-date-chip" data-start="1990-01-02">1990~ (VIX 출범~)</span>
+              <span class="chip js-date-chip" data-start="2000-01-03">2000~ (닷컴버블~)</span>
+              <span class="chip js-date-chip" data-start="2008-01-02">2008~ (금융위기~)</span>
+              <span class="chip js-date-chip" data-start="2020-01-02">2020~ (코로나~)</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">비교 벤치마크 자산</label>
+                <select id="cfgBenchmark" class="form-control"></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">신호 발생 후 체결 시점</label>
+                <select id="cfgLag" class="form-control">
+                  <option value="1" selected>익일(T+1) 종가 체결 (미래참조 방지 권장)</option>
+                  <option value="0">당일(T) 종가 즉시 체결</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row" style="margin-bottom:0;">
+              <div class="form-group">
+                <label class="form-label">대기 현금(Cash) 이자 수익</label>
+                <select id="cfgCashYield" class="form-control">
+                  <option value="US3M" selected>미국 3개월 국채금리(DTB3) 일할복리 가산</option>
+                  <option value="NONE">무이자 (0%)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">매매 수수료율 (%)</label>
+                <input type="number" id="cfgFee" class="form-control" value="0.05" min="0" max="5" step="0.01" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Asset Allocation & Rebalancing Card -->
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">2️⃣ 기본 자산배분 & 리밸런싱 조건</div>
+                <div class="card-subtitle">매매 가능 자산만 배분 대상에 표시됩니다. (100% 미만 설정 시 나머지는 현금 보유)</div>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" id="btnAddAlloc" class="btn btn-sm">+ 자산 추가</button>
+                <button type="button" id="btnNormalizeAlloc" class="btn btn-sm">100% 맞춤</button>
+              </div>
+            </div>
+
+            <div id="allocList" class="alloc-list"></div>
+            <div id="allocSumText" class="alloc-summary-bar"></div>
+
+            <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-color);">
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px;">🔄 리밸런싱 발동 조건 (기간 + 비율초과 밴드 동시 지원)</div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">주기적 리밸런싱 (기간 기준)</label>
+                  <select id="cfgRebPeriod" class="form-control">
+                    <option value="NONE">사용 안 함 (기간 리밸런싱 없음)</option>
+                    <option value="MONTHLY">매월 초 (Monthly)</option>
+                    <option value="QUARTERLY" selected>매분기 초 (Quarterly)</option>
+                    <option value="SEMIANNUAL">매반기 초 (Semi-Annual)</option>
+                    <option value="YEARLY">매년 초 (Yearly)</option>
+                    <option value="CUSTOM_DAYS">사용자 지정 거래일 간격마다</option>
+                  </select>
+                </div>
+                <div class="form-group" id="wrapRebCustomDays" style="display:none;">
+                  <label class="form-label">리밸런싱 주기 (거래일)</label>
+                  <input type="number" id="cfgRebCustomDays" class="form-control" value="60" min="5" max="1000" />
+                </div>
+              </div>
+
+              <div class="form-row" style="margin-bottom:0;">
+                <div class="form-group">
+                  <label class="form-label">비율 초과량 리밸런싱 (Threshold Band)</label>
+                  <select id="cfgRebBandMode" class="form-control">
+                    <option value="NONE">사용 안 함 (비율초과 밴드 없음)</option>
+                    <option value="ABS_PP" selected>절대 비중 초과량 (±N%p 이상 이탈 시)</option>
+                    <option value="REL_PCT">상대 비중 초과량 (목표비중의 ±N% 이탈 시)</option>
+                  </select>
+                </div>
+                <div class="form-group" id="wrapRebBandVal">
+                  <label class="form-label">초과 허용 한도 (%p 또는 %)</label>
+                  <input type="number" id="cfgRebBandVal" class="form-control" value="10" min="1" max="50" step="0.5" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Cross-Asset Conditional Rules Builder -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">3️⃣ 멀티에셋 교차조건 매수/매도 빌더 (Cross-Condition Rules)</div>
+                <div class="card-subtitle">
+                  금리(10Y/2Y/금리차), 달러(DXY), VIX, 풋콜비율 등 <strong>시그널 지표</strong>와 주가지수·채권·섹터의 <strong>파생지표(볼린저밴드, 이격도, RSI, MACD, 이동평균, 낙폭, 모멘텀)</strong>를 조합해 매수/매도합니다.
+                </div>
+              </div>
+              <button type="button" id="btnAddRule" class="btn btn-primary btn-sm">+ 교차조건 규칙 추가</button>
+            </div>
+
+            <div id="rulesContainer"></div>
+
+            <div style="margin-top:16px;">
+              <button type="button" id="btnRunBacktest" class="btn btn-success btn-lg">
+                🚀 현재 설정으로 백테스트 실행 및 스코어보드에 기록하기
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: BACKTEST RESULTS & CHARTS -->
+    <section id="tab-results" class="tab-panel">
+      <div class="card">
+        <div class="card-header" style="margin-bottom:6px;border-bottom:none;padding-bottom:0;">
+          <div>
+            <div class="card-title" style="font-size:18px;">
+              📊 <span id="resStrategyTitle">백테스트 결과 리포트</span>
+            </div>
+            <div id="resPeriodBadge" class="card-subtitle"></div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" id="btnManualSaveSb" class="btn btn-primary btn-sm">🏆 다른 이름으로 스코어보드 저장</button>
+            <button type="button" class="btn btn-sm" data-tab-target="tab-builder">⚙️ 조건 수정하기</button>
+            <button type="button" class="btn btn-sm" data-tab-target="tab-scoreboard">🏆 스코어보드 비교</button>
+          </div>
+        </div>
+        <div id="resRulesSummary" style="margin-top:8px;padding:10px 12px;background:var(--bg-card-alt);border-radius:8px;font-size:12.5px;"></div>
+      </div>
+
+      <!-- 8 KPI Cards -->
+      <div id="kpiGrid" class="kpi-grid"></div>
+
+      <!-- Equity Curve Chart -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📈 포트폴리오 누적 자산 성장 곡선 (Equity Curve vs Benchmark)</div>
+            <div class="card-subtitle">장기 복리 효과를 정확히 비교하려면 로그 스케일(Log Scale) 보기를 권장합니다.</div>
+          </div>
+          <button type="button" id="btnToggleScale" class="btn btn-sm">📐 현재: 로그 스케일 (Log)</button>
+        </div>
+        <div class="chart-container">
+          <canvas id="chartEquity"></canvas>
+        </div>
+      </div>
+
+      <!-- Drawdown & Allocation Charts Row -->
+      <div class="builder-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🌊 수중 낙폭 차트 (Underwater Drawdown %)</div>
+              <div class="card-subtitle">전고점 대비 하락률 추이 (위기 방어력 확인)</div>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartDrawdown"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🥧 포트폴리오 자산 비중 변화 추이 (%)</div>
+              <div class="card-subtitle">교차매매 및 리밸런싱에 따른 자산별 비중 변화</div>
+            </div>
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartWeights"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Yearly Returns Chart -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📅 연도별 수익률 비교 (Annual Returns %)</div>
+        </div>
+        <div class="chart-container-sm">
+          <canvas id="chartYearly"></canvas>
+        </div>
+      </div>
+
+      <!-- Trade & Rebalance History Table -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📝 교차조건 매매 & 리밸런싱 체결 이력</div>
+            <div class="card-subtitle">최근 250건의 체결 내역이 표시됩니다.</div>
+          </div>
+          <span id="tradeLogsCount" class="tag">0건</span>
+        </div>
+        <div class="scoreboard-table-wrap" style="max-height:360px;overflow-y:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>체결일자</th>
+                <th>구분</th>
+                <th>발동 규칙 / 사유</th>
+                <th>매매 자산</th>
+                <th>주문 금액</th>
+                <th>체결 후 총자산</th>
+              </tr>
+            </thead>
+            <tbody id="tradeLogsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: SCOREBOARD LEADERBOARD -->
+    <section id="tab-scoreboard" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🏆 전략 실험 이력 스코어보드 (Leaderboard & History)</div>
+            <div class="card-subtitle">
+              기존에 실행했던 다양한 교차조건과 자산배분 전략들의 성과가 자동 기록됩니다. 가장 좋은 조건을 정렬해 비교하고 언제든 <strong>[⚡ 조건 불러오기]</strong>로 복원하세요.
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <select id="sbSortSelect" class="form-control" style="width:auto;">
+              <option value="quantScore" selected>정렬: 🏆 종합 퀀트스코어 순</option>
+              <option value="cagrPct">정렬: 📈 연복리수익률(CAGR) 높은 순</option>
+              <option value="sharpe">정렬: ⚡ 샤프지수(Sharpe) 높은 순</option>
+              <option value="calmar">정렬: ⚖️ 칼마지수(수익/MDD) 높은 순</option>
+              <option value="maxDrawdownPct">정렬: 🛡️ 최대낙폭(MDD) 방어 순</option>
+              <option value="totalReturnPct">정렬: 💰 총 누적수익률 순</option>
+              <option value="createdAt">정렬: 🕒 최신 실험 순</option>
+            </select>
+            <button type="button" id="btnExportScoreboard" class="btn btn-sm">💾 이력 JSON 백업</button>
+            <label class="btn btn-sm" style="cursor:pointer;">
+              📂 JSON 복원 <input type="file" id="inputImportScoreboard" accept=".json" style="display:none;" />
+            </label>
+            <button type="button" id="btnClearScoreboard" class="btn btn-danger btn-sm">🗑️ 기록 정리</button>
+          </div>
+        </div>
+
+        <!-- Champions Podium -->
+        <div id="sbPodium" class="podium-grid"></div>
+
+        <!-- Multi-Strategy Overlay Chart -->
+        <div style="margin-bottom:18px;padding:12px;background:var(--bg-card-alt);border:1px solid var(--border-color);border-radius:10px;">
+          <div style="font-size:13px;font-weight:700;margin-bottom:8px;">
+            📊 선택한 전략들의 수익률 곡선 동시 비교 (시작 원금 = 100 기준 로그 스케일, 아래 표 좌측 체크박스로 선택)
+          </div>
+          <div class="chart-container-sm">
+            <canvas id="chartScoreboardOverlay"></canvas>
+          </div>
+        </div>
+
+        <!-- Scoreboard Leaderboard Table -->
+        <div class="scoreboard-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>비교</th>
+                <th>순위</th>
+                <th>전략명 / 자산배분 & 교차조건 요약</th>
+                <th>Quant Score</th>
+                <th>CAGR (연복리)</th>
+                <th>총수익률 (최종자산)</th>
+                <th>MDD (최대낙폭)</th>
+                <th>샤프지수</th>
+                <th>칼마지수</th>
+                <th>백테스트 기간</th>
+                <th>관리 / 조건 복원</th>
+              </tr>
+            </thead>
+            <tbody id="sbTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: DATA CATALOG & CUSTOM CSV UPLOAD -->
+    <section id="tab-catalog" class="tab-panel">
+      <div class="builder-grid">
+        <!-- Custom CSV Upload Card -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">➕ CSV 파일로 추가 자산 / 지표 DB 등록</div>
+                <div class="card-subtitle">
+                  스마트폰이나 PC에 있는 CSV 파일(Date, Close 열 포함)을 업로드하면 1970~현재 거래일 캘린더에 자동 매칭되어 브라우저 DB(IndexedDB)에 영구 저장됩니다.
+                </div>
+              </div>
+            </div>
+
+            <form id="formUploadCsv">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">티커 코드 (영문/숫자)</label>
+                  <input type="text" id="csvTickerId" class="form-control" placeholder="예: BTC, KOSPI, NVDA" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">자산 / 지표 표시 이름</label>
+                  <input type="text" id="csvTickerName" class="form-control" placeholder="예: 비트코인, 코스피지수" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">데이터 용도 구분</label>
+                  <select id="csvCategory" class="form-control">
+                    <option value="asset" selected>💹 매매 가능 자산 (자산배분 + 매수/매도 + 조건 참조 모두 가능)</option>
+                    <option value="indicator">📊 시그널 전용 지표 (금리·심리지표 등 조건식 참조 전용)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">단위 표시</label>
+                  <input type="text" id="csvUnit" class="form-control" value="$" placeholder="$, pt, %" />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:12px;">
+                <label class="form-label">CSV 파일 선택 (`Date, Close` 또는 `날짜, 종가` 형식)</label>
+                <input type="file" id="csvFileInput" class="form-control" accept=".csv,.txt" required />
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg">📥 CSV 데이터 파싱 및 DB에 추가하기</button>
+            </form>
+          </div>
+
+          <!-- Preview Chart Card -->
+          <div class="card">
+            <div class="card-header">
+              <div id="catPreviewTitle" class="card-title">📈 자산/지표 시계열 미리보기</div>
+            </div>
+            <div class="chart-container-sm">
+              <canvas id="chartCatalogPreview"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Built-in & Custom Series Catalog Table -->
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📚 탑재된 기본 자산 (17종) & 시그널 지표 (7종) DB 카탈로그</div>
+                <div class="card-subtitle">
+                  1970년 1월 2일부터 현재까지 일별(Daily) 총 14,327 거래일 데이터가 수록되어 있습니다. 각 항목의 [CSV 다운] 버튼으로 원천 데이터를 내려받을 수 있습니다.
+                </div>
+              </div>
+            </div>
+
+            <div class="scoreboard-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>티커</th>
+                    <th>이름</th>
+                    <th>구분</th>
+                    <th>분류</th>
+                    <th>원천 데이터 시작일</th>
+                    <th>시작값 → 현재값</th>
+                    <th>설명 및 합성/연결 기준</th>
+                    <th>동작</th>
+                  </tr>
+                </thead>
+                <tbody id="catalogTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Mobile Bottom Navigation -->
+  <nav class="mobile-bottom-nav">
+    <button type="button" class="mobile-nav-item active" data-tab-target="tab-builder">
+      <span>⚙️</span>
+      <span>조건설정</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab-target="tab-results">
+      <span>📊</span>
+      <span>결과차트</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab-target="tab-scoreboard">
+      <span>🏆</span>
+      <span>스코어보드(<span class="js-sb-count">0</span>)</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab-target="tab-catalog">
+      <span>📁</span>
+      <span>자산DB/CSV</span>
+    </button>
+  </nav>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="data/market_data.js"></script>
+  <script src="js/indicators.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
