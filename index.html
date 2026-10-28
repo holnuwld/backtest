@@ -66,14 +66,14 @@
             </div>
 
             <div class="form-group" style="margin-bottom:6px;">
-              <label class="form-label">시작 금액 ($)</label>
-              <input type="number" id="cfgCapital" class="form-control" value="10000" min="100" step="1000" />
+              <label class="form-label">시작 금액 (₩, 원화 기준)</label>
+              <input type="number" id="cfgCapital" class="form-control" value="10000000" min="10000" step="1000000" />
             </div>
             <div class="chip-group">
-              <span class="chip js-cap-chip" data-cap="10000">$10,000</span>
-              <span class="chip js-cap-chip" data-cap="50000">$50,000</span>
-              <span class="chip js-cap-chip" data-cap="100000">$100,000</span>
-              <span class="chip js-cap-chip" data-cap="1000000">$1,000,000</span>
+              <span class="chip js-cap-chip" data-cap="10000000">1,000만원</span>
+              <span class="chip js-cap-chip" data-cap="30000000">3,000만원</span>
+              <span class="chip js-cap-chip" data-cap="50000000">5,000만원</span>
+              <span class="chip js-cap-chip" data-cap="100000000">1억원</span>
             </div>
 
             <div class="form-row">
@@ -98,7 +98,10 @@
 
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">비교 벤치마크 자산</label>
+                <label class="form-label">
+                  비교 벤치마크 자산
+                  <button type="button" class="btn-help-inline" data-help="BENCHMARK" title="벤치마크 안내">?</button>
+                </label>
                 <select id="cfgBenchmark" class="form-control"></select>
               </div>
               <div class="form-group">
@@ -126,11 +129,18 @@
           </div>
 
           <!-- Asset Allocation & Rebalancing Card -->
-          <div class="card">
+          <div class="card" id="cardRebalance">
             <div class="card-header">
               <div>
-                <div class="card-title">2️⃣ 기본 자산배분 & 리밸런싱 조건</div>
-                <div class="card-subtitle">매매 가능 자산만 배분 대상에 표시됩니다. (100% 미만 설정 시 나머지는 현금 보유)</div>
+                <div class="card-title" style="display:flex;align-items:center;gap:10px;">
+                  <span>리밸런싱 조건</span>
+                  <label class="toggle-switch-label" title="리밸런싱 전체 켜기/끄기">
+                    <input type="checkbox" id="toggleRebalance" class="toggle-checkbox" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <span id="badgeRebalanceStatus" class="toggle-status-badge on">활성</span>
+                </div>
+                <div class="card-subtitle">매매 가능 자산만 배분 대상에 표시됩니다. (스위치 OFF 시 리밸런싱 미수행)</div>
               </div>
               <div style="display:flex;gap:6px;">
                 <button type="button" id="btnAddAlloc" class="btn btn-sm">+ 자산 추가</button>
@@ -142,7 +152,10 @@
             <div id="allocSumText" class="alloc-summary-bar"></div>
 
             <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border-color);">
-              <div style="font-size:13px;font-weight:700;margin-bottom:8px;">🔄 리밸런싱 발동 조건 (기간 + 비율초과 밴드 동시 지원)</div>
+              <div style="font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                <span>🔄 리밸런싱 발동 조건 (기간 + 비율초과 밴드 동시 지원)</span>
+                <button type="button" class="btn-help-inline" data-help="REBALANCE_COND" title="리밸런싱 조건 안내">?</button>
+              </div>
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">주기적 리밸런싱 (기간 기준)</label>
@@ -181,12 +194,19 @@
 
         <!-- Right Column: Cross-Asset Conditional Rules Builder -->
         <div>
-          <div class="card">
+          <div class="card" id="cardRules">
             <div class="card-header">
               <div>
-                <div class="card-title">3️⃣ 멀티에셋 교차조건 매수/매도 빌더 (Cross-Condition Rules)</div>
+                <div class="card-title" style="display:flex;align-items:center;gap:10px;">
+                  <span>매수 매도 조건</span>
+                  <label class="toggle-switch-label" title="매수 매도 조건 전체 켜기/끄기">
+                    <input type="checkbox" id="toggleRules" class="toggle-checkbox" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <span id="badgeRulesStatus" class="toggle-status-badge on">활성</span>
+                </div>
                 <div class="card-subtitle">
-                  금리(10Y/2Y/금리차), 달러(DXY), VIX, 풋콜비율 등 <strong>시그널 지표</strong>와 주가지수·채권·섹터의 <strong>파생지표(볼린저밴드, 이격도, RSI, MACD, 이동평균, 낙폭, 모멘텀)</strong>를 조합해 매수/매도합니다.
+                  금리(10Y/2Y/금리차), 환율, 달러(DXY), VIX, 풋콜비율, 비트코인 등 <strong>시그널 지표</strong>와 자산의 <strong>파생지표(볼린저밴드, 이격도, RSI, MACD, 고점하락률, 모멘텀)</strong>를 조합해 매수/매도합니다. (스위치 OFF 시 규칙 미수행)
                 </div>
               </div>
               <button type="button" id="btnAddRule" class="btn btn-primary btn-sm">+ 교차조건 규칙 추가</button>
@@ -231,7 +251,7 @@
         <div class="card-header">
           <div>
             <div class="card-title">📈 포트폴리오 누적 자산 성장 곡선 (Equity Curve vs Benchmark)</div>
-            <div class="card-subtitle">장기 복리 효과를 정확히 비교하려면 로그 스케일(Log Scale) 보기를 권장합니다.</div>
+            <div class="card-subtitle">사고 판 지점(▲매수 / ▼매도) 마커가 표시되며, 마우스 오버 시 체결 단가·수량·금액을 확인할 수 있습니다.</div>
           </div>
           <button type="button" id="btnToggleScale" class="btn btn-sm">📐 현재: 로그 스케일 (Log)</button>
         </div>
@@ -267,10 +287,17 @@
         </div>
       </div>
 
-      <!-- Yearly Returns Chart -->
+      <!-- Yearly Returns Chart with Dynamic Benchmark Selector -->
       <div class="card">
-        <div class="card-header">
-          <div class="card-title">📅 연도별 수익률 비교 (Annual Returns %)</div>
+        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div class="card-title">📅 연도별 수익률 비교 (Annual Returns %)</div>
+            <div class="card-subtitle">선택한 비교자산 대비 아웃퍼폼(Beat) 시 녹색, 언더퍼폼 시 적색으로 표시됩니다.</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <label for="resYearlyBenchSelect" style="font-size:12.5px;color:var(--text-muted);font-weight:600;">비교 자산:</label>
+            <select id="resYearlyBenchSelect" class="form-control" style="width:auto;padding:5px 10px;font-size:12.5px;font-weight:600;"></select>
+          </div>
         </div>
         <div class="chart-container-sm">
           <canvas id="chartYearly"></canvas>
@@ -484,6 +511,20 @@
       <span>자산DB/CSV</span>
     </button>
   </nav>
+
+  <!-- Help Info Modal Popup -->
+  <div id="helpModal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="helpModalTitle">💡 조건 항목 상세 안내</div>
+        <button type="button" class="modal-close-btn" id="btnHelpModalClose">&times;</button>
+      </div>
+      <div class="modal-body" id="helpModalBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" id="btnHelpModalOk">확인</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Container -->
   <div id="toastContainer" class="toast-container"></div>

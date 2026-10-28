@@ -17,6 +17,113 @@
   let autoSaveToScoreboard = true;
   let selectedScoreboardIds = new Set();
 
+  // Condition Items Help Dictionary for (?) Popups
+  const HELP_DICT = {
+    DRAWDOWN_DAYS: {
+      title: "고점 기준일 (Lookback Days)",
+      content: `
+        <p><strong>최고가를 탐색할 과거 기간(거래일 수)</strong>을 설정합니다.</p>
+        <ul>
+          <li><strong>0 입력 시:</strong> 백테스트 시작일 이후의 <strong>'역대 최고점(ATH, All-Time High)'</strong> 대비 현재 가격의 하락률(-%)을 계산합니다. 장기 대세 하락장이나 역사적 고점 대비 낙폭 과대 매수를 노릴 때 사용합니다.</li>
+          <li><strong>N (예: 252) 입력 시:</strong> 최근 N 거래일(252 거래일 ≈ 1년) 동안의 최고가 대비 현재 가격의 하락률(-%)을 계산합니다. 최근 1년 고점 대비 단기/중기 조정 폭을 측정할 때 적합합니다.</li>
+          <li><strong>조건 활용 팁:</strong> 하락률 수치는 <strong>음수(-%)</strong>로 계산되므로, 고점 대비 20% 이상 하락했을 때 매수하려면 연산자를 <code>&le;</code> (이하)로 하고 기준값에 <code>-20</code>을 입력합니다.</li>
+        </ul>
+      `,
+    },
+    TRANSFORM: {
+      title: "파생지표 종류 (Indicator Transform)",
+      content: `
+        <p>원천 시계열 가격을 다양한 기술적 분석 지표로 가공하여 매매 시그널을 생성합니다.</p>
+        <ul>
+          <li><strong>종가(PRICE):</strong> 해당 자산/지표의 원천 수치 그대로 사용합니다.</li>
+          <li><strong>단순이동평균(SMA):</strong> 최근 N 거래일 종가의 산술평균입니다.</li>
+          <li><strong>지수이동평균(EMA):</strong> 최근 가격에 더 높은 가중치를 부여한 지수 이동평균선입니다.</li>
+          <li><strong>이격도(DISPARITY):</strong> 현재 주가가 이동평균선 대비 몇 %에 위치하는지(100% 기준)를 나타내며, 과매수/과매도 판단에 쓰입니다.</li>
+          <li><strong>볼린저밴드(BB):</strong> 이동평균선 기준 &plusmn;K배 표준편차로 상단/하단 밴드를 산출합니다.</li>
+          <li><strong>RSI(상대강도지수):</strong> 14일간의 상승폭과 하락폭 비율(0~100)로 과열/침체를 진단합니다.</li>
+          <li><strong>MACD:</strong> 단기(12일)와 장기(26일) 지수이동평균의 차이로 추세 방향과 반전을 포착합니다.</li>
+          <li><strong>모멘텀(ROC):</strong> 최근 N일 전 대비 수익률 변화폭(%)을 측정합니다.</li>
+        </ul>
+      `,
+    },
+    OPERATOR: {
+      title: "비교 / 교차 조건 (Operator)",
+      content: `
+        <p>좌측 지표와 우측 수치(또는 타 지표)를 비교하는 규칙입니다.</p>
+        <ul>
+          <li><strong>&gt; (초과), &ge; (이상), &lt; (미만), &le; (이하):</strong> 현재 시점의 단순 대소 비교입니다.</li>
+          <li><strong>상향돌파(CROSS_UP):</strong> 전일에는 이하(&le;)였다가 당일 초과(&gt;)로 올라서는 순간 골든크로스를 감지합니다.</li>
+          <li><strong>하향돌파(CROSS_DOWN):</strong> 전일에는 이상(&ge;)이었다가 당일 미만(&lt;)으로 떨어지는 데드크로스를 감지합니다.</li>
+          <li><strong>볼린저밴드 상/하단 터치:</strong> 주가가 볼린저 상단 이상이거나 하단 이하로 접촉한 상태를 감지합니다.</li>
+          <li><strong>MACD 골든/데드크로스:</strong> MACD 히스토그램이 0선을 상향/하향 돌파하는 모멘텀 전환 시점입니다.</li>
+        </ul>
+      `,
+    },
+    SIZING_MODE: {
+      title: "매수 / 매도 주문 기준 (Sizing Mode)",
+      content: `
+        <p>체결 시 주문할 주식 수량을 어떤 기준으로 산정할지 결정합니다.</p>
+        <ul>
+          <li><strong>포트폴리오 총액 대비 비율 (TOTAL_PCT):</strong> 현재 전체 자산(현금 + 모든 보유자산) 평가액의 특정 %만큼 매수/매도합니다. (예: 총자산의 20% 매수)</li>
+          <li><strong>잔액 대비 비율 (BALANCE_PCT):</strong> 매수 시에는 <strong>'보유 현금'</strong>의 특정 %, 매도 시에는 <strong>'해당 자산 보유량'</strong>의 특정 %만큼 체결합니다. (예: 보유잔액의 50% 분할 매도)</li>
+          <li><strong>고정 금액 (AMOUNT):</strong> 지정한 <strong>원화(₩)</strong> 금액만큼 정액 매수/매도합니다. (예: 1,000,000원 매수)</li>
+          <li><strong>전량 매도 (SELL_ALL):</strong> 보유 중인 해당 자산을 100% 전량 청산하여 현금화합니다.</li>
+        </ul>
+      `,
+    },
+    FUNDING_SOURCE: {
+      title: "매수 재원 및 충당 방식 (Funding Source)",
+      content: `
+        <p>매수 주문 시 보유 현금이 부족할 경우 어떻게 매수 자금을 조달할지 지정합니다.</p>
+        <ul>
+          <li><strong>현금 우선 + 부족분 타자산 비례매도:</strong> 현금을 먼저 쓰고, 모자란 금액은 포트폴리오의 다른 보유 자산들을 비례적으로 분할 매도하여 채웁니다.</li>
+          <li><strong>보유 현금 한도 내에서만 매수:</strong> 보유 중인 여유 현금(Cash)을 초과하는 주문은 체결되지 않습니다.</li>
+          <li><strong>특정 자산 매도 대금으로 충당:</strong> 특정 자산(예: 국채 TLT 또는 금)을 매도하여 해당 대금으로 대상 자산을 교차 매수(스위칭)합니다.</li>
+        </ul>
+      `,
+    },
+    COOLDOWN: {
+      title: "재발동 대기일 (Cooldown Days)",
+      content: `
+        <p>규칙이 한 번 발동하여 주문이 체결된 후, <strong>동일한 규칙이 다시 실행되기까지 대기해야 하는 최소 거래일 수</strong>입니다.</p>
+        <p>연속적인 신호 발생으로 인해 매 거래일마다 과도하게 주문이 반복 체결되거나 불필요한 거래 수수료가 누적되는 것을 방지합니다. 보통 5~20 거래일 설정을 권장합니다.</p>
+      `,
+    },
+    BENCHMARK: {
+      title: "비교 벤치마크 자산",
+      content: `
+        <p>포트폴리오의 투자 성과(누적 수익률, CAGR, MDD, 샤프지수 등)를 1:1로 비교 평가할 기준 자산입니다.</p>
+        <p>모든 달러 자산(S&P 500, 나스닥 등)은 당일 원달러 환율이 반영된 원화 환산 총수익률 곡선으로 동일하게 평가되므로 정확한 상대 성과(알파)를 확인할 수 있습니다.</p>
+      `,
+    },
+    REBALANCE_COND: {
+      title: "리밸런싱 발동 조건",
+      content: `
+        <p>포트폴리오가 목표 비중에서 이탈했을 때 원래 목표 비율로 되돌리는 규칙입니다.</p>
+        <ul>
+          <li><strong>주기적 리밸런싱:</strong> 매월 초, 매분기 초, 매년 초 등 정해진 시간 간격마다 정기적으로 리밸런싱합니다.</li>
+          <li><strong>비율초과량(밴드) 리밸런싱:</strong> 특정 자산의 실제 비중이 목표 비중 대비 허용 한도(예: &plusmn;10%p) 이상 크게 벗어났을 때 즉시 발동합니다.</li>
+        </ul>
+      `,
+    },
+  };
+
+  function openHelpModal(key) {
+    const item = HELP_DICT[key] || { title: "안내", content: "상세 내용이 없습니다." };
+    const modal = document.getElementById("helpModal");
+    const titleEl = document.getElementById("helpModalTitle");
+    const bodyEl = document.getElementById("helpModalBody");
+    if (!modal || !titleEl || !bodyEl) return;
+    titleEl.innerHTML = item.title;
+    bodyEl.innerHTML = item.content;
+    modal.style.display = "flex";
+  }
+
+  function closeHelpModal() {
+    const modal = document.getElementById("helpModal");
+    if (modal) modal.style.display = "none";
+  }
+
   // Chart instances
   const charts = {
     equity: null,
@@ -35,7 +142,7 @@
       desc: "금리차 역전 시 장기채 방어 비중 확대, 금리차 정상화(>0) 또는 나스닥 200일선 돌파 시 나스닥 100 매수",
       config: {
         name: "10Y-2Y 금리차 & 나스닥/국채 스위칭",
-        initialCapital: 10000,
+        initialCapital: 10000000,
         startDate: "1980-01-02",
         endDate: "2026-10-27",
         executionLag: 1,
@@ -119,7 +226,7 @@
       desc: "나스닥100 볼린저밴드(20,2σ) 하단 터치 또는 RSI(14)≤30 과매도 시 현금/채권 재원으로 매수, 상단 돌파 & RSI≥75 시 일부 차익실현",
       config: {
         name: "나스닥 볼린저밴드 상하단 + RSI 스윙",
-        initialCapital: 10000,
+        initialCapital: 10000000,
         startDate: "1985-01-02",
         endDate: "2026-10-27",
         executionLag: 1,
@@ -203,7 +310,7 @@
       desc: "시장 극단적 공포(VIX≥30 및 Put/Call Ratio≥1.10) 발생 시 반도체(SOXX) 집중 매수, VIX 안정화 및 이격도 과열 시 리밸런싱",
       config: {
         name: "VIX & Put/Call 공포지수 역발상 반도체 전략",
-        initialCapital: 10000,
+        initialCapital: 10000000,
         startDate: "1990-01-02",
         endDate: "2026-10-27",
         executionLag: 1,
@@ -360,7 +467,7 @@
       desc: "S&P500 30% + 나스닥 15% + 미국장기채(TLT) 30% + 중기채(IEF) 10% + 금(Gold) 15% 배분 및 ±5%p 비율초과 시 자동 리밸런싱",
       config: {
         name: "올웨더 멀티에셋 + ±5%p 밴드 리밸런싱 (1970~)",
-        initialCapital: 10000,
+        initialCapital: 10000000,
         startDate: "1970-01-02",
         endDate: "2026-10-27",
         executionLag: 1,
@@ -389,7 +496,7 @@
       desc: "달러인덱스(DXY)와 10년물 금리가 60일선 하향돌파 시 기술/반도체 비중 확대, 급등 시 금/단기채 방어",
       config: {
         name: "달러(DXY) & 10Y금리 모멘텀 매크로 로테이션",
-        initialCapital: 10000,
+        initialCapital: 10000000,
         startDate: "1980-01-02",
         endDate: "2026-10-27",
         executionLag: 1,
@@ -457,6 +564,80 @@
               sizingMode: "TOTAL_PCT",
               sizingValue: 15,
               fundingSource: "NDX",
+            },
+          },
+        ],
+      },
+    },
+    {
+      id: "preset_korea_btc_multi",
+      title: "🪙 비트코인(BTC/KRW) & 코스피200 & KRX금 글로벌 멀티에셋",
+      desc: "비트코인(BTC/KRW) 10% + 코스피200 20% + S&P500 25% + KRX금 15% + 미국채10Y 25% 배분 및 BTC 달러(BTC_USD) 50일선 추세추종 교차매매",
+      config: {
+        name: "한국형 글로벌 멀티에셋 (BTC+KOSPI+KRX금+미국채)",
+        initialCapital: 10000000,
+        startDate: "2018-01-02",
+        endDate: "2026-10-27",
+        executionLag: 1,
+        feeRatePct: 0.05,
+        cashYieldMode: "US3M",
+        benchmarkTicker: "SPX",
+        allocations: [
+          { ticker: "SPX", weightPct: 25 },
+          { ticker: "KPI200", weightPct: 20 },
+          { ticker: "KRX_GOLD", weightPct: 15 },
+          { ticker: "UST10Y_TR", weightPct: 25 },
+          { ticker: "BTC_KRW", weightPct: 10 },
+        ],
+        rebalance: {
+          periodMode: "QUARTERLY",
+          customDays: 60,
+          bandMode: "ABS_PP",
+          bandThreshold: 8,
+        },
+        rules: [
+          {
+            id: "r_btc_trend_buy",
+            name: "BTC 달러가격(BTC_USD) 50일 이동평균 상향돌파 시 비트코인 10% 추가매수",
+            enabled: true,
+            logic: "AND",
+            cooldownDays: 15,
+            conditions: [
+              {
+                left: { ticker: "BTC_USD", transform: "PRICE", p1: 20, p2: 2, p3: 9 },
+                operator: "CROSS_UP",
+                rightMode: "INDICATOR",
+                rightIndicator: { ticker: "BTC_USD", transform: "SMA", p1: 50, p2: 2, p3: 9 },
+              },
+            ],
+            action: {
+              type: "BUY",
+              targetTicker: "BTC_KRW",
+              sizingMode: "TOTAL_PCT",
+              sizingValue: 10,
+              fundingSource: "UST10Y_TR",
+            },
+          },
+          {
+            id: "r_btc_rsi_profit",
+            name: "BTC_USD RSI(14) ≥ 80 과열 시 비트코인 30% 차익실현",
+            enabled: true,
+            logic: "AND",
+            cooldownDays: 15,
+            conditions: [
+              {
+                left: { ticker: "BTC_USD", transform: "RSI", p1: 14, p2: 2, p3: 9 },
+                operator: ">=",
+                rightMode: "VALUE",
+                rightValue: 80,
+              },
+            ],
+            action: {
+              type: "SELL",
+              targetTicker: "BTC_KRW",
+              sizingMode: "BALANCE_PCT",
+              sizingValue: 30,
+              fundingSource: "CASH_THEN_PRORATA",
             },
           },
         ],
@@ -689,16 +870,42 @@
     });
   }
 
+  function updateToggleUI() {
+    const rebCheck = document.getElementById("toggleRebalance")?.checked !== false;
+    const rebBadge = document.getElementById("badgeRebalanceStatus");
+    if (rebBadge) {
+      rebBadge.textContent = rebCheck ? "활성" : "비활성";
+      rebBadge.className = `toggle-status-badge ${rebCheck ? "on" : "off"}`;
+    }
+
+    const rulesCheck = document.getElementById("toggleRules")?.checked !== false;
+    const rulesBadge = document.getElementById("badgeRulesStatus");
+    if (rulesBadge) {
+      rulesBadge.textContent = rulesCheck ? "활성" : "비활성";
+      rulesBadge.className = `toggle-status-badge ${rulesCheck ? "on" : "off"}`;
+    }
+  }
+
   function loadConfigIntoUI(cfg) {
     currentConfig = JSON.parse(JSON.stringify(cfg));
     document.getElementById("cfgName").value = currentConfig.name || "나의 백테스트 전략";
-    document.getElementById("cfgCapital").value = currentConfig.initialCapital || 10000;
+    document.getElementById("cfgCapital").value = currentConfig.initialCapital || 10000000;
     document.getElementById("cfgStartDate").value = currentConfig.startDate || marketData.startDate;
     document.getElementById("cfgEndDate").value = currentConfig.endDate || marketData.endDate;
     document.getElementById("cfgLag").value = String(currentConfig.executionLag ?? 1);
     document.getElementById("cfgFee").value = currentConfig.feeRatePct ?? 0.05;
     document.getElementById("cfgCashYield").value = currentConfig.cashYieldMode || "US3M";
     document.getElementById("cfgBenchmark").value = currentConfig.benchmarkTicker || "SPX";
+
+    const toggleReb = document.getElementById("toggleRebalance");
+    if (toggleReb) {
+      toggleReb.checked = currentConfig.rebalanceEnabled !== false;
+    }
+    const toggleRul = document.getElementById("toggleRules");
+    if (toggleRul) {
+      toggleRul.checked = currentConfig.rulesEnabled !== false;
+    }
+    updateToggleUI();
 
     const reb = currentConfig.rebalance || {};
     document.getElementById("cfgRebPeriod").value = reb.periodMode || "QUARTERLY";
@@ -832,9 +1039,12 @@
           </div>
 
           <div class="action-box">
-            <div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+            <div style="font-size:12px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;">
               <span>⚡ 조건 충족 시 실행할 주문 (Action)</span>
-              <span style="font-size:11px;color:var(--text-muted);">재발동 대기(Cooldown): <input type="number" class="form-control js-rule-cooldown" data-ridx="${rIdx}" value="${rule.cooldownDays ?? 5}" min="1" max="252" style="width:58px;display:inline-block;padding:2px 6px;font-size:11px;" /> 거래일</span>
+              <span style="font-size:11px;color:var(--text-muted);">
+                재발동 대기(Cooldown)<button type="button" class="btn-help-inline" data-help="COOLDOWN" title="재발동 대기일 안내">?</button>: 
+                <input type="number" class="form-control js-rule-cooldown" data-ridx="${rIdx}" value="${rule.cooldownDays ?? 5}" min="1" max="252" style="width:58px;display:inline-block;padding:2px 6px;font-size:11px;" /> 거래일
+              </span>
             </div>
             <div class="form-row" style="margin-bottom:0;">
               <div class="form-group">
@@ -852,19 +1062,25 @@
                 </select>
               </div>
               <div class="form-group" style="${act.type === "SELL_ALL" ? "display:none;" : ""}">
-                <label class="form-label">매수/매도 기준 (금액·총액비율·잔액비율)</label>
+                <label class="form-label">
+                  매수/매도 기준
+                  <button type="button" class="btn-help-inline" data-help="SIZING_MODE" title="주문 기준 안내">?</button>
+                </label>
                 <select class="form-control js-act-sizing-mode" data-ridx="${rIdx}">
                   <option value="TOTAL_PCT" ${act.sizingMode === "TOTAL_PCT" ? "selected" : ""}>포트폴리오 총액 대비 비율 (%)</option>
                   <option value="BALANCE_PCT" ${act.sizingMode === "BALANCE_PCT" ? "selected" : ""}>잔액 대비 비율 (매수:현금잔액% / 매도:보유잔액%)</option>
-                  <option value="AMOUNT" ${act.sizingMode === "AMOUNT" ? "selected" : ""}>고정 금액 ($)</option>
+                  <option value="AMOUNT" ${act.sizingMode === "AMOUNT" ? "selected" : ""}>고정 금액 (₩)</option>
                 </select>
               </div>
               <div class="form-group" style="${act.type === "SELL_ALL" ? "display:none;" : ""}">
-                <label class="form-label">${act.sizingMode === "AMOUNT" ? "주문 금액 ($)" : "주문 비율 (%)"}</label>
+                <label class="form-label">${act.sizingMode === "AMOUNT" ? "주문 금액 (₩)" : "주문 비율 (%)"}</label>
                 <input type="number" class="form-control js-act-sizing-val" data-ridx="${rIdx}" value="${act.sizingValue ?? 20}" min="0.1" step="any" />
               </div>
               <div class="form-group" style="${act.type === "BUY" ? "" : "display:none;"}">
-                <label class="form-label">현금 부족 시 매수 재원</label>
+                <label class="form-label">
+                  현금 부족 시 매수 재원
+                  <button type="button" class="btn-help-inline" data-help="FUNDING_SOURCE" title="매수 재원 충당 방식 안내">?</button>
+                </label>
                 <select class="form-control js-act-funding" data-ridx="${rIdx}">
                   <option value="CASH_THEN_PRORATA" ${act.fundingSource === "CASH_THEN_PRORATA" ? "selected" : ""}>현금 우선 + 부족분 타자산 비례매도</option>
                   <option value="CASH_ONLY" ${act.fundingSource === "CASH_ONLY" ? "selected" : ""}>보유 현금 한도 내에서만 매수</option>
@@ -906,7 +1122,10 @@
         <div class="cond-grid">
           <!-- Left Spec -->
           <div class="side-spec-box">
-            <div class="side-spec-title">① 기준 자산 / 시그널 지표 (Left)</div>
+            <div class="side-spec-title">
+              ① 기준 자산 / 시그널 지표 (Left)
+              <button type="button" class="btn-help-inline" data-help="TRANSFORM" title="파생지표 설명">?</button>
+            </div>
             <div class="form-group" style="margin-bottom:6px;">
               <select class="form-control js-cond-left-ticker" data-ridx="${rIdx}" data-cidx="${cIdx}">
                 ${buildAllSeriesOptionsHTML(left.ticker)}
@@ -922,7 +1141,10 @@
 
           <!-- Operator -->
           <div class="form-group">
-            <label class="form-label">② 비교 / 교차 조건</label>
+            <label class="form-label">
+              ② 비교 / 교차 조건
+              <button type="button" class="btn-help-inline" data-help="OPERATOR" title="비교 조건 연산자 설명">?</button>
+            </label>
             <select class="form-control js-cond-op" data-ridx="${rIdx}" data-cidx="${cIdx}">
               ${buildOperatorOptionsHTML(op)}
             </select>
@@ -1051,7 +1273,10 @@
       return `
         <div class="param-inline">
           <div class="form-group">
-            <label class="form-label">고점 기준일 (0=역대전고점)</label>
+            <label class="form-label">
+              고점 기준일 (0=역대전고점)
+              <button type="button" class="btn-help-inline" data-help="DRAWDOWN_DAYS" title="고점 기준일 안내">?</button>
+            </label>
             <input type="number" class="form-control ${prefix}-p1" data-ridx="${rIdx}" data-cidx="${cIdx}" value="${spec.p1 ?? 0}" min="0" />
           </div>
         </div>
@@ -1271,13 +1496,19 @@
 
   function syncUIFieldsToConfig() {
     currentConfig.name = document.getElementById("cfgName").value.trim() || "백테스트 전략";
-    currentConfig.initialCapital = Math.max(100, parseFloat(document.getElementById("cfgCapital").value) || 10000);
+    currentConfig.initialCapital = Math.max(100, parseFloat(document.getElementById("cfgCapital").value) || 10000000);
     currentConfig.startDate = document.getElementById("cfgStartDate").value || marketData.startDate;
     currentConfig.endDate = document.getElementById("cfgEndDate").value || marketData.endDate;
     currentConfig.executionLag = parseInt(document.getElementById("cfgLag").value, 10) === 0 ? 0 : 1;
     currentConfig.feeRatePct = Math.max(0, parseFloat(document.getElementById("cfgFee").value) || 0);
     currentConfig.cashYieldMode = document.getElementById("cfgCashYield").value;
     currentConfig.benchmarkTicker = document.getElementById("cfgBenchmark").value || "SPX";
+
+    const toggleReb = document.getElementById("toggleRebalance");
+    currentConfig.rebalanceEnabled = toggleReb ? toggleReb.checked : true;
+
+    const toggleRul = document.getElementById("toggleRules");
+    currentConfig.rulesEnabled = toggleRul ? toggleRul.checked : true;
 
     currentConfig.rebalance = {
       periodMode: document.getElementById("cfgRebPeriod").value,
@@ -1327,8 +1558,8 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-label">💰 최종 평가자산 (총수익률)</div>
-        <div class="kpi-value ${m.totalReturnPct >= 0 ? "text-pos" : "text-neg"}">$${Math.round(m.finalEquity).toLocaleString()}</div>
-        <div class="kpi-sub">누적 ${m.totalReturnPct >= 0 ? "+" : ""}${m.totalReturnPct.toLocaleString(undefined, { maximumFractionDigits: 1 })}% (원금 $${m.initialCapital.toLocaleString()})</div>
+        <div class="kpi-value ${m.totalReturnPct >= 0 ? "text-pos" : "text-neg"}">₩${Math.round(m.finalEquity).toLocaleString()}</div>
+        <div class="kpi-sub">누적 ${m.totalReturnPct >= 0 ? "+" : ""}${m.totalReturnPct.toLocaleString(undefined, { maximumFractionDigits: 1 })}% (원금 ₩${m.initialCapital.toLocaleString()})</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">🛡️ 최대 낙폭 (MDD)</div>
@@ -1353,7 +1584,7 @@
       <div class="kpi-card">
         <div class="kpi-label">🔄 교차매매 & 리밸런싱 횟수</div>
         <div class="kpi-value">${m.ruleTradeCount}회 <span style="font-size:14px;color:var(--text-muted);">/ ${m.rebalanceCount}회</span></div>
-        <div class="kpi-sub">누적 수수료: $${Math.round(m.totalFeesPaid).toLocaleString()}</div>
+        <div class="kpi-sub">누적 수수료: ₩${Math.round(m.totalFeesPaid).toLocaleString()}</div>
       </div>
     `;
     document.getElementById("kpiGrid").innerHTML = kpiHTML;
@@ -1396,34 +1627,173 @@
     renderTradeLogsTable(res.tradeLogs);
   }
 
-  function downsampleForChart(dates, arraysObj, maxPoints = 600) {
+  function downsampleForChart(dates, arraysObj, maxPoints = 650, keyDateSet = null) {
     const n = dates.length;
     if (n <= maxPoints) {
       return { dates, series: arraysObj };
     }
     const step = Math.ceil(n / maxPoints);
-    const outDates = [];
-    const outSeries = {};
-    Object.keys(arraysObj).forEach((k) => (outSeries[k] = []));
-
+    const keepSet = new Set();
+    keepSet.add(0);
+    keepSet.add(n - 1);
     for (let i = 0; i < n; i += step) {
-      outDates.push(dates[i]);
-      Object.keys(arraysObj).forEach((k) => {
-        outSeries[k].push(arraysObj[k][i]);
-      });
+      keepSet.add(i);
     }
-    if (outDates[outDates.length - 1] !== dates[n - 1]) {
-      outDates.push(dates[n - 1]);
-      Object.keys(arraysObj).forEach((k) => {
-        outSeries[k].push(arraysObj[k][n - 1]);
-      });
+    if (keyDateSet && keyDateSet.size > 0) {
+      for (let i = 0; i < n; i++) {
+        if (keyDateSet.has(dates[i])) {
+          keepSet.add(i);
+        }
+      }
+    }
+    const sortedIndices = Array.from(keepSet).sort((a, b) => a - b);
+    const outDates = new Array(sortedIndices.length);
+    const outSeries = {};
+    const keys = Object.keys(arraysObj);
+    keys.forEach((k) => (outSeries[k] = new Array(sortedIndices.length)));
+
+    for (let j = 0; j < sortedIndices.length; j++) {
+      const idx = sortedIndices[j];
+      outDates[j] = dates[idx];
+      for (let k = 0; k < keys.length; k++) {
+        const key = keys[k];
+        outSeries[key][j] = arraysObj[key][idx];
+      }
     }
     return { dates: outDates, series: outSeries };
+  }
+
+  function computeYearlyComparison(res, benchTicker) {
+    const dates = res.series.dates;
+    const equity = res.series.equity;
+    const n = dates.length;
+    if (n === 0) return [];
+
+    const isKrw = catalogMap[benchTicker]?.currency === "KRW";
+    const bSeries = marketData.series[benchTicker];
+    const fxSeries = marketData.series["USDKRW"];
+    const startIdx = marketData.dates.indexOf(dates[0]);
+
+    function getBenchPxKrw(idx) {
+      const gIdx = startIdx >= 0 ? startIdx + idx : marketData.dates.indexOf(dates[idx]);
+      if (gIdx < 0 || !bSeries) return 1.0;
+      const raw = bSeries[gIdx] || 1.0;
+      if (isKrw) return raw;
+      const fx = fxSeries && fxSeries[gIdx] ? fxSeries[gIdx] : 1.0;
+      return raw * fx;
+    }
+
+    const yearlyData = [];
+    let yrStartEq = equity[0];
+    let yrStartBench = getBenchPxKrw(0);
+    let curYear = dates[0].slice(0, 4);
+
+    for (let i = 1; i < n; i++) {
+      const y = dates[i].slice(0, 4);
+      if (y !== curYear || i === n - 1) {
+        const endIdx = y !== curYear ? i - 1 : i;
+        const yrEndEq = equity[endIdx];
+        const yrEndBench = getBenchPxKrw(endIdx);
+        const stratRet = yrStartEq > 0 ? ((yrEndEq / yrStartEq) - 1.0) * 100.0 : 0.0;
+        const benchRet = yrStartBench > 0 ? ((yrEndBench / yrStartBench) - 1.0) * 100.0 : 0.0;
+        yearlyData.push({
+          year: curYear,
+          stratReturnPct: stratRet,
+          benchReturnPct: benchRet,
+          isBeat: stratRet >= benchRet,
+        });
+        curYear = y;
+        yrStartEq = yrEndEq;
+        yrStartBench = yrEndBench;
+      }
+    }
+    return yearlyData;
+  }
+
+  function populateYearlyBenchmarkSelect(selectedTicker) {
+    const sel = document.getElementById("resYearlyBenchSelect");
+    if (!sel) return;
+    const curVal = selectedTicker || sel.value || "SPX";
+    sel.innerHTML = buildTradableAssetOptionsHTML(curVal);
+    sel.value = curVal;
+  }
+
+  function renderYearlyChart(res, targetBenchTicker) {
+    if (!global.Chart || !res) return;
+    const benchTicker = targetBenchTicker || res.metrics.benchmarkTicker || "SPX";
+    const benchMeta = catalogMap[benchTicker] || { name: benchTicker, shortName: benchTicker };
+    const benchName = benchMeta.shortName || benchMeta.name || benchTicker;
+
+    const yearlyData = computeYearlyComparison(res, benchTicker);
+
+    const ctxYr = document.getElementById("chartYearly")?.getContext("2d");
+    if (!ctxYr) return;
+    if (charts.yearly) charts.yearly.destroy();
+
+    charts.yearly = new global.Chart(ctxYr, {
+      type: "bar",
+      data: {
+        labels: yearlyData.map((y) => y.year),
+        datasets: [
+          {
+            label: `전략 연수익률 (%) [Beat=초록 / Under=적색]`,
+            data: yearlyData.map((y) => Number(y.stratReturnPct.toFixed(2))),
+            backgroundColor: yearlyData.map((y) =>
+              y.isBeat ? "rgba(16, 185, 129, 0.85)" : "rgba(239, 68, 68, 0.85)"
+            ),
+            borderColor: yearlyData.map((y) =>
+              y.isBeat ? "#059669" : "#dc2626"
+            ),
+            borderWidth: 1,
+            borderRadius: 3,
+          },
+          {
+            label: `비교자산: ${benchName} 연수익률 (%)`,
+            data: yearlyData.map((y) => Number(y.benchReturnPct.toFixed(2))),
+            backgroundColor: "rgba(148, 163, 184, 0.5)",
+            borderColor: "#64748b",
+            borderWidth: 1,
+            borderRadius: 3,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: "#cbd5e1" } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y >= 0 ? "+" : ""}${ctx.parsed.y.toFixed(2)}%`,
+            },
+          },
+        },
+        scales: {
+          x: { ticks: { color: "#94a3b8" }, grid: { display: false } },
+          y: {
+            ticks: {
+              color: "#94a3b8",
+              callback: (v) => `${v}%`,
+            },
+            grid: { color: "rgba(148,163,184,0.1)" },
+          },
+        },
+      },
+    });
   }
 
   function renderMainCharts(res) {
     if (!global.Chart) return;
     const benchName = catalogMap[res.metrics.benchmarkTicker]?.shortName || res.metrics.benchmarkTicker;
+
+    // Collect trade dates to ensure every trade date is kept during downsampling
+    const tradeDateSet = new Set();
+    const trades = res.tradeLogs || [];
+    trades.forEach((t) => {
+      if (t.type === "BUY" || t.type === "SELL" || t.type === "SELL_ALL") {
+        tradeDateSet.add(t.date);
+      }
+    });
 
     const rawSeriesMap = {
       equity: res.series.equity,
@@ -1436,7 +1806,27 @@
       rawSeriesMap["w_" + t] = res.series.assetWeights[t];
     });
 
-    const sampled = downsampleForChart(res.series.dates, rawSeriesMap, 650);
+    const sampled = downsampleForChart(res.series.dates, rawSeriesMap, 650, tradeDateSet);
+
+    // Prepare buy and sell scatter points for Equity chart
+    const buyScatterPoints = [];
+    const sellScatterPoints = [];
+
+    trades.forEach((t) => {
+      if (t.type === "BUY") {
+        buyScatterPoints.push({
+          x: t.date,
+          y: t.equityAfter,
+          trade: t,
+        });
+      } else if (t.type === "SELL" || t.type === "SELL_ALL") {
+        sellScatterPoints.push({
+          x: t.date,
+          y: t.equityAfter,
+          trade: t,
+        });
+      }
+    });
 
     // 1. Equity Curve Chart
     const ctxEq = document.getElementById("chartEquity").getContext("2d");
@@ -1447,7 +1837,7 @@
         labels: sampled.dates,
         datasets: [
           {
-            label: `전략 포트폴리오 ($)`,
+            label: `전략 포트폴리오 (₩)`,
             data: sampled.series.equity,
             borderColor: "#3b82f6",
             backgroundColor: "rgba(59, 130, 246, 0.12)",
@@ -1455,9 +1845,10 @@
             pointRadius: 0,
             fill: true,
             tension: 0.1,
+            order: 3,
           },
           {
-            label: `벤치마크: ${benchName} 단순보유 ($)`,
+            label: `벤치마크: ${benchName} (₩)`,
             data: sampled.series.benchmark,
             borderColor: "#94a3b8",
             borderWidth: 1.5,
@@ -1465,6 +1856,33 @@
             pointRadius: 0,
             fill: false,
             tension: 0.1,
+            order: 4,
+          },
+          {
+            type: "scatter",
+            label: "🟢 매수 체결 (BUY ▲)",
+            data: buyScatterPoints,
+            backgroundColor: "#10b981",
+            borderColor: "#059669",
+            borderWidth: 1.5,
+            pointStyle: "triangle",
+            rotation: 0,
+            pointRadius: 6,
+            pointHoverRadius: 9,
+            order: 1,
+          },
+          {
+            type: "scatter",
+            label: "🔴 매도 체결 (SELL ▼)",
+            data: sellScatterPoints,
+            backgroundColor: "#ef4444",
+            borderColor: "#dc2626",
+            borderWidth: 1.5,
+            pointStyle: "triangle",
+            rotation: 180,
+            pointRadius: 6,
+            pointHoverRadius: 9,
+            order: 2,
           },
         ],
       },
@@ -1476,7 +1894,28 @@
           legend: { labels: { color: "#cbd5e1" } },
           tooltip: {
             callbacks: {
-              label: (ctx) => `${ctx.dataset.label}: $${Math.round(ctx.parsed.y).toLocaleString()}`,
+              label: (ctx) => {
+                const raw = ctx.raw;
+                if (raw && raw.trade) {
+                  const t = raw.trade;
+                  const typeLabel = t.type === "BUY" ? "🟢 매수 (BUY ▲)" : "🔴 매도 (SELL ▼)";
+                  const assetName = t.tickerName || catalogMap[t.ticker]?.name || t.ticker;
+                  const unitPriceStr =
+                    t.currency === "KRW"
+                      ? `₩${Math.round(t.priceKrw).toLocaleString()}`
+                      : `$${t.rawPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (₩${Math.round(t.priceKrw).toLocaleString()})`;
+                  const sharesStr = t.shares ? (t.shares >= 100 ? t.shares.toFixed(1) : t.shares.toFixed(4)) : "0";
+                  const amtStr = `₩${Math.round(t.amountKrw || t.amount).toLocaleString()}`;
+                  return [
+                    `${typeLabel}: ${assetName}`,
+                    ` • 단가: ${unitPriceStr}`,
+                    ` • 수량: ${sharesStr}주`,
+                    ` • 체결금액: ${amtStr}`,
+                    ` • 발동사유: ${t.ruleName || ""}`,
+                  ];
+                }
+                return `${ctx.dataset.label}: ₩${Math.round(ctx.parsed.y).toLocaleString()}`;
+              },
             },
           },
         },
@@ -1486,7 +1925,7 @@
             type: isLogScale ? "logarithmic" : "linear",
             ticks: {
               color: "#94a3b8",
-              callback: (v) => "$" + Number(v).toLocaleString(),
+              callback: (v) => "₩" + Number(v).toLocaleString(),
             },
             grid: { color: "rgba(148,163,184,0.1)" },
           },
@@ -1591,38 +2030,10 @@
       },
     });
 
-    // 4. Annual Returns Bar Chart
-    const ctxYr = document.getElementById("chartYearly").getContext("2d");
-    if (charts.yearly) charts.yearly.destroy();
-    charts.yearly = new global.Chart(ctxYr, {
-      type: "bar",
-      data: {
-        labels: res.yearlyReturns.map((y) => y.year),
-        datasets: [
-          {
-            label: "전략 연수익률 (%)",
-            data: res.yearlyReturns.map((y) => Number(y.returnPct.toFixed(2))),
-            backgroundColor: res.yearlyReturns.map((y) => (y.returnPct >= 0 ? "rgba(16, 185, 129, 0.8)" : "rgba(239, 68, 68, 0.8)")),
-          },
-          {
-            label: `${benchName} 연수익률 (%)`,
-            data: res.yearlyReturns.map((y) => Number(y.benchReturnPct.toFixed(2))),
-            backgroundColor: "rgba(148, 163, 184, 0.45)",
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: "#cbd5e1" } },
-        },
-        scales: {
-          x: { ticks: { color: "#94a3b8" }, grid: { display: false } },
-          y: { ticks: { color: "#94a3b8", callback: (v) => v + "%" }, grid: { color: "rgba(148,163,184,0.1)" } },
-        },
-      },
-    });
+    // 4. Annual Returns Bar Chart (Dynamic comparison against selected benchmark)
+    populateYearlyBenchmarkSelect(res.metrics.benchmarkTicker);
+    const chosenBench = document.getElementById("resYearlyBenchSelect")?.value || res.metrics.benchmarkTicker;
+    renderYearlyChart(res, chosenBench);
   }
 
   function renderTradeLogsTable(logs) {
@@ -1641,15 +2052,19 @@
     tbody.innerHTML = slice
       .map((row) => {
         const badgeClass =
-          row.type === "BUY" ? "tag-asset" : row.type === "SELL" ? "tag-indicator" : "";
+          row.type === "BUY" ? "tag-asset" : row.type === "SELL" || row.type === "SELL_ALL" ? "tag-indicator" : "";
+        const pxStr = row.priceKrw
+          ? (row.currency === "KRW" ? `₩${Math.round(row.priceKrw).toLocaleString()}` : `$${(row.rawPrice || 0).toFixed(2)} (₩${Math.round(row.priceKrw).toLocaleString()})`)
+          : "";
+        const sharesStr = row.shares ? ` • ${row.shares >= 100 ? row.shares.toFixed(1) : row.shares.toFixed(4)}주` : "";
         return `
         <tr>
           <td>${row.date}</td>
           <td><span class="tag ${badgeClass}">${row.type}</span></td>
           <td>${escapeHtml(row.ruleName || "")}</td>
-          <td><strong>${escapeHtml(row.actionLabel || row.ticker)}</strong></td>
-          <td>$${Math.round(row.amount || 0).toLocaleString()}</td>
-          <td>$${Math.round(row.equityAfter || 0).toLocaleString()}</td>
+          <td><strong>${escapeHtml(row.actionLabel || row.tickerName || row.ticker)}</strong><div style="font-size:11px;color:var(--text-muted);">${pxStr}${sharesStr}</div></td>
+          <td>₩${Math.round(row.amountKrw || row.amount || 0).toLocaleString()}</td>
+          <td>₩${Math.round(row.equityAfter || 0).toLocaleString()}</td>
         </tr>
       `;
       })
@@ -1740,7 +2155,7 @@
           </td>
           <td><span class="score-pill ${m.quantScore >= 70 ? "high" : ""}">${m.quantScore.toFixed(1)}</span></td>
           <td class="${m.cagrPct >= 0 ? "text-pos" : "text-neg"}" style="font-weight:700;">${m.cagrPct >= 0 ? "+" : ""}${m.cagrPct.toFixed(2)}%</td>
-          <td>${m.totalReturnPct >= 0 ? "+" : ""}${Math.round(m.totalReturnPct).toLocaleString()}%<br/><span style="font-size:11px;color:var(--text-muted);">$${Math.round(m.finalEquity).toLocaleString()}</span></td>
+          <td>${m.totalReturnPct >= 0 ? "+" : ""}${Math.round(m.totalReturnPct).toLocaleString()}%<br/><span style="font-size:11px;color:var(--text-muted);">₩${Math.round(m.finalEquity).toLocaleString()}</span></td>
           <td class="text-neg" style="font-weight:700;">${m.maxDrawdownPct.toFixed(2)}%</td>
           <td style="font-weight:700;">${m.sharpe.toFixed(2)}</td>
           <td>${m.calmar.toFixed(2)}</td>
@@ -2210,6 +2625,48 @@
         }
       };
       reader.readAsText(file);
+    });
+
+    // Toggle switch listeners
+    document.getElementById("toggleRebalance")?.addEventListener("change", () => {
+      updateToggleUI();
+      if (currentConfig) {
+        currentConfig.rebalanceEnabled = document.getElementById("toggleRebalance").checked;
+      }
+    });
+
+    document.getElementById("toggleRules")?.addEventListener("change", () => {
+      updateToggleUI();
+      if (currentConfig) {
+        currentConfig.rulesEnabled = document.getElementById("toggleRules").checked;
+      }
+    });
+
+    // Dynamic Yearly Benchmark Selector change listener
+    document.getElementById("resYearlyBenchSelect")?.addEventListener("change", (e) => {
+      if (lastResult) {
+        renderYearlyChart(lastResult, e.target.value);
+      }
+    });
+
+    // Help Modal event listeners
+    document.getElementById("btnHelpModalClose")?.addEventListener("click", closeHelpModal);
+    document.getElementById("btnHelpModalOk")?.addEventListener("click", closeHelpModal);
+    document.getElementById("helpModal")?.addEventListener("click", (e) => {
+      if (e.target.id === "helpModal") closeHelpModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeHelpModal();
+    });
+
+    // Delegated click listener for (?) inline help buttons
+    document.addEventListener("click", (e) => {
+      const btn = e.target.closest(".btn-help-inline");
+      if (btn && btn.dataset.help) {
+        e.preventDefault();
+        e.stopPropagation();
+        openHelpModal(btn.dataset.help);
+      }
     });
   }
 

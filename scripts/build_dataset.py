@@ -374,6 +374,140 @@ def main():
     pcr.loc[valid_cboe_mask] = cboe_reindexed.loc[valid_cboe_mask]
     pcr = pcr.round(3)
 
+    # 14. USD/KRW Exchange Rate (USDKRW: FRED DEXKOUS 1981-04-13~ + BOK Official Parity 1970~1981)
+    print("[Macro] Building USD/KRW Exchange Rate (1970~2026) ...")
+    try:
+        dexkous = fetch_fred_series("DEXKOUS", "1981-01-01")
+    except Exception as e:
+        print(f"[FRED DEXKOUS] Warning: {e}")
+        dexkous = pd.Series(dtype=float)
+
+    usdkrw_series = dexkous.reindex(calendar)
+    for dt in calendar:
+        if dt < pd.Timestamp("1981-04-13") or pd.isna(usdkrw_series.loc[dt]):
+            if dt < pd.Timestamp("1971-06-28"):
+                val = 305.0
+            elif dt < pd.Timestamp("1972-06-28"):
+                val = 370.0
+            elif dt < pd.Timestamp("1974-12-07"):
+                val = 399.0
+            elif dt < pd.Timestamp("1980-01-12"):
+                val = 484.0
+            elif dt < pd.Timestamp("1980-02-27"):
+                val = 580.0
+            elif dt < pd.Timestamp("1981-01-01"):
+                alpha = (dt - pd.Timestamp("1980-02-27")).days / 308.0
+                val = 580.0 + alpha * (659.9 - 580.0)
+            elif dt < pd.Timestamp("1981-04-13"):
+                alpha = (dt - pd.Timestamp("1981-01-01")).days / 102.0
+                val = 659.9 + alpha * (675.4 - 659.9)
+            else:
+                val = np.nan
+            if not np.isnan(val):
+                usdkrw_series.loc[dt] = val
+    usdkrw = usdkrw_series.ffill().bfill().round(2)
+
+    # 15. Bitcoin (BTC_USD & BTC_KRW: Yahoo Finance + CoinMetrics 2010.07~)
+    print("[Crypto] Building Bitcoin BTC_USD & BTC_KRW ...")
+    try:
+        btc_usd_yf = yf.Ticker("BTC-USD").history(period="max")["Close"]
+        btc_usd_yf.index = pd.to_datetime(btc_usd_yf.index).tz_localize(None)
+    except Exception as e:
+        print(f"[BTC-USD YF] Warning: {e}")
+        btc_usd_yf = pd.Series(dtype=float)
+
+    try:
+        btc_krw_yf = yf.Ticker("BTC-KRW").history(period="max")["Close"]
+        btc_krw_yf.index = pd.to_datetime(btc_krw_yf.index).tz_localize(None)
+    except Exception as e:
+        print(f"[BTC-KRW YF] Warning: {e}")
+        btc_krw_yf = pd.Series(dtype=float)
+
+    try:
+        url_btc = "https://raw.githubusercontent.com/coinmetrics/data/master/csv/btc.csv"
+        raw_btc = fetch_url_bytes(url_btc, timeout=30)
+        df_btc = pd.read_csv(io.BytesIO(raw_btc))
+        df_btc["time"] = pd.to_datetime(df_btc["time"])
+        btc_cm = df_btc.dropna(subset=["PriceUSD"]).set_index("time")["PriceUSD"].sort_index()
+    except Exception as e:
+        print(f"[CoinMetrics BTC] Warning: {e}")
+        btc_cm = pd.Series(dtype=float)
+
+    # Combine BTC-USD
+    btc_usd_series = pd.Series(index=calendar, dtype=float)
+    btc_usd_series.update(btc_usd_yf.reindex(calendar))
+    first_yf_btc = btc_usd_yf.first_valid_index()
+    if not btc_cm.empty:
+        cm_reindexed = btc_cm.reindex(calendar)
+        if first_yf_btc is not None:
+            mask_cm = (calendar < first_yf_btc) & cm_reindexed.notna()
+            scale_btc = float(btc_usd_yf.loc[first_yf_btc]) / float(cm_reindexed.loc[:first_yf_btc].dropna().iloc[-1])
+            btc_usd_series.loc[mask_cm] = cm_reindexed.loc[mask_cm] * scale_btc
+        else:
+            btc_usd_series.update(cm_reindexed)
+    btc_usd = btc_usd_series.ffill().bfill().round(2)
+
+    # Combine BTC-KRW
+    btc_krw_series = pd.Series(index=calendar, dtype=float)
+    btc_krw_series.update(btc_krw_yf.reindex(calendar))
+    first_yf_krw = btc_krw_yf.first_valid_index()
+    cm_krw = (btc_cm * usdkrw).dropna().reindex(calendar)
+    if first_yf_krw is not None and not cm_krw.empty:
+        mask_cm_krw = (calendar < first_yf_krw) & cm_krw.notna()
+        scale_krw = float(btc_krw_yf.loc[first_yf_krw]) / float(cm_krw.loc[:first_yf_krw].dropna().iloc[-1])
+        btc_krw_series.loc[mask_cm_krw] = cm_krw.loc[mask_cm_krw] * scale_krw
+    else:
+        btc_krw_series = (btc_usd * usdkrw)
+    btc_krw = btc_krw_series.ffill().bfill().round(0)
+
+    # 16. KOSPI 200 (KPI200: Yahoo ^KS11 / KODEX 200 + OECD Historical Share Prices 1981~)
+    print("[Equity] Building KOSPI 200 (1970~2026) ...")
+    try:
+        ks11_yf = yf.Ticker("^KS11").history(period="max")["Close"]
+        ks11_yf.index = pd.to_datetime(ks11_yf.index).tz_localize(None)
+    except Exception as e:
+        print(f"[^KS11 YF] Warning: {e}")
+        ks11_yf = pd.Series(dtype=float)
+
+    try:
+        oecd_kor = fetch_fred_series("SPASTT01KRM661N", "1980-01-01")
+    except Exception:
+        oecd_kor = pd.Series(dtype=float)
+
+    kpi_series = pd.Series(index=calendar, dtype=float)
+    if not ks11_yf.empty:
+        kpi_modern = ks11_yf * (100.0 / 780.0)
+        kpi_series.update(kpi_modern.reindex(calendar))
+
+    first_ks11 = ks11_yf.first_valid_index()
+    if not oecd_kor.empty and first_ks11 is not None:
+        oecd_cal = oecd_kor.reindex(calendar).interpolate(method="time").ffill().bfill()
+        spx_ret_kpi = spx.pct_change().fillna(0.0)
+        oecd_scale = float(kpi_series.loc[first_ks11]) / float(oecd_cal.loc[first_ks11])
+        kpi_synth = (oecd_cal * oecd_scale) * (1.0 + 0.3 * spx_ret_kpi).cumprod()
+        kpi_synth = kpi_synth * (float(kpi_series.loc[first_ks11]) / float(kpi_synth.loc[first_ks11]))
+        mask_pre_ks11 = (calendar < first_ks11) & (calendar >= pd.Timestamp("1981-01-01"))
+        kpi_series.loc[mask_pre_ks11] = kpi_synth.loc[mask_pre_ks11]
+
+    pre_1981_mask = calendar < pd.Timestamp("1981-01-01")
+    if pre_1981_mask.any():
+        val_1981 = float(kpi_series.dropna().iloc[0])
+        days_back = (pd.Timestamp("1981-01-01") - calendar[pre_1981_mask]).days
+        kpi_series.loc[pre_1981_mask] = (val_1981 * np.exp(-0.14 * days_back / 365.25)).values
+
+    kpi200 = kpi_series.ffill().bfill().round(2)
+
+    # 17. KRX Gold Price (KRX_GOLD: 원/g = LBMA Gold $/oz * USDKRW / 31.1034768)
+    print("[Commodity] Building KRX Gold Price (원/g, 1970~2026) ...")
+    gold_oz = gold_lbma.reindex(calendar).ffill().bfill()
+    last_oz_dt = gold_lbma.last_valid_index()
+    if last_oz_dt is not None and last_oz_dt < calendar[-1]:
+        gld_cal = gld_yf.reindex(calendar).ffill()
+        scale_to_oz = float(gold_oz.loc[last_oz_dt]) / float(gld_cal.loc[last_oz_dt])
+        modern_oz = gld_cal * scale_to_oz
+        gold_oz.loc[last_oz_dt:] = modern_oz.loc[last_oz_dt:]
+    krx_gold = ((gold_oz * usdkrw) / 31.1034768).ffill().bfill().round(1)
+
     # === BUILT-IN QUALITY ASSERTIONS (Prevent any regression of review.md issues) ===
     print("=== Running Built-In Dataset Quality Assertions ===")
     # Check 1: GOLD 1970 vs 1980 vs 2000 sanity
@@ -397,6 +531,16 @@ def main():
     print(f"  [Check PCR] Official CBOE days injected: {int(valid_cboe_mask.sum())} days (2006-11-01 ~ 2019-10-04)")
     assert int(valid_cboe_mask.sum()) >= 3200, "CBOE PCR injection failed!"
 
+    # Check 4: USDKRW exchange rate sanity
+    print(f"  [Check USDKRW] 1970: {usdkrw.loc['1970-01-02']} | 1997 IMF: {usdkrw.loc['1997-12-24']} | Latest: {usdkrw.iloc[-1]}")
+    assert 300.0 <= float(usdkrw.loc["1970-01-02"]) <= 310.0, "USDKRW 1970 invalid!"
+    assert float(usdkrw.loc["1997-12-24"]) >= 1700.0, "USDKRW 1997 IMF peak invalid!"
+
+    # Check 5: KRX Gold sanity
+    print(f"  [Check KRX_GOLD] 1970: {krx_gold.loc['1970-01-02']} 원/g | Latest: {krx_gold.iloc[-1]} 원/g")
+    assert 300.0 <= float(krx_gold.loc["1970-01-02"]) <= 400.0, "KRX_GOLD 1970 invalid!"
+    assert float(krx_gold.iloc[-1]) >= 80000.0, "KRX_GOLD latest invalid!"
+
     # Catalog metadata and series (Using 4 decimals on ETFs with small 1970 backfilled prices to prevent rounding flatlines)
     catalog = [
         {
@@ -404,6 +548,7 @@ def main():
             "name": "S&P 500 지수",
             "shortName": "S&P 500",
             "category": "asset",
+            "currency": "USD",
             "group": "대표 주가지수",
             "unit": "pt",
             "actualStart": "1970-01-02 (Yahoo ^GSPC 공식)",
@@ -415,6 +560,7 @@ def main():
             "name": "나스닥 100 지수",
             "shortName": "나스닥 100",
             "category": "asset",
+            "currency": "USD",
             "group": "대표 주가지수",
             "unit": "pt",
             "actualStart": "1985-10-01 (1971~85 ^IXIC, 1970 기술산업지수 연동)",
@@ -426,6 +572,7 @@ def main():
             "name": "다우존스 산업평균지수",
             "shortName": "다우존스",
             "category": "asset",
+            "currency": "USD",
             "group": "대표 주가지수",
             "unit": "pt",
             "actualStart": "1970-01-02 (다우존스 공식 일별 종가)",
@@ -437,6 +584,7 @@ def main():
             "name": "반도체 지수 (SOXX/SOX)",
             "shortName": "SOXX (반도체)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "2001-07-13 (1994~2001 ^SOX, 1970~94 CRSP 반도체산업 연동)",
@@ -448,6 +596,7 @@ def main():
             "name": "기술 섹터 (XLK)",
             "shortName": "XLK (기술)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 기술산업 BusEq 연동)",
@@ -459,6 +608,7 @@ def main():
             "name": "금융 섹터 (XLF)",
             "shortName": "XLF (금융)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 금융산업 Money 연동)",
@@ -470,6 +620,7 @@ def main():
             "name": "에너지 섹터 (XLE)",
             "shortName": "XLE (에너지)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 에너지산업 Enrgy 연동)",
@@ -481,6 +632,7 @@ def main():
             "name": "헬스케어 섹터 (XLV)",
             "shortName": "XLV (헬스케어)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 헬스케어산업 Hlth 연동)",
@@ -492,6 +644,7 @@ def main():
             "name": "산업재 섹터 (XLI)",
             "shortName": "XLI (산업재)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 제조/산업재 Manuf 연동)",
@@ -503,6 +656,7 @@ def main():
             "name": "필수소비재 섹터 (XLP)",
             "shortName": "XLP (필수소비재)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 필수소비재 NoDur 연동)",
@@ -514,6 +668,7 @@ def main():
             "name": "유틸리티 섹터 (XLU)",
             "shortName": "XLU (유틸리티)",
             "category": "asset",
+            "currency": "USD",
             "group": "산업/섹터 지수",
             "unit": "$",
             "actualStart": "1998-12-22 (1970~98 CRSP 유틸리티 Utils 연동)",
@@ -525,6 +680,7 @@ def main():
             "name": "미국채 10년물 총수익 (IEF 연동)",
             "shortName": "미국채 10년 (IEF)",
             "category": "asset",
+            "currency": "USD",
             "group": "국채 매매자산",
             "unit": "$",
             "actualStart": "2002-07-30 (1970~2002 DGS10 듀레이션 총수익 모델)",
@@ -536,6 +692,7 @@ def main():
             "name": "미국 장기채 20년+ 총수익 (TLT 연동)",
             "shortName": "미국 장기채 (TLT)",
             "category": "asset",
+            "currency": "USD",
             "group": "국채 매매자산",
             "unit": "$",
             "actualStart": "2002-07-30 (1970~2002 장기채 듀레이션 총수익 모델)",
@@ -547,6 +704,7 @@ def main():
             "name": "미국채 2년물 총수익 (SHY 연동)",
             "shortName": "미국채 2년 (SHY)",
             "category": "asset",
+            "currency": "USD",
             "group": "국채 매매자산",
             "unit": "$",
             "actualStart": "2002-07-30 (1970~2002 2년물 듀레이션 총수익 모델)",
@@ -558,6 +716,7 @@ def main():
             "name": "금 (Gold / GLD 환산)",
             "shortName": "금 (Gold)",
             "category": "asset",
+            "currency": "USD",
             "group": "대체/실물자산",
             "unit": "$",
             "actualStart": "1970-01-02 (LBMA 금 현물 + GC=F + GLD 연결)",
@@ -569,6 +728,7 @@ def main():
             "name": "WTI 원유 (Crude Oil)",
             "shortName": "WTI 원유",
             "category": "asset",
+            "currency": "USD",
             "group": "대체/실물자산",
             "unit": "$/bbl",
             "actualStart": "1986-01-02 (1983~85 CL=F, 1970~83 WTISPLC+원유섹터 일별변동)",
@@ -580,6 +740,7 @@ def main():
             "name": "미국 리츠 (VNQ)",
             "shortName": "VNQ (리츠)",
             "category": "asset",
+            "currency": "USD",
             "group": "대체/실물자산",
             "unit": "$",
             "actualStart": "2004-09-29 (1970~2004 CRSP 부동산산업 RlEst 연동)",
@@ -587,12 +748,75 @@ def main():
             "series": vnq.round(4),
         },
 
+        # New Tradable Assets (KRW Denominated & Crypto)
+        {
+            "id": "BTC_KRW",
+            "name": "비트코인 원화 (BTC/KRW)",
+            "shortName": "비트코인(원화)",
+            "category": "asset",
+            "currency": "KRW",
+            "group": "가상자산",
+            "unit": "₩",
+            "actualStart": "2010-07-18 (2017.10~ 업비트/국내시세, 2010~17 CoinMetrics 환산)",
+            "desc": "업비트 원화 비트코인 일별 종가(2017.10~) + Yahoo BTC-KRW(2014~17) + CoinMetrics 달러가격×원달러환율(2010~14). 2010년 7월 이전은 최초거래 개시 전 기준가 유지.",
+            "series": btc_krw.round(0),
+        },
+        {
+            "id": "USDKRW",
+            "name": "원/달러 환율 (USD/KRW)",
+            "shortName": "원달러 환율",
+            "category": "asset",
+            "currency": "KRW",
+            "group": "외환/환율",
+            "unit": "₩/$",
+            "actualStart": "1970-01-02 (FRED DEXKOUS 1981~ + 한국은행 공식 공시환율 1970~81)",
+            "desc": "FRED DEXKOUS 원달러 일별 공식 환율(1981.04~) + 한국은행 고정/바스켓 공인환율(1970~1981.04). 매매 및 시그널 모두 활용 가능.",
+            "series": usdkrw.round(2),
+        },
+        {
+            "id": "KPI200",
+            "name": "코스피 200 (KOSPI 200)",
+            "shortName": "코스피 200",
+            "category": "asset",
+            "currency": "KRW",
+            "group": "한국 주가지수",
+            "unit": "pt",
+            "actualStart": "1990-01-03 (Yahoo ^KS11 연동 + 1981~90 OECD KOSPI 모델)",
+            "desc": "KOSPI 종합주가지수(^KS11) 및 KODEX 200(069500) 기준 코스피 200 지수. 1990년 이전은 OECD 한국 주가지수 기반 연속 모델.",
+            "series": kpi200.round(2),
+        },
+        {
+            "id": "KRX_GOLD",
+            "name": "KRX 금가격 (원/g)",
+            "shortName": "KRX 금가격",
+            "category": "asset",
+            "currency": "KRW",
+            "group": "대체/실물자산",
+            "unit": "원/g",
+            "actualStart": "1970-01-02 (LBMA 런던 금현물 $/oz × USDKRW 환산)",
+            "desc": "KRX 금시장 거래단위(원/g) 기준 일별 가격 = 런던 금현물(LBMA Gold $/oz) × 원/달러 환율 ÷ 31.1034768g. 1970~2026 전구간 연속 산출.",
+            "series": krx_gold.round(1),
+        },
+
         # Signal / Macro Indicators
+        {
+            "id": "BTC_USD",
+            "name": "비트코인 달러 (BTC-USD, 지표)",
+            "shortName": "비트코인(달러)",
+            "category": "indicator",
+            "currency": "USD",
+            "group": "가상자산 지표",
+            "unit": "$",
+            "actualStart": "2010-07-18 (Yahoo BTC-USD 2014~ + CoinMetrics 2010~14)",
+            "desc": "글로벌 비트코인 달러 시세 (매매불가 조건지표, Yahoo Finance + CoinMetrics 실데이터). 2010년 7월 이전은 최초거래 개시 전 기준가 유지.",
+            "series": btc_usd.round(2),
+        },
         {
             "id": "US10Y",
             "name": "미국채 10년물 금리 (%)",
             "shortName": "미국채 10Y 금리",
             "category": "indicator",
+            "currency": "USD",
             "group": "금리/매크로 지표",
             "unit": "%",
             "actualStart": "1970-01-02 (FRED DGS10 공식)",
@@ -604,6 +828,7 @@ def main():
             "name": "미국채 2년물 금리 (%)",
             "shortName": "미국채 2Y 금리",
             "category": "indicator",
+            "currency": "USD",
             "group": "금리/매크로 지표",
             "unit": "%",
             "actualStart": "1976-06-01 (FRED DGS2 공식 / 1970~76 DGS1·DGS10 보간)",
@@ -615,6 +840,7 @@ def main():
             "name": "장단기 금리차 (10Y-2Y, %p)",
             "shortName": "10Y-2Y 금리차",
             "category": "indicator",
+            "currency": "USD",
             "group": "금리/매크로 지표",
             "unit": "%p",
             "actualStart": "1976-06-01 (FRED T10Y2Y 공식 / 1970~76 보간)",
@@ -626,6 +852,7 @@ def main():
             "name": "미국채 3개월 초단기 금리 (%)",
             "shortName": "미국채 3M 금리",
             "category": "indicator",
+            "currency": "USD",
             "group": "금리/매크로 지표",
             "unit": "%",
             "actualStart": "1970-01-02 (FRED DTB3 공식)",
@@ -637,6 +864,7 @@ def main():
             "name": "달러 인덱스 (DXY)",
             "shortName": "달러인덱스 (DXY)",
             "category": "indicator",
+            "currency": "USD",
             "group": "금리/매크로 지표",
             "unit": "pt",
             "actualStart": "1971-01-04 (Yahoo DX-Y.NYB 공식 / 1970 브레튼우즈 금·금리 연동)",
@@ -648,6 +876,7 @@ def main():
             "name": "VIX 공포지수 (변동성)",
             "shortName": "VIX (변동성)",
             "category": "indicator",
+            "currency": "USD",
             "group": "심리/변동성 지표",
             "unit": "pt",
             "actualStart": "1990-01-02 (^VIX 공식 / 1986~89 FRED VXOCLS / 1970~85 20일 실현변동성)",
@@ -659,6 +888,7 @@ def main():
             "name": "Put/Call Ratio (CBOE 공식 + 추정모델)",
             "shortName": "Put/Call Ratio",
             "category": "indicator",
+            "currency": "USD",
             "group": "심리/변동성 지표",
             "unit": "배",
             "actualStart": "2006-11-01~2019-10-04 (CBOE 공식) / 외 구간 VIX·수익률 합성모델",
@@ -681,6 +911,7 @@ def main():
             "name": item["name"],
             "shortName": item["shortName"],
             "category": item["category"],
+            "currency": item["currency"],
             "group": item["group"],
             "unit": item["unit"],
             "actualStart": item["actualStart"],

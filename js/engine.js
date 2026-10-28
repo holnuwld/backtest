@@ -158,7 +158,7 @@
       SELL_ALL: "전량매도",
     };
     const sizeTypeMap = {
-      AMOUNT: `$${Number(act.sizingValue || 0).toLocaleString()}`,
+      AMOUNT: `₩${Number(act.sizingValue || 0).toLocaleString()}`,
       TOTAL_PCT: `총자산의 ${act.sizingValue}%`,
       BALANCE_PCT: act.type === "BUY" ? `현금잔액의 ${act.sizingValue}%` : `보유잔액의 ${act.sizingValue}%`,
     };
@@ -167,7 +167,7 @@
   }
 
   /**
-   * Run full portfolio backtest over specified date range
+   * Run full portfolio backtest over specified date range (KRW Base Currency with USDKRW FX Conversion)
    */
   function runBacktest(marketData, config) {
     const dates = marketData.dates;
@@ -178,6 +178,23 @@
     (marketData.catalog || []).forEach((item) => {
       catalogMap[item.id] = item;
     });
+
+    const usdkrwSeries = marketData.series["USDKRW"] || null;
+    function getExchangeRate(gIdx) {
+      if (!usdkrwSeries || !usdkrwSeries[gIdx]) return 1300.0;
+      return Number(usdkrwSeries[gIdx]);
+    }
+
+    function getPriceKrw(ticker, gIdx) {
+      const cur = catalogMap[ticker]?.currency || "USD";
+      const rawPx = marketData.series[ticker] ? marketData.series[ticker][gIdx] : 0;
+      if (cur === "KRW") return rawPx;
+      return rawPx * getExchangeRate(gIdx);
+    }
+
+    function getRawPrice(ticker, gIdx) {
+      return marketData.series[ticker] ? marketData.series[ticker][gIdx] : 0;
+    }
 
     // Find start and end indices
     const reqStart = config.startDate || dates[0];
@@ -194,11 +211,16 @@
     }
 
     const numDays = endIdx - startIdx + 1;
-    const initialCapital = Math.max(100, Number(config.initialCapital || 10000));
+    // Initial capital in KRW (default: 10,000,000 KRW)
+    const initialCapital = Math.max(1000, Number(config.initialCapital || 10000000));
     const feeRate = Math.max(0, Number(config.feeRatePct ?? 0.05)) / 100.0;
     const executionLag = Number(config.executionLag ?? 1) === 0 ? 0 : 1;
     const cashYieldMode = config.cashYieldMode || "US3M";
     const benchmarkTicker = config.benchmarkTicker || "SPX";
+
+    // Feature toggles
+    const rebalanceEnabled = config.rebalanceEnabled !== false;
+    const rulesEnabled = config.rulesEnabled !== false;
 
     // Normalize target allocations
     const rawAlloc = Array.isArray(config.allocations) ? config.allocations : [];
@@ -208,7 +230,7 @@
 
     // Ensure any asset targeted by rules is also tracked in holdings
     const trackedTickersSet = new Set(activeAlloc.map((a) => a.ticker));
-    const rules = Array.isArray(config.rules) ? config.rules.filter((r) => r && r.enabled) : [];
+    const rules = (rulesEnabled && Array.isArray(config.rules)) ? config.rules.filter((r) => r && r.enabled) : [];
     rules.forEach((r) => {
       if (r.action && r.action.targetTicker && marketData.series[r.action.targetTicker]) {
         trackedTickersSet.add(r.action.targetTicker);
@@ -235,23 +257,23 @@
       totalTargetWeight = 1.0;
     }
 
-    // Portfolio state: shares per ticker + cash
+    // Portfolio state: shares per ticker + KRW cash
     const shares = {};
     trackedTickers.forEach((t) => (shares[t] = 0));
     let cash = initialCapital;
 
-    // Initial allocation purchase on startIdx
+    // Initial allocation purchase on startIdx in KRW
     let totalFeesPaid = 0;
     trackedTickers.forEach((t) => {
       const w = targetWeights[t] || 0;
       if (w > 0) {
-        const allocDollar = initialCapital * w;
-        const fee = allocDollar * feeRate;
-        const netInvest = allocDollar - fee;
-        const px = marketData.series[t][startIdx];
-        if (px > 0) {
-          shares[t] = netInvest / px;
-          cash -= allocDollar;
+        const allocKrw = initialCapital * w;
+        const fee = allocKrw * feeRate;
+        const netInvest = allocKrw - fee;
+        const pxKrw = getPriceKrw(t, startIdx);
+        if (pxKrw > 0) {
+          shares[t] = netInvest / pxKrw;
+          cash -= allocKrw;
           totalFeesPaid += fee;
         }
       }
@@ -286,13 +308,13 @@
 
     const allocTickerSet = new Set(activeAlloc.filter((a) => a.weight > 0).map((a) => a.ticker));
 
-    // Helper: calculate current portfolio value at global index gIdx
+    // Helper: calculate current portfolio value at global index gIdx (in KRW)
     function getPortfolioValuation(gIdx) {
       let assetVal = 0;
       const vals = {};
       for (let i = 0; i < trackedTickers.length; i++) {
         const t = trackedTickers[i];
-        const v = shares[t] * marketData.series[t][gIdx];
+        const v = shares[t] * getPriceKrw(t, gIdx);
         vals[t] = v;
         assetVal += v;
       }
@@ -307,7 +329,7 @@
     const bandThreshold = Math.max(0.5, Number(rebCfg.bandThreshold || 5.0)) / 100.0;
 
     function shouldPeriodRebalance(gIdx) {
-      if (gIdx <= startIdx || periodMode === "NONE" || totalTargetWeight <= 0) return false;
+      if (!rebalanceEnabled || gIdx <= startIdx || periodMode === "NONE" || totalTargetWeight <= 0) return false;
       const curDate = dates[gIdx];
       const prevDate = dates[gIdx - 1];
       const curY = curDate.slice(0, 4);
@@ -328,14 +350,13 @@
     }
 
     function shouldBandRebalance(gIdx, valuation) {
-      if (gIdx <= startIdx || bandMode === "NONE" || totalTargetWeight <= 0) return false;
+      if (!rebalanceEnabled || gIdx <= startIdx || bandMode === "NONE" || totalTargetWeight <= 0) return false;
       if (valuation.total <= 0) return false;
-      // Avoid immediate band rebalance right after a tactical rule trade or recent rebalance (minimum 20 trading days grace period)
       if (gIdx - lastRuleTradeIdx < 20 || gIdx - lastRebalanceIdx < 10) return false;
 
       for (let i = 0; i < trackedTickers.length; i++) {
         const t = trackedTickers[i];
-        if (!allocTickerSet.has(t)) continue; // Only check drift on core target allocation assets
+        if (!allocTickerSet.has(t)) continue;
         const targetW = targetWeights[t] || 0;
         const curW = (valuation.vals[t] || 0) / valuation.total;
         const diff = Math.abs(curW - targetW);
@@ -348,12 +369,11 @@
       return false;
     }
 
-    function executeRebalance(gIdx, reasonLabel) {
+    function executeRebalance(gIdx, reasonLabel, step) {
       const val = getPortfolioValuation(gIdx);
       const totalEq = val.total;
       if (totalEq <= 0) return;
 
-      // Calculate how much equity belongs to core allocation basket (excluding tactical-only assets if any)
       let tacticalOnlyVal = 0;
       for (let i = 0; i < trackedTickers.length; i++) {
         const t = trackedTickers[i];
@@ -362,7 +382,7 @@
         }
       }
       const rebalanceableEq = Math.max(0, totalEq - tacticalOnlyVal);
-      if (rebalanceableEq <= 10) return;
+      if (rebalanceableEq <= 1000) return;
 
       let tradedDollar = 0;
       // 1. Sell overweight core assets first
@@ -372,9 +392,9 @@
         const targetDollar = rebalanceableEq * (targetWeights[t] || 0);
         const curDollar = val.vals[t] || 0;
         const diff = curDollar - targetDollar;
-        if (diff > 1.0) {
-          const px = marketData.series[t][gIdx];
-          const sellShares = diff / px;
+        if (diff > 1000.0) {
+          const pxKrw = getPriceKrw(t, gIdx);
+          const sellShares = diff / pxKrw;
           const fee = diff * feeRate;
           shares[t] = Math.max(0, shares[t] - sellShares);
           cash += diff - fee;
@@ -387,15 +407,15 @@
         const t = trackedTickers[i];
         if (!allocTickerSet.has(t)) continue;
         const targetDollar = rebalanceableEq * (targetWeights[t] || 0);
-        const curDollar = shares[t] * marketData.series[t][gIdx];
+        const curDollar = shares[t] * getPriceKrw(t, gIdx);
         const needDollar = targetDollar - curDollar;
-        if (needDollar > 1.0 && cash > 1.0) {
+        if (needDollar > 1000.0 && cash > 1000.0) {
           const spend = Math.min(cash, needDollar);
           const fee = spend * feeRate;
           const netBuy = spend - fee;
-          const px = marketData.series[t][gIdx];
-          if (px > 0) {
-            shares[t] += netBuy / px;
+          const pxKrw = getPriceKrw(t, gIdx);
+          if (pxKrw > 0) {
+            shares[t] += netBuy / pxKrw;
             cash -= spend;
             totalFeesPaid += fee;
             tradedDollar += spend;
@@ -403,17 +423,26 @@
         }
       }
 
-      if (tradedDollar > 10) {
+      if (tradedDollar > 1000) {
         rebalanceCount++;
         lastRebalanceIdx = gIdx;
         if (tradeLogs.length < 1500) {
           tradeLogs.push({
             date: dates[gIdx],
+            stepIndex: step,
+            globalIndex: gIdx,
             type: "REBALANCE",
             ruleName: reasonLabel,
             ticker: "PORTFOLIO",
-            actionLabel: "목표비중 리밸런싱",
+            tickerName: "포트폴리오 리밸런싱",
+            currency: "KRW",
+            rawPrice: 0,
+            rate: getExchangeRate(gIdx),
+            priceKrw: 0,
+            shares: 0,
             amount: tradedDollar,
+            amountKrw: tradedDollar,
+            feeKrw: totalFeesPaid,
             equityAfter: getPortfolioValuation(gIdx).total,
           });
         }
@@ -432,11 +461,10 @@
         cash *= 1.0 + annualRate / 252.0;
       }
 
-      // 2. Evaluate and execute cross-asset rules (using signal index = gIdx - executionLag)
-      if (step > 0 && rules.length > 0) {
+      // 2. Evaluate and execute cross-asset rules (if rulesEnabled)
+      if (rulesEnabled && step > 0 && rules.length > 0) {
         const sigIdx = gIdx - executionLag;
         if (sigIdx >= 0) {
-          // Separate triggered rules into SELL first, then BUY so freed cash can be used immediately
           const triggeredSells = [];
           const triggeredBuys = [];
 
@@ -465,7 +493,7 @@
 
             const val = getPortfolioValuation(gIdx);
             const holdingVal = val.vals[t] || 0;
-            if (holdingVal <= 1.0) continue;
+            if (holdingVal <= 10.0) continue;
 
             let sellDollar = 0;
             const sMode = (act.sizingMode || "BALANCE_PCT").toUpperCase();
@@ -478,13 +506,15 @@
             } else if (sMode === "TOTAL_PCT") {
               sellDollar = Math.min(holdingVal, val.total * (sVal / 100.0));
             } else {
-              // BALANCE_PCT: % of current holding of targetTicker
               sellDollar = holdingVal * Math.min(1.0, sVal / 100.0);
             }
 
-            if (sellDollar > 1.0) {
-              const px = marketData.series[t][gIdx];
-              const sellSh = sellDollar / px;
+            if (sellDollar > 10.0) {
+              const px = getRawPrice(t, gIdx);
+              const pxKrw = getPriceKrw(t, gIdx);
+              const cur = catalogMap[t]?.currency || "USD";
+              const rate = getExchangeRate(gIdx);
+              const sellSh = sellDollar / pxKrw;
               const fee = sellDollar * feeRate;
               shares[t] = Math.max(0, shares[t] - sellSh);
               cash += sellDollar - fee;
@@ -496,12 +526,21 @@
               if (tradeLogs.length < 1500) {
                 tradeLogs.push({
                   date: curDate,
+                  stepIndex: step,
+                  globalIndex: gIdx,
                   signalDate: dates[sigIdx],
                   type: "SELL",
                   ruleName: rule.name || "매도 조건",
                   ticker: t,
-                  actionLabel: `${catalogMap[t]?.shortName || t} 매도`,
+                  tickerName: catalogMap[t]?.shortName || t,
+                  currency: cur,
+                  rawPrice: px,
+                  rate: rate,
+                  priceKrw: pxKrw,
+                  shares: sellSh,
                   amount: sellDollar,
+                  amountKrw: sellDollar,
+                  feeKrw: fee,
                   price: px,
                   equityAfter: getPortfolioValuation(gIdx).total,
                 });
@@ -527,47 +566,43 @@
             } else if (sMode === "TOTAL_PCT") {
               desiredBuyDollar = val.total * Math.min(1.0, sVal / 100.0);
             } else {
-              // BALANCE_PCT: % of available cash (or if cash < $10 and funding allows, % of funding asset)
-              if (cash > 10.0 || funding === "CASH_ONLY") {
+              if (cash > 1000.0 || funding === "CASH_ONLY") {
                 desiredBuyDollar = cash * Math.min(1.0, sVal / 100.0);
-              } else if (funding !== "CASH_ONLY" && funding !== "CASH_THEN_PRORATA" && val.vals[funding] > 10) {
+              } else if (funding !== "CASH_ONLY" && funding !== "CASH_THEN_PRORATA" && val.vals[funding] > 1000) {
                 desiredBuyDollar = val.vals[funding] * Math.min(1.0, sVal / 100.0);
               } else {
                 desiredBuyDollar = (val.total - (val.vals[t] || 0)) * Math.min(1.0, sVal / 100.0);
               }
             }
 
-            // If cash is insufficient and fundingSource allows selling other holdings to fund the purchase
-            if (desiredBuyDollar > cash + 1.0 && funding !== "CASH_ONLY") {
+            if (desiredBuyDollar > cash + 10.0 && funding !== "CASH_ONLY") {
               const shortfall = desiredBuyDollar - cash;
               if (funding !== "CASH_THEN_PRORATA" && marketData.series[funding] && funding !== t) {
-                // Sell specific funding asset
                 const availFund = val.vals[funding] || 0;
                 const toLiquidate = Math.min(availFund, shortfall / (1 - feeRate));
-                if (toLiquidate > 1.0) {
-                  const pxF = marketData.series[funding][gIdx];
+                if (toLiquidate > 10.0) {
+                  const pxFKrw = getPriceKrw(funding, gIdx);
                   const feeF = toLiquidate * feeRate;
-                  shares[funding] = Math.max(0, shares[funding] - toLiquidate / pxF);
+                  shares[funding] = Math.max(0, shares[funding] - toLiquidate / pxFKrw);
                   cash += toLiquidate - feeF;
                   totalFeesPaid += feeF;
                 }
               } else if (funding === "CASH_THEN_PRORATA") {
-                // Sell other holdings pro-rata to raise shortfall
                 let otherTotal = 0;
                 for (let k = 0; k < trackedTickers.length; k++) {
                   const ot = trackedTickers[k];
                   if (ot !== t) otherTotal += val.vals[ot] || 0;
                 }
-                if (otherTotal > 1.0) {
+                if (otherTotal > 10.0) {
                   const sellFraction = Math.min(1.0, (shortfall / (1 - feeRate)) / otherTotal);
                   for (let k = 0; k < trackedTickers.length; k++) {
                     const ot = trackedTickers[k];
                     if (ot === t) continue;
                     const otVal = (val.vals[ot] || 0) * sellFraction;
-                    if (otVal > 0.5) {
-                      const pxO = marketData.series[ot][gIdx];
+                    if (otVal > 10.0) {
+                      const pxOKrw = getPriceKrw(ot, gIdx);
                       const feeO = otVal * feeRate;
-                      shares[ot] = Math.max(0, shares[ot] - otVal / pxO);
+                      shares[ot] = Math.max(0, shares[ot] - otVal / pxOKrw);
                       cash += otVal - feeO;
                       totalFeesPaid += feeO;
                     }
@@ -577,12 +612,16 @@
             }
 
             const actualSpend = Math.min(cash, desiredBuyDollar);
-            if (actualSpend > 1.0) {
-              const px = marketData.series[t][gIdx];
+            if (actualSpend > 100.0) {
+              const px = getRawPrice(t, gIdx);
+              const pxKrw = getPriceKrw(t, gIdx);
+              const cur = catalogMap[t]?.currency || "USD";
+              const rate = getExchangeRate(gIdx);
               const fee = actualSpend * feeRate;
               const netBuy = actualSpend - fee;
-              if (px > 0) {
-                shares[t] += netBuy / px;
+              if (pxKrw > 0) {
+                const buySh = netBuy / pxKrw;
+                shares[t] += buySh;
                 cash -= actualSpend;
                 totalFeesPaid += fee;
                 ruleLastFiredIdx.set(rule.id, gIdx);
@@ -592,12 +631,21 @@
                 if (tradeLogs.length < 1500) {
                   tradeLogs.push({
                     date: curDate,
+                    stepIndex: step,
+                    globalIndex: gIdx,
                     signalDate: dates[sigIdx],
                     type: "BUY",
                     ruleName: rule.name || "매수 조건",
                     ticker: t,
-                    actionLabel: `${catalogMap[t]?.shortName || t} 매수`,
+                    tickerName: catalogMap[t]?.shortName || t,
+                    currency: cur,
+                    rawPrice: px,
+                    rate: rate,
+                    priceKrw: pxKrw,
+                    shares: buySh,
                     amount: actualSpend,
+                    amountKrw: actualSpend,
+                    feeKrw: fee,
                     price: px,
                     equityAfter: getPortfolioValuation(gIdx).total,
                   });
@@ -608,15 +656,15 @@
         }
       }
 
-      // 3. Check Periodic or Threshold Band Rebalancing
-      if (step > 0 && totalTargetWeight > 0) {
+      // 3. Check Periodic or Threshold Band Rebalancing (if rebalanceEnabled)
+      if (rebalanceEnabled && step > 0 && totalTargetWeight > 0) {
         const valNow = getPortfolioValuation(gIdx);
         const periodTrig = shouldPeriodRebalance(gIdx);
         const bandTrig = !periodTrig && shouldBandRebalance(gIdx, valNow);
         if (periodTrig) {
-          executeRebalance(gIdx, `정기 리밸런싱 (${periodMode})`);
+          executeRebalance(gIdx, `정기 리밸런싱 (${periodMode})`, step);
         } else if (bandTrig) {
-          executeRebalance(gIdx, `비율초과 밴드 리밸런싱`);
+          executeRebalance(gIdx, `비율초과 밴드 리밸런싱`, step);
         }
       }
 
@@ -639,11 +687,9 @@
         assetWeightHistory[t][step] = eq > 0 ? ((eodVal.vals[t] || 0) / eq) * 100.0 : 0.0;
       }
 
-      if (benchSeries && benchStartPx > 0) {
-        benchmarkCurve[step] = initialCapital * (benchSeries[gIdx] / benchStartPx);
-      } else {
-        benchmarkCurve[step] = initialCapital;
-      }
+      const benchCurKrw = getPriceKrw(benchmarkTicker, gIdx);
+      const benchStartKrw = getPriceKrw(benchmarkTicker, startIdx);
+      benchmarkCurve[step] = benchStartKrw > 0 ? initialCapital * (benchCurKrw / benchStartKrw) : initialCapital;
     }
 
     // Compute performance metrics
