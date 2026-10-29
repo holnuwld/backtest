@@ -28,9 +28,11 @@
           🏆 스코어보드 <span class="badge-count js-sb-count">0</span>
         </button>
         <button type="button" class="nav-tab-btn" data-tab-target="tab-catalog">📁 자산/지표 DB & CSV 추가</button>
+        <a href="test-result.html" target="_blank" class="nav-tab-btn" style="text-decoration:none;color:var(--accent);border-color:rgba(56,189,248,0.3);background:rgba(56,189,248,0.08);">📑 테스트 리포트 ↗</a>
       </nav>
 
       <div class="header-actions">
+        <a href="test-result.html" target="_blank" class="btn btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;background:rgba(56,189,248,0.15);color:var(--accent);border:1px solid rgba(56,189,248,0.35);font-weight:700;">📑 테스트 리포트 ↗</a>
         <button type="button" id="btnRunQuick" class="btn btn-primary btn-sm">▶ 즉시 실행</button>
         <button type="button" id="btnThemeToggle" class="btn btn-sm" title="다크/라이트 테마 전환">🌓 테마</button>
       </div>
@@ -41,6 +43,18 @@
   <main class="main-container">
     <!-- TAB 1: STRATEGY & CROSS-CONDITION BUILDER -->
     <section id="tab-builder" class="tab-panel active">
+      <!-- Test Result Report Link Banner -->
+      <div style="background:linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%);border:1px solid rgba(56,189,248,0.35);border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">📑</span>
+          <div>
+            <div style="font-size:13.5px;font-weight:700;color:#f8fafc;">4개 에이전트 블라인드 백테스트 통합 리포트 (총 200개 전략 검증 결과)</div>
+            <div style="font-size:12px;color:var(--text-muted);">전일 종가 시그널·익일 시가/종가 체결 검증, 파레토 최적 Top 10, MDD 위기 구간 추적 리포트를 확인하세요.</div>
+          </div>
+        </div>
+        <a href="test-result.html" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--accent);color:#0f172a;font-weight:700;padding:6px 14px;border-radius:8px;white-space:nowrap;">통합 리포트 열람 ↗</a>
+      </div>
+
       <!-- Presets Card -->
       <div class="card">
         <div class="card-header">
@@ -538,8 +552,12 @@
     </button>
     <button type="button" class="mobile-nav-item" data-tab-target="tab-catalog">
       <span>📁</span>
-      <span>자산DB/CSV</span>
+      <span>자산DB</span>
     </button>
+    <a href="test-result.html" target="_blank" class="mobile-nav-item" style="text-decoration:none;color:var(--accent);">
+      <span>📑</span>
+      <span>리포트</span>
+    </a>
   </nav>
 
   <!-- Help Info Modal Popup -->
