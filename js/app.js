@@ -1018,7 +1018,10 @@
     container.innerHTML = STRATEGY_PRESETS.map(
       (p, idx) => `
       <button type="button" class="preset-card" data-preset-idx="${idx}">
-        <div class="preset-card-title">${p.title}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px;">
+          <div class="preset-card-title" style="margin-bottom:0;">${p.title}</div>
+          <span class="tag" style="font-size:10.5px;padding:1px 6px;background:rgba(56,189,248,0.12);color:var(--accent);border-color:rgba(56,189,248,0.3);flex-shrink:0;">적용</span>
+        </div>
         <div class="preset-card-desc">${p.desc}</div>
       </button>
     `
@@ -1106,11 +1109,11 @@
         <select class="form-control js-alloc-ticker" data-idx="${idx}">
           ${buildTradableAssetOptionsHTML(item.ticker)}
         </select>
-        <div style="display:flex;align-items:center;gap:4px;">
-          <input type="number" class="form-control js-alloc-weight" data-idx="${idx}" min="0" max="100" step="1" value="${item.weightPct}" />
-          <span style="font-size:12px;color:var(--text-muted);">%</span>
+        <div style="position:relative;display:flex;align-items:center;">
+          <input type="number" class="form-control js-alloc-weight" data-idx="${idx}" min="0" max="100" step="1" value="${item.weightPct}" style="padding-right:24px;text-align:right;font-weight:700;" />
+          <span style="position:absolute;right:8px;font-size:12px;font-weight:700;color:var(--text-muted);pointer-events:none;">%</span>
         </div>
-        <button type="button" class="btn btn-danger btn-sm js-alloc-del" data-idx="${idx}" title="삭제">✕</button>
+        <button type="button" class="btn btn-danger btn-sm js-alloc-del" data-idx="${idx}" title="삭제" style="width:34px;height:38px;padding:0;font-size:14px;font-weight:700;">✕</button>
       </div>
     `
       )
@@ -1733,71 +1736,71 @@
     // KPI Cards with Help (?) Popups
     const kpiHTML = `
       <div class="kpi-card">
-        <div class="kpi-label">
-          🏆 종합 퀀트 스코어 (Quant Score)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">🏆 종합 퀀트 스코어</span>
           <button type="button" class="btn-help-inline" data-help="QUANT_SCORE" title="퀀트 스코어 산출 기준 안내">?</button>
         </div>
-        <div class="kpi-value text-accent">${m.quantScore.toFixed(1)} <span style="font-size:13px;font-weight:600;">/ 100</span></div>
-        <div class="kpi-sub">수익·변동성·낙폭 종합점수</div>
+        <div class="kpi-value text-accent">${m.quantScore.toFixed(1)} <span style="font-size:13px;font-weight:600;color:var(--text-muted);">/ 100</span></div>
+        <div class="kpi-sub">수익·변동성·낙폭 종합 평가</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          📈 연평균 복리수익률 (CAGR)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">📈 연복리수익률 (CAGR)</span>
           <button type="button" class="btn-help-inline" data-help="CAGR" title="CAGR 산출 기준 안내">?</button>
         </div>
         <div class="kpi-value ${m.cagrPct >= 0 ? "text-pos" : "text-neg"}">${m.cagrPct >= 0 ? "+" : ""}${m.cagrPct.toFixed(2)}%</div>
-        <div class="kpi-sub">벤치마크(${benchName}): ${m.benchCagrPct >= 0 ? "+" : ""}${m.benchCagrPct.toFixed(2)}%</div>
+        <div class="kpi-sub">비교 벤치마크(${benchName}): ${m.benchCagrPct >= 0 ? "+" : ""}${m.benchCagrPct.toFixed(2)}%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          💰 최종 평가자산 (총수익률)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">💰 최종 평가자산</span>
           <button type="button" class="btn-help-inline" data-help="TOTAL_RETURN" title="최종 평가자산 안내">?</button>
         </div>
         <div class="kpi-value ${m.totalReturnPct >= 0 ? "text-pos" : "text-neg"}">₩${Math.round(m.finalEquity).toLocaleString()}</div>
         <div class="kpi-sub">누적 ${m.totalReturnPct >= 0 ? "+" : ""}${m.totalReturnPct.toLocaleString(undefined, { maximumFractionDigits: 1 })}% (원금 ₩${m.initialCapital.toLocaleString()})</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          🛡️ 최대 낙폭 (MDD)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">🛡️ 최대 낙폭 (MDD)</span>
           <button type="button" class="btn-help-inline" data-help="MDD" title="최대 낙폭(MDD) 안내">?</button>
         </div>
         <div class="kpi-value text-neg">${m.maxDrawdownPct.toFixed(2)}%</div>
-        <div class="kpi-sub">${benchName} MDD: ${m.benchMddPct.toFixed(2)}% (최저점 ${m.maxDrawdownDate})</div>
+        <div class="kpi-sub">${benchName} MDD: ${m.benchMddPct.toFixed(2)}% (저점 ${m.maxDrawdownDate})</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          ⚡ 샤프 지수 (Sharpe Ratio)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">⚡ 샤프 지수 (Sharpe)</span>
           <button type="button" class="btn-help-inline" data-help="SHARPE" title="샤프 지수 안내">?</button>
         </div>
         <div class="kpi-value ${m.sharpe >= 1 ? "text-pos" : "text-main"}">${m.sharpe.toFixed(2)}</div>
         <div class="kpi-sub">
-          소르티노(Sortino): ${m.sortino.toFixed(2)}
+          소르티노(Sortino): <strong>${m.sortino.toFixed(2)}</strong>
           <button type="button" class="btn-help-inline" data-help="SORTINO" title="소르티노 지수 안내" style="width:14px;height:14px;font-size:9.5px;margin-left:3px;">?</button>
         </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          ⚖️ 칼마 지수 (CAGR / |MDD|)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">⚖️ 칼마 지수 (Calmar)</span>
           <button type="button" class="btn-help-inline" data-help="CALMAR" title="칼마 지수 안내">?</button>
         </div>
         <div class="kpi-value">${m.calmar.toFixed(2)}</div>
-        <div class="kpi-sub">연간 변동성: ${m.annualVolPct.toFixed(2)}%</div>
+        <div class="kpi-sub">연간 변동성(Vol): ${m.annualVolPct.toFixed(2)}%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          🗓️ 연도별 승률 (Win Rate)
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">🗓️ 연도별 승률 (Win Rate)</span>
           <button type="button" class="btn-help-inline" data-help="WIN_RATE" title="승률 산출 안내">?</button>
         </div>
         <div class="kpi-value">${m.winRateYearlyPct.toFixed(1)}%</div>
-        <div class="kpi-sub">일별 상승비율: ${m.DailyWinRatePct.toFixed(1)}%</div>
+        <div class="kpi-sub">일별 상승일 비율: ${m.DailyWinRatePct.toFixed(1)}%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">
-          🔄 교차매매 & 리밸런싱 횟수
+        <div class="kpi-label-wrap">
+          <span class="kpi-label">🔄 매매 & 리밸런싱</span>
           <button type="button" class="btn-help-inline" data-help="TRADE_COUNT" title="체결 횟수 안내">?</button>
         </div>
-        <div class="kpi-value">${m.ruleTradeCount}회 <span style="font-size:14px;color:var(--text-muted);">/ ${m.rebalanceCount}회</span></div>
-        <div class="kpi-sub">누적 수수료: ₩${Math.round(m.totalFeesPaid).toLocaleString()}</div>
+        <div class="kpi-value">${m.ruleTradeCount}회 <span style="font-size:14px;font-weight:600;color:var(--text-muted);">/ ${m.rebalanceCount}회</span></div>
+        <div class="kpi-sub">수수료 합계: ₩${Math.round(m.totalFeesPaid).toLocaleString()}</div>
       </div>
     `;
     document.getElementById("kpiGrid").innerHTML = kpiHTML;
@@ -1973,26 +1976,26 @@
         return `
           <tr>
             <td style="font-weight:700;text-align:center;">${rankBadge}</td>
-            <td style="font-weight:800;color:var(--neg);font-size:13.5px;">${ep.depthPct.toFixed(2)}%</td>
-            <td><strong style="color:var(--text-main);">${ep.troughDate}</strong></td>
-            <td>${ep.peakDate}</td>
-            <td>${recText}</td>
-            <td style="font-size:11.5px;color:var(--text-muted);">${dropPeriodStr} / ${durStr}</td>
+            <td style="font-weight:800;color:var(--danger);font-size:13.5px;text-align:right;padding-right:16px;">${ep.depthPct.toFixed(2)}%</td>
+            <td style="text-align:center;"><strong style="color:var(--text-main);">${ep.troughDate}</strong></td>
+            <td style="text-align:center;">${ep.peakDate}</td>
+            <td style="text-align:center;">${recText}</td>
+            <td style="font-size:12px;color:var(--text-muted);text-align:center;">${dropPeriodStr} / ${durStr}</td>
           </tr>
         `;
       })
       .join("");
 
     container.innerHTML = `
-      <table class="data-table" style="font-size:12px;margin-bottom:0;">
+      <table class="data-table" style="font-size:12.5px;margin-bottom:0;">
         <thead>
           <tr>
-            <th style="width:70px;text-align:center;">순위</th>
-            <th>최대 낙폭량 (MDD)</th>
-            <th>저점 도달일 (Trough)</th>
-            <th>직전 고점일 (Peak)</th>
-            <th>전고점 회복일 (Recovery)</th>
-            <th>기간 분석 (하락 / 회복 소요)</th>
+            <th style="width:75px;text-align:center;">순위</th>
+            <th style="text-align:right;padding-right:16px;">최대 낙폭량 (MDD)</th>
+            <th style="text-align:center;">저점 도달일 (Trough)</th>
+            <th style="text-align:center;">직전 고점일 (Peak)</th>
+            <th style="text-align:center;">전고점 회복일 (Recovery)</th>
+            <th style="text-align:center;">기간 분석 (하락 / 회복 소요)</th>
           </tr>
         </thead>
         <tbody>

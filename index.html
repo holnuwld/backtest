@@ -44,15 +44,17 @@
     <!-- TAB 1: STRATEGY & CROSS-CONDITION BUILDER -->
     <section id="tab-builder" class="tab-panel active">
       <!-- Test Result Report Link Banner -->
-      <div style="background:linear-gradient(135deg, rgba(15,23,42,0.9) 0%, rgba(30,41,59,0.9) 100%);border:1px solid rgba(56,189,248,0.35);border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span style="font-size:20px;">📑</span>
+      <div class="hero-report-banner">
+        <div class="hero-report-banner-text">
+          <div class="hero-report-banner-icon">📑</div>
           <div>
-            <div style="font-size:13.5px;font-weight:700;color:#f8fafc;">4개 에이전트 블라인드 백테스트 통합 리포트 (총 200개 전략 검증 결과)</div>
-            <div style="font-size:12px;color:var(--text-muted);">전일 종가 시그널·익일 시가/종가 체결 검증, 파레토 최적 Top 10, MDD 위기 구간 추적 리포트를 확인하세요.</div>
+            <div class="hero-report-banner-title">4개 에이전트 블라인드 백테스트 통합 리포트 (총 200개 전략 검증 결과)</div>
+            <div class="hero-report-banner-sub">전일 종가 시그널 · 익일 시가/종가 체결 검증, 파레토 최적 Top 10, MDD 위기 구간 추적 리포트를 확인하세요.</div>
           </div>
         </div>
-        <a href="test-result.html" target="_blank" class="btn btn-sm" style="text-decoration:none;background:var(--accent);color:#0f172a;font-weight:700;padding:6px 14px;border-radius:8px;white-space:nowrap;">통합 리포트 열람 ↗</a>
+        <a href="test-result.html" target="_blank" class="btn btn-primary" style="font-weight:800;white-space:nowrap;">
+          통합 리포트 열람 ↗
+        </a>
       </div>
 
       <!-- Presets Card -->
@@ -152,9 +154,9 @@
           <!-- Asset Allocation & Rebalancing Card -->
           <div class="card" id="cardRebalance">
             <div class="card-header">
-              <div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
                 <div class="card-title" style="display:flex;align-items:center;gap:10px;">
-                  <span>리밸런싱 조건</span>
+                  <span>2️⃣ 리밸런싱 조건</span>
                   <label class="toggle-switch-label" title="리밸런싱 전체 켜기/끄기">
                     <input type="checkbox" id="toggleRebalance" class="toggle-checkbox" checked />
                     <span class="toggle-slider"></span>
@@ -163,7 +165,7 @@
                 </div>
                 <div class="card-subtitle">매매 가능 자산만 배분 대상에 표시됩니다. (스위치 OFF 시 리밸런싱 미수행)</div>
               </div>
-              <div style="display:flex;gap:6px;">
+              <div style="display:flex;align-items:center;gap:6px;">
                 <button type="button" id="btnAddAlloc" class="btn btn-sm">+ 자산 추가</button>
                 <button type="button" id="btnNormalizeAlloc" class="btn btn-sm">100% 맞춤</button>
               </div>
@@ -217,9 +219,9 @@
         <div>
           <div class="card" id="cardRules">
             <div class="card-header">
-              <div>
+              <div style="display:flex;flex-direction:column;gap:4px;">
                 <div class="card-title" style="display:flex;align-items:center;gap:10px;">
-                  <span>매수 매도 조건</span>
+                  <span>3️⃣ 매수 매도 조건</span>
                   <label class="toggle-switch-label" title="매수 매도 조건 전체 켜기/끄기">
                     <input type="checkbox" id="toggleRules" class="toggle-checkbox" checked />
                     <span class="toggle-slider"></span>
@@ -269,25 +271,27 @@
 
       <!-- Equity Curve Chart -->
       <div class="card">
-        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
           <div>
             <div class="card-title">📈 포트폴리오 누적 자산 성장 곡선 (Equity Curve vs Benchmark)</div>
             <div class="card-subtitle">사고 판 지점(↑매수 / ↓매도) 소형 화살표 마커 표시 | 마우스 드래그/휠 또는 툴바 버튼으로 횡방향 확대·축소 가능</div>
           </div>
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-            <div class="chip-group" style="margin-bottom:0;display:inline-flex;">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="chip-group" style="margin-bottom:0;">
               <span class="chip js-eq-range" data-range="1Y" style="cursor:pointer;">1년</span>
               <span class="chip js-eq-range" data-range="3Y" style="cursor:pointer;">3년</span>
               <span class="chip js-eq-range" data-range="5Y" style="cursor:pointer;">5년</span>
               <span class="chip js-eq-range" data-range="10Y" style="cursor:pointer;">10년</span>
-              <span class="chip chip-accent js-eq-range" data-range="ALL" style="cursor:pointer;">전체</span>
+              <span class="chip chip-accent js-eq-range active" data-range="ALL" style="cursor:pointer;">전체</span>
             </div>
-            <button type="button" id="btnZoomIn" class="btn btn-sm" title="횡방향 1.5배 확대">🔍 +</button>
-            <button type="button" id="btnZoomOut" class="btn btn-sm" title="횡방향 1.5배 축소">🔍 -</button>
-            <button type="button" id="btnPanLeft" class="btn btn-sm" title="과거로 이동">◀</button>
-            <button type="button" id="btnPanRight" class="btn btn-sm" title="최근으로 이동">▶</button>
-            <button type="button" id="btnResetZoom" class="btn btn-sm" title="전체 구간 리셋">↺ 초기화</button>
-            <button type="button" id="btnToggleScale" class="btn btn-sm">📐 현재: 로그 스케일 (Log)</button>
+            <div class="btn-group">
+              <button type="button" id="btnZoomIn" class="btn" title="횡방향 1.5배 확대">🔍 +</button>
+              <button type="button" id="btnZoomOut" class="btn" title="횡방향 1.5배 축소">🔍 -</button>
+              <button type="button" id="btnPanLeft" class="btn" title="과거로 이동">◀</button>
+              <button type="button" id="btnPanRight" class="btn" title="최근으로 이동">▶</button>
+              <button type="button" id="btnResetZoom" class="btn" title="전체 구간 리셋">↺ 초기화</button>
+            </div>
+            <button type="button" id="btnToggleScale" class="btn btn-sm">📐 로그 스케일</button>
           </div>
         </div>
         <div class="chart-container">
