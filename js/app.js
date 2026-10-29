@@ -144,6 +144,86 @@
         </ul>
       `,
     },
+    QUANT_SCORE: {
+      title: "종합 퀀트 스코어 (Quant Score)",
+      content: `
+        <p>전략의 <strong>수익성(CAGR), 위험 방어력(MDD), 위험대비 초과수익(Sharpe), 낙폭 대비 수익성(Calmar), 연도별 승률</strong>을 종합하여 100점 만점으로 정규화한 퀀트 평가 지표입니다.</p>
+        <ul>
+          <li><strong>80점 이상:</strong> 시장(S&P500 등)을 압도하는 최상위권 알파 전략</li>
+          <li><strong>60~79점:</strong> 안정적인 우상향과 견고한 위험 통제를 갖춘 양호한 전략</li>
+          <li><strong>60점 미만:</strong> 변동성이 지나치게 높거나 낙폭이 커서 개선이 필요한 전략</li>
+        </ul>
+      `,
+    },
+    CAGR: {
+      title: "연평균 복리수익률 (CAGR, Compound Annual Growth Rate)",
+      content: `
+        <p>투자 기간 동안 원금이 매년 복리로 재투자되었을 때의 <strong>연평균 기하급수 성장률(%)</strong>입니다.</p>
+        <p>단순 산술평균과 달리, 하락장의 손실 회복 필요 수익률(예: -50% 손실 시 +100% 상승 필요)이 정확하게 반영된 장기 성과의 핵심 지표입니다.</p>
+      `,
+    },
+    TOTAL_RETURN: {
+      title: "최종 평가자산 및 누적 총수익률",
+      content: `
+        <p>시작 원금에서 출발하여 매매 수수료 및 단기 이자 수익이 모두 반영된 <strong>백테스트 종료 시점의 순자산 총액(₩)</strong> 및 누적 총수익률(%)입니다.</p>
+      `,
+    },
+    MDD: {
+      title: "최대 낙폭 (MDD, Maximum Drawdown)",
+      content: `
+        <p>백테스트 기간 중 <strong>직전 최고점(Peak) 대비 자산이 가장 깊게 폭락했을 때의 하락률(-%)</strong>입니다.</p>
+        <ul>
+          <li>투자자가 역사적으로 감내해야 했던 <strong>'최악의 고통(Pain Index)'</strong>과 계좌 파산 리스크를 나타냅니다.</li>
+          <li>예를 들어 MDD가 -50%라면 고점에서 계좌 자산이 반토막 났음을 의미합니다.</li>
+          <li>보통 주식 100% 포트폴리오는 대공황이나 2008 금융위기 시 MDD가 -50%~-60%에 달하며, 훌륭한 올웨더 및 리밸런싱 전략은 이를 -20%~-30% 이내로 방어합니다.</li>
+        </ul>
+      `,
+    },
+    SHARPE: {
+      title: "샤프 지수 (Sharpe Ratio)",
+      content: `
+        <p>공식: <code>(연환산 수익률 - 무위험 이자율) &divide; 연환산 변동성</code></p>
+        <p>감수한 <strong>'총 위험(변동성 1단위)' 대비 얼마만큼의 초과 수익(Risk Premium)을 창출했는가</strong>를 측정하는 가장 대표적인 위험조정 성과 지표입니다.</p>
+        <ul>
+          <li><strong>1.0 이상:</strong> 우수한 퀀트 전략 (위험 대비 양호한 성과)</li>
+          <li><strong>1.5 이상:</strong> 매우 뛰어난 고효율 전략</li>
+          <li><strong>2.0 이상:</strong> 최상위 헤지펀드 수준의 탁월한 알파 전략</li>
+        </ul>
+      `,
+    },
+    SORTINO: {
+      title: "소르티노 지수 (Sortino Ratio)",
+      content: `
+        <p>공식: <code>(연환산 수익률 - 무위험 이자율) &divide; 하방 변동성(Downside Deviation)</code></p>
+        <p>샤프 지수는 주가 급등에 따른 상방 변동성까지 '위험'으로 간주하여 감점하는 한계가 있습니다.</p>
+        <p>소르티노 지수는 투자자에게 실제로 고통을 주는 <strong>'원금 손실 구간의 하락 변동성'만을 분모로 사용하여</strong> 실제 투자 체감 리스크 대비 수익성을 더 정밀하게 평가합니다.</p>
+      `,
+    },
+    CALMAR: {
+      title: "칼마 지수 (Calmar Ratio)",
+      content: `
+        <p>공식: <code>CAGR(연평균 복리수익률) &divide; |MDD|(최대 낙폭 절대값)</code></p>
+        <p><strong>겪어야 하는 최대 고통(최대 낙폭) 대비 매년 얼마의 복리 성장을 제공하는가</strong>를 직관적으로 비교하는 지표입니다.</p>
+        <ul>
+          <li>예: CAGR 15% / MDD -15% &rarr; 칼마 지수 1.0 (매우 우수)</li>
+          <li>예: CAGR 15% / MDD -50% &rarr; 칼마 지수 0.3 (고통 대비 성과 저조)</li>
+          <li>일반적으로 0.5 이상이면 양호, 1.0 이상이면 낙폭 통제력이 매우 탁월한 전략입니다.</li>
+        </ul>
+      `,
+    },
+    WIN_RATE: {
+      title: "연도별 및 일별 승률 (Win Rate)",
+      content: `
+        <p>전체 투자 기간 중 플러스(+) 수익을 기록한 <strong>연도의 비율</strong> 및 상승 마감한 <strong>거래일의 비율</strong>입니다.</p>
+        <p>연도별 승률이 80% 이상인 전략은 장기 투자 시 원금 손실을 겪을 확률이 극히 낮음을 의미합니다.</p>
+      `,
+    },
+    TRADE_COUNT: {
+      title: "교차조건 매매 & 리밸런싱 체결 횟수",
+      content: `
+        <p>백테스트 기간 동안 발동된 <strong>교차조건 규칙 매매 횟수</strong>와 목표 비중 유지를 위한 <strong>정기/밴드 리밸런싱 체결 횟수</strong>의 총합 및 누적 거래 수수료입니다.</p>
+      `,
+    },
   };
 
   function openHelpModal(key) {
@@ -1650,45 +1730,72 @@
     document.getElementById("resStrategyTitle").textContent = res.configSnapshot.name;
     document.getElementById("resPeriodBadge").textContent = `${m.startDate} ~ ${m.endDate} (${m.years}년 / ${m.tradingDays.toLocaleString()}거래일)`;
 
-    // KPI Cards
+    // KPI Cards with Help (?) Popups
     const kpiHTML = `
       <div class="kpi-card">
-        <div class="kpi-label">🏆 종합 퀀트 스코어 (Quant Score)</div>
+        <div class="kpi-label">
+          🏆 종합 퀀트 스코어 (Quant Score)
+          <button type="button" class="btn-help-inline" data-help="QUANT_SCORE" title="퀀트 스코어 산출 기준 안내">?</button>
+        </div>
         <div class="kpi-value text-accent">${m.quantScore.toFixed(1)} <span style="font-size:13px;font-weight:600;">/ 100</span></div>
         <div class="kpi-sub">수익·변동성·낙폭 종합점수</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">📈 연평균 복리수익률 (CAGR)</div>
+        <div class="kpi-label">
+          📈 연평균 복리수익률 (CAGR)
+          <button type="button" class="btn-help-inline" data-help="CAGR" title="CAGR 산출 기준 안내">?</button>
+        </div>
         <div class="kpi-value ${m.cagrPct >= 0 ? "text-pos" : "text-neg"}">${m.cagrPct >= 0 ? "+" : ""}${m.cagrPct.toFixed(2)}%</div>
         <div class="kpi-sub">벤치마크(${benchName}): ${m.benchCagrPct >= 0 ? "+" : ""}${m.benchCagrPct.toFixed(2)}%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">💰 최종 평가자산 (총수익률)</div>
+        <div class="kpi-label">
+          💰 최종 평가자산 (총수익률)
+          <button type="button" class="btn-help-inline" data-help="TOTAL_RETURN" title="최종 평가자산 안내">?</button>
+        </div>
         <div class="kpi-value ${m.totalReturnPct >= 0 ? "text-pos" : "text-neg"}">₩${Math.round(m.finalEquity).toLocaleString()}</div>
         <div class="kpi-sub">누적 ${m.totalReturnPct >= 0 ? "+" : ""}${m.totalReturnPct.toLocaleString(undefined, { maximumFractionDigits: 1 })}% (원금 ₩${m.initialCapital.toLocaleString()})</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">🛡️ 최대 낙폭 (MDD)</div>
+        <div class="kpi-label">
+          🛡️ 최대 낙폭 (MDD)
+          <button type="button" class="btn-help-inline" data-help="MDD" title="최대 낙폭(MDD) 안내">?</button>
+        </div>
         <div class="kpi-value text-neg">${m.maxDrawdownPct.toFixed(2)}%</div>
         <div class="kpi-sub">${benchName} MDD: ${m.benchMddPct.toFixed(2)}% (최저점 ${m.maxDrawdownDate})</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">⚡ 샤프 지수 (Sharpe Ratio)</div>
+        <div class="kpi-label">
+          ⚡ 샤프 지수 (Sharpe Ratio)
+          <button type="button" class="btn-help-inline" data-help="SHARPE" title="샤프 지수 안내">?</button>
+        </div>
         <div class="kpi-value ${m.sharpe >= 1 ? "text-pos" : "text-main"}">${m.sharpe.toFixed(2)}</div>
-        <div class="kpi-sub">소르티노(Sortino): ${m.sortino.toFixed(2)}</div>
+        <div class="kpi-sub">
+          소르티노(Sortino): ${m.sortino.toFixed(2)}
+          <button type="button" class="btn-help-inline" data-help="SORTINO" title="소르티노 지수 안내" style="width:14px;height:14px;font-size:9.5px;margin-left:3px;">?</button>
+        </div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">⚖️ 칼마 지수 (CAGR / |MDD|)</div>
+        <div class="kpi-label">
+          ⚖️ 칼마 지수 (CAGR / |MDD|)
+          <button type="button" class="btn-help-inline" data-help="CALMAR" title="칼마 지수 안내">?</button>
+        </div>
         <div class="kpi-value">${m.calmar.toFixed(2)}</div>
         <div class="kpi-sub">연간 변동성: ${m.annualVolPct.toFixed(2)}%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">🗓️ 연도별 승률 (Win Rate)</div>
+        <div class="kpi-label">
+          🗓️ 연도별 승률 (Win Rate)
+          <button type="button" class="btn-help-inline" data-help="WIN_RATE" title="승률 산출 안내">?</button>
+        </div>
         <div class="kpi-value">${m.winRateYearlyPct.toFixed(1)}%</div>
         <div class="kpi-sub">일별 상승비율: ${m.DailyWinRatePct.toFixed(1)}%</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">🔄 교차매매 & 리밸런싱 횟수</div>
+        <div class="kpi-label">
+          🔄 교차매매 & 리밸런싱 횟수
+          <button type="button" class="btn-help-inline" data-help="TRADE_COUNT" title="체결 횟수 안내">?</button>
+        </div>
         <div class="kpi-value">${m.ruleTradeCount}회 <span style="font-size:14px;color:var(--text-muted);">/ ${m.rebalanceCount}회</span></div>
         <div class="kpi-sub">누적 수수료: ₩${Math.round(m.totalFeesPaid).toLocaleString()}</div>
       </div>
@@ -1783,6 +1890,118 @@
     return { dates: outDates, series: outSeries };
   }
 
+  // Helper to compute Top Drawdown Episodes (Worst DD cycles)
+  function computeTopDrawdownEpisodes(res, topN = 5) {
+    const dates = res.series.dates;
+    const dd = res.series.drawdown;
+    const equity = res.series.equity;
+    const n = dates.length;
+    if (n === 0) return [];
+
+    const episodes = [];
+    let inEpisode = false;
+    let peakIdx = 0;
+    let troughIdx = 0;
+    let minDd = 0;
+
+    for (let i = 0; i < n; i++) {
+      const curDd = dd[i];
+      if (curDd < -0.0001) {
+        if (!inEpisode) {
+          inEpisode = true;
+          peakIdx = Math.max(0, i - 1);
+          troughIdx = i;
+          minDd = curDd;
+        } else {
+          if (curDd < minDd) {
+            minDd = curDd;
+            troughIdx = i;
+          }
+        }
+      } else {
+        if (inEpisode) {
+          episodes.push({
+            peakDate: dates[peakIdx],
+            troughDate: dates[troughIdx],
+            recoveryDate: dates[i],
+            depthPct: minDd,
+            peakEquity: equity[peakIdx],
+            troughEquity: equity[troughIdx],
+            daysToTrough: troughIdx - peakIdx,
+            totalDays: i - peakIdx,
+            isRecovered: true,
+          });
+          inEpisode = false;
+        }
+      }
+    }
+
+    if (inEpisode) {
+      episodes.push({
+        peakDate: dates[peakIdx],
+        troughDate: dates[troughIdx],
+        recoveryDate: null,
+        depthPct: minDd,
+        peakEquity: equity[peakIdx],
+        troughEquity: equity[troughIdx],
+        daysToTrough: troughIdx - peakIdx,
+        totalDays: n - 1 - peakIdx,
+        isRecovered: false,
+      });
+    }
+
+    episodes.sort((a, b) => a.depthPct - b.depthPct);
+    return episodes.slice(0, topN);
+  }
+
+  function renderTopDrawdowns(res) {
+    const container = document.getElementById("topDrawdownList");
+    if (!container) return;
+    const topEpisodes = computeTopDrawdownEpisodes(res, 5);
+    if (topEpisodes.length === 0) {
+      container.innerHTML = `<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:12px;">낙폭(-0.01% 이상) 구간이 발생하지 않았습니다.</div>`;
+      return;
+    }
+
+    const rows = topEpisodes
+      .map((ep, idx) => {
+        const rankBadge = idx === 0 ? "🥇 1위" : idx === 1 ? "🥈 2위" : idx === 2 ? "🥉 3위" : `${idx + 1}위`;
+        const recText = ep.recoveryDate ? `<strong>${ep.recoveryDate}</strong>` : `<span class="tag tag-indicator">현재 진행중 (미회복)</span>`;
+        const dropPeriodStr = `${Math.round(ep.daysToTrough)}거래일 하락`;
+        const durStr = ep.recoveryDate ? `${Math.round(ep.totalDays)}거래일 만에 회복` : `총 ${Math.round(ep.totalDays)}거래일 경과`;
+
+        return `
+          <tr>
+            <td style="font-weight:700;text-align:center;">${rankBadge}</td>
+            <td style="font-weight:800;color:var(--neg);font-size:13.5px;">${ep.depthPct.toFixed(2)}%</td>
+            <td><strong style="color:var(--text-main);">${ep.troughDate}</strong></td>
+            <td>${ep.peakDate}</td>
+            <td>${recText}</td>
+            <td style="font-size:11.5px;color:var(--text-muted);">${dropPeriodStr} / ${durStr}</td>
+          </tr>
+        `;
+      })
+      .join("");
+
+    container.innerHTML = `
+      <table class="data-table" style="font-size:12px;margin-bottom:0;">
+        <thead>
+          <tr>
+            <th style="width:70px;text-align:center;">순위</th>
+            <th>최대 낙폭량 (MDD)</th>
+            <th>저점 도달일 (Trough)</th>
+            <th>직전 고점일 (Peak)</th>
+            <th>전고점 회복일 (Recovery)</th>
+            <th>기간 분석 (하락 / 회복 소요)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    `;
+  }
+
   function computeYearlyComparison(res, benchTicker) {
     const dates = res.series.dates;
     const equity = res.series.equity;
@@ -1803,9 +2022,21 @@
       return raw * fx;
     }
 
+    function getAssetPxKrw(t, idx) {
+      const gIdx = startIdx >= 0 ? startIdx + idx : marketData.dates.indexOf(dates[idx]);
+      if (gIdx < 0 || !marketData.series[t]) return 1.0;
+      const raw = marketData.series[t][gIdx] || 1.0;
+      if (catalogMap[t]?.currency === "KRW") return raw;
+      const fx = fxSeries && fxSeries[gIdx] ? fxSeries[gIdx] : 1.0;
+      return raw * fx;
+    }
+
+    const tracked = res.series.trackedTickers || [];
+    const benchName = catalogMap[benchTicker]?.shortName || benchTicker;
     const yearlyData = [];
     let yrStartEq = equity[0];
     let yrStartBench = getBenchPxKrw(0);
+    let yrStartIdx = 0;
     let curYear = dates[0].slice(0, 4);
 
     for (let i = 1; i < n; i++) {
@@ -1816,15 +2047,56 @@
         const yrEndBench = getBenchPxKrw(endIdx);
         const stratRet = yrStartEq > 0 ? ((yrEndEq / yrStartEq) - 1.0) * 100.0 : 0.0;
         const benchRet = yrStartBench > 0 ? ((yrEndBench / yrStartBench) - 1.0) * 100.0 : 0.0;
+        const diff = stratRet - benchRet;
+
+        // Compute performance of constituent assets during this specific year
+        const assetPerformances = [];
+        tracked.forEach((t) => {
+          const pStart = getAssetPxKrw(t, yrStartIdx);
+          const pEnd = getAssetPxKrw(t, endIdx);
+          const aRet = pStart > 0 ? ((pEnd / pStart) - 1.0) * 100.0 : 0.0;
+          const aName = catalogMap[t]?.shortName || t;
+          assetPerformances.push({ ticker: t, name: aName, ret: aRet });
+        });
+        assetPerformances.sort((a, b) => b.ret - a.ret);
+        const bestAsset = assetPerformances[0];
+        const worstAsset = assetPerformances[assetPerformances.length - 1];
+
+        // Synthesize explanatory reason
+        let reason = "";
+        const absDiff = Math.abs(diff);
+        if (absDiff < 1.0) {
+          reason = `벤치마크(${benchName})와 자산배분 성과가 유사하게 동행 (편차 ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}%p)`;
+        } else if (diff > 0) {
+          if (benchRet < -5) {
+            reason = `시장 급락기(${benchRet.toFixed(1)}%) 중 안전자산·채권·현금 비중 및 리스크 관리로 손실 방어 (+${diff.toFixed(1)}%p 방어 알파)`;
+          } else if (bestAsset && bestAsset.ret > benchRet + 10) {
+            reason = `편입 자산 [${bestAsset.name}] 급등(+${bestAsset.ret.toFixed(1)}%) 및 적극적 비중 확대 기여 (+${diff.toFixed(1)}%p 알파)`;
+          } else {
+            reason = `포트폴리오 자산배분 다변화 및 교차매매 타이밍 적시 발동 (+${diff.toFixed(1)}%p 초과수익)`;
+          }
+        } else {
+          if (benchRet > 15) {
+            reason = `벤치마크 강세장(+${benchRet.toFixed(1)}%) 대비 채권·현금·방어자산 분산으로 상승 탄력 제한 (${diff.toFixed(1)}%p 차이)`;
+          } else if (worstAsset && worstAsset.ret < -12) {
+            reason = `편입 자산 [${worstAsset.name}] 부진(${worstAsset.ret.toFixed(1)}%) 및 단기 변동성 확대로 시장 하회 (${diff.toFixed(1)}%p)`;
+          } else {
+            reason = `자산별 수익률 둔화 및 리밸런싱 수수료 영향으로 벤치마크 대비 소폭 하회 (${diff.toFixed(1)}%p)`;
+          }
+        }
+
         yearlyData.push({
           year: curYear,
           stratReturnPct: stratRet,
           benchReturnPct: benchRet,
           isBeat: stratRet >= benchRet,
+          reason,
         });
+
         curYear = y;
         yrStartEq = yrEndEq;
         yrStartBench = yrEndBench;
+        yrStartIdx = endIdx;
       }
     }
     return yearlyData;
@@ -1885,6 +2157,20 @@
           tooltip: {
             callbacks: {
               label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y >= 0 ? "+" : ""}${ctx.parsed.y.toFixed(2)}%`,
+              afterBody: (items) => {
+                if (!items || !items.length) return [];
+                const idx = items[0].dataIndex;
+                const d = yearlyData[idx];
+                if (!d) return [];
+                const status = d.isBeat ? "🟢 초과 달성 (Beat)" : "🔴 시장 하회 (Lag)";
+                const diffSign = d.stratReturnPct >= d.benchReturnPct ? "+" : "";
+                const diff = (d.stratReturnPct - d.benchReturnPct).toFixed(2);
+                return [
+                  `─────────────────────────────`,
+                  `성과 격차: ${diffSign}${diff}%p [${status}]`,
+                  `원인 분석: ${d.reason}`,
+                ];
+              },
             },
           },
         },
@@ -1900,6 +2186,38 @@
         },
       },
     });
+  }
+
+  function createArrowCanvas(direction, color) {
+    if (typeof document === "undefined") return null;
+    const canvas = document.createElement("canvas");
+    canvas.width = 14;
+    canvas.height = 14;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    if (direction === "up") {
+      // Small arrow pointing up (↑)
+      ctx.moveTo(7, 12);
+      ctx.lineTo(7, 2);
+      ctx.moveTo(3.5, 6);
+      ctx.lineTo(7, 2);
+      ctx.lineTo(10.5, 6);
+    } else {
+      // Small arrow pointing down (↓)
+      ctx.moveTo(7, 2);
+      ctx.lineTo(7, 12);
+      ctx.moveTo(3.5, 8);
+      ctx.lineTo(7, 12);
+      ctx.lineTo(10.5, 8);
+    }
+    ctx.stroke();
+    return canvas;
   }
 
   function renderMainCharts(res) {
@@ -1948,6 +2266,9 @@
       }
     });
 
+    const arrowUpCanvas = createArrowCanvas("up", "#10b981");
+    const arrowDownCanvas = createArrowCanvas("down", "#ef4444");
+
     // 1. Equity Curve Chart
     const ctxEq = document.getElementById("chartEquity").getContext("2d");
     if (charts.equity) charts.equity.destroy();
@@ -1980,26 +2301,18 @@
           },
           {
             type: "scatter",
-            label: "🟢 매수 체결 (BUY ▲)",
+            label: "🟢 매수 체결 (BUY ↑)",
             data: buyScatterPoints,
-            backgroundColor: "#10b981",
-            borderColor: "#059669",
-            borderWidth: 1.5,
-            pointStyle: "triangle",
-            rotation: 0,
+            pointStyle: arrowUpCanvas || "triangle",
             pointRadius: 6,
             pointHoverRadius: 9,
             order: 1,
           },
           {
             type: "scatter",
-            label: "🔴 매도 체결 (SELL ▼)",
+            label: "🔴 매도 체결 (SELL ↓)",
             data: sellScatterPoints,
-            backgroundColor: "#ef4444",
-            borderColor: "#dc2626",
-            borderWidth: 1.5,
-            pointStyle: "triangle",
-            rotation: 180,
+            pointStyle: arrowDownCanvas || "triangle",
             pointRadius: 6,
             pointHoverRadius: 9,
             order: 2,
@@ -2011,6 +2324,28 @@
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
         plugins: {
+          zoom: {
+            pan: {
+              enabled: true,
+              mode: "x",
+            },
+            zoom: {
+              wheel: {
+                enabled: true,
+                speed: 0.08,
+              },
+              pinch: {
+                enabled: true,
+              },
+              drag: {
+                enabled: true,
+                backgroundColor: "rgba(59, 130, 246, 0.2)",
+                borderColor: "#3b82f6",
+                borderWidth: 1,
+              },
+              mode: "x",
+            },
+          },
           legend: { labels: { color: "#cbd5e1" } },
           tooltip: {
             callbacks: {
@@ -2018,7 +2353,7 @@
                 const raw = ctx.raw;
                 if (raw && raw.trade) {
                   const t = raw.trade;
-                  const typeLabel = t.type === "BUY" ? "🟢 매수 (BUY ▲)" : "🔴 매도 (SELL ▼)";
+                  const typeLabel = t.type === "BUY" ? "🟢 매수 (BUY ↑)" : "🔴 매도 (SELL ↓)";
                   const assetName = t.tickerName || catalogMap[t.ticker]?.name || t.ticker;
                   const unitPriceStr =
                     t.currency === "KRW"
@@ -2053,7 +2388,7 @@
       },
     });
 
-    // 2. Drawdown Chart
+    // 2. Drawdown Chart (Full Width)
     const ctxDd = document.getElementById("chartDrawdown").getContext("2d");
     if (charts.drawdown) charts.drawdown.destroy();
     charts.drawdown = new global.Chart(ctxDd, {
@@ -2066,7 +2401,7 @@
             data: sampled.series.drawdown,
             borderColor: "#ef4444",
             backgroundColor: "rgba(239, 68, 68, 0.18)",
-            borderWidth: 1.6,
+            borderWidth: 1.8,
             pointRadius: 0,
             fill: true,
           },
@@ -2098,6 +2433,9 @@
         },
       },
     });
+
+    // Render Top Drawdown Episodes Table
+    renderTopDrawdowns(res);
 
     // 3. Asset Allocation Weights History Chart
     const palette = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899", "#06b6d4", "#eab308"];
@@ -2525,6 +2863,93 @@
     URL.revokeObjectURL(url);
   }
 
+  // Equity Chart Zoom & Pan Helper Functions
+  function zoomEquityChart(factor) {
+    if (!charts.equity) return;
+    if (typeof charts.equity.zoom === "function") {
+      charts.equity.zoom(factor);
+    } else {
+      const xScale = charts.equity.scales.x;
+      if (!xScale) return;
+      const curMin = xScale.min !== undefined ? xScale.min : 0;
+      const curMax = xScale.max !== undefined ? xScale.max : charts.equity.data.labels.length - 1;
+      const range = curMax - curMin;
+      const newRange = range / factor;
+      const center = (curMin + curMax) / 2;
+      let newMin = Math.max(0, Math.round(center - newRange / 2));
+      let newMax = Math.min(charts.equity.data.labels.length - 1, Math.round(center + newRange / 2));
+      if (newMax - newMin < 5) return;
+      xScale.options.min = newMin;
+      xScale.options.max = newMax;
+      charts.equity.update();
+    }
+  }
+
+  function panEquityChart(pct) {
+    if (!charts.equity) return;
+    if (typeof charts.equity.pan === "function") {
+      const px = charts.equity.chartArea ? charts.equity.chartArea.width * pct : pct > 0 ? 100 : -100;
+      charts.equity.pan({ x: px });
+    } else {
+      const xScale = charts.equity.scales.x;
+      if (!xScale) return;
+      const curMin = xScale.min !== undefined ? xScale.min : 0;
+      const curMax = xScale.max !== undefined ? xScale.max : charts.equity.data.labels.length - 1;
+      const shift = Math.round((curMax - curMin) * pct);
+      let newMin = curMin + shift;
+      let newMax = curMax + shift;
+      if (newMin < 0) {
+        newMax -= newMin;
+        newMin = 0;
+      }
+      if (newMax > charts.equity.data.labels.length - 1) {
+        newMin -= newMax - (charts.equity.data.labels.length - 1);
+        newMax = charts.equity.data.labels.length - 1;
+      }
+      xScale.options.min = Math.max(0, newMin);
+      xScale.options.max = Math.min(charts.equity.data.labels.length - 1, newMax);
+      charts.equity.update();
+    }
+  }
+
+  function resetEquityZoom() {
+    if (!charts.equity) return;
+    if (typeof charts.equity.resetZoom === "function") {
+      charts.equity.resetZoom();
+    }
+    if (charts.equity.scales && charts.equity.scales.x) {
+      delete charts.equity.scales.x.options.min;
+      delete charts.equity.scales.x.options.max;
+    }
+    charts.equity.update();
+  }
+
+  function setEquityRangeYears(years) {
+    if (!charts.equity || !charts.equity.data.labels.length) return;
+    const labels = charts.equity.data.labels;
+    const totalLen = labels.length;
+    if (years === "ALL") {
+      resetEquityZoom();
+      return;
+    }
+    const numYears = Number(years);
+    if (!numYears) return;
+
+    const lastDate = new Date(labels[totalLen - 1]);
+    const targetStartDate = new Date(lastDate);
+    targetStartDate.setFullYear(targetStartDate.getFullYear() - numYears);
+    const targetIso = targetStartDate.toISOString().slice(0, 10);
+
+    let targetIdx = labels.findIndex((d) => d >= targetIso);
+    if (targetIdx < 0) targetIdx = 0;
+
+    if (charts.equity.scales && charts.equity.scales.x) {
+      charts.equity.scales.x.options.min = targetIdx;
+      charts.equity.scales.x.options.max = totalLen - 1;
+      charts.equity.update();
+    }
+  }
+
   // Global UI Event Listeners
   function bindGlobalEvents() {
     // Tab switching
@@ -2651,6 +3076,22 @@
       isLogScale = !isLogScale;
       e.currentTarget.textContent = isLogScale ? "📐 현재: 로그 스케일 (Log)" : "📏 현재: 선형 스케일 (Linear)";
       if (lastResult) renderMainCharts(lastResult);
+    });
+
+    // Equity Chart Zoom & Pan Controls
+    document.getElementById("btnZoomIn")?.addEventListener("click", () => zoomEquityChart(1.3));
+    document.getElementById("btnZoomOut")?.addEventListener("click", () => zoomEquityChart(0.77));
+    document.getElementById("btnPanLeft")?.addEventListener("click", () => panEquityChart(-0.2));
+    document.getElementById("btnPanRight")?.addEventListener("click", () => panEquityChart(0.2));
+    document.getElementById("btnResetZoom")?.addEventListener("click", resetEquityZoom);
+
+    // Equity Range Chips (1Y, 3Y, 5Y, 10Y, ALL)
+    document.querySelectorAll(".js-eq-range").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".js-eq-range").forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        setEquityRangeYears(chip.dataset.range);
+      });
     });
 
     // Manual Save to Scoreboard button on Results tab
