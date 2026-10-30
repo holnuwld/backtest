@@ -85,6 +85,9 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding-bottom: 76px; /* Space for mobile bottom bar */
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 a {
@@ -101,8 +104,10 @@ a {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-color);
-  padding: 10px 20px;
+  padding: 10px 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 [data-theme="light"] .app-header {
   background: rgba(255, 255, 255, 0.94);
@@ -114,8 +119,9 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  flex-wrap: nowrap;
+  gap: 12px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .brand-group {
@@ -1188,4 +1194,178 @@ select.form-control {
   display: flex;
   justify-content: flex-end;
   background: var(--bg-card-alt);
+}
+
+/* ==========================================================================
+   Mobile Responsive & Horizontal Overflow Prevention System
+   ========================================================================== */
+img, canvas, svg, video {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  /* Prevent header overflow */
+  .btn-report-desktop {
+    display: none !important;
+  }
+
+  .app-header {
+    padding: 8px 12px;
+  }
+
+  .header-inner {
+    gap: 8px;
+  }
+
+  .brand-group {
+    gap: 8px;
+  }
+
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .brand-title {
+    font-size: 13.5px;
+  }
+
+  .brand-sub {
+    font-size: 10.5px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header-actions .btn {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  /* Main layout & Cards */
+  .main-container {
+    padding: 0 10px;
+    margin: 10px auto;
+  }
+
+  .card {
+    padding: 14px 12px;
+    border-radius: var(--radius-md);
+    margin-bottom: 14px;
+  }
+
+  .card-header {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    gap: 8px;
+  }
+
+  .card-title {
+    font-size: 14.5px;
+  }
+
+  /* Form & Inputs */
+  .form-row {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .alloc-item {
+    grid-template-columns: 1fr 78px 30px;
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .alloc-item .form-control {
+    padding: 0 6px;
+    font-size: 12px;
+    height: 34px;
+  }
+
+  /* Rules */
+  .rule-card {
+    padding: 12px 10px;
+    margin-bottom: 12px;
+  }
+
+  .condition-box {
+    padding: 10px 8px;
+  }
+
+  .cond-grid {
+    gap: 8px;
+  }
+
+  .side-spec-box {
+    padding: 8px 10px;
+  }
+
+  /* KPI Cards */
+  .kpi-grid {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .kpi-card {
+    padding: 12px 10px;
+  }
+
+  .kpi-value {
+    font-size: 19px;
+  }
+
+  .kpi-label {
+    font-size: 11.5px;
+  }
+
+  /* Podium & Tables */
+  .podium-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .scoreboard-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    display: block;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  /* Toast & Modals */
+  .toast-container {
+    right: 12px;
+    left: 12px;
+    bottom: 74px;
+  }
+
+  .modal-card {
+    max-width: 95vw;
+    margin: 10px;
+  }
+
+  .modal-header {
+    padding: 12px 16px;
+  }
+
+  .modal-body {
+    padding: 14px 16px;
+    font-size: 13px;
+  }
+
+  .modal-footer {
+    padding: 10px 16px;
+  }
 }

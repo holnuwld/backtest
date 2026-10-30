@@ -32,9 +32,9 @@
       </nav>
 
       <div class="header-actions">
-        <a href="test-result.html" target="_blank" class="btn btn-sm" style="text-decoration:none;display:inline-flex;align-items:center;gap:4px;background:rgba(56,189,248,0.15);color:var(--accent);border:1px solid rgba(56,189,248,0.35);font-weight:700;">📑 테스트 리포트 ↗</a>
+        <a href="test-result.html" target="_blank" class="btn btn-sm btn-report-desktop" style="display:inline-flex;align-items:center;gap:4px;background:rgba(56,189,248,0.15);color:var(--accent);border:1px solid rgba(56,189,248,0.35);font-weight:700;">📑 테스트 리포트 ↗</a>
         <button type="button" id="btnRunQuick" class="btn btn-primary btn-sm">▶ 즉시 실행</button>
-        <button type="button" id="btnThemeToggle" class="btn btn-sm" title="다크/라이트 테마 전환">🌓 테마</button>
+        <button type="button" id="btnThemeToggle" class="btn btn-sm" title="다크/라이트 테마 전환">🌓</button>
       </div>
     </div>
   </header>
@@ -43,20 +43,6 @@
   <main class="main-container">
     <!-- TAB 1: STRATEGY & CROSS-CONDITION BUILDER -->
     <section id="tab-builder" class="tab-panel active">
-      <!-- Test Result Report Link Banner -->
-      <div class="hero-report-banner">
-        <div class="hero-report-banner-text">
-          <div class="hero-report-banner-icon">📑</div>
-          <div>
-            <div class="hero-report-banner-title">4개 에이전트 블라인드 백테스트 통합 리포트 (총 200개 전략 검증 결과)</div>
-            <div class="hero-report-banner-sub">전일 종가 시그널 · 익일 시가/종가 체결 검증, 파레토 최적 Top 10, MDD 위기 구간 추적 리포트를 확인하세요.</div>
-          </div>
-        </div>
-        <a href="test-result.html" target="_blank" class="btn btn-primary" style="font-weight:800;white-space:nowrap;">
-          통합 리포트 열람 ↗
-        </a>
-      </div>
-
       <!-- Presets Card -->
       <div class="card">
         <div class="card-header">
@@ -128,10 +114,14 @@
                 <select id="cfgBenchmark" class="form-control"></select>
               </div>
               <div class="form-group">
-                <label class="form-label">신호 발생 후 체결 시점</label>
+                <label class="form-label">
+                  신호 발생 후 주문/체결 방식
+                  <button type="button" class="btn-help-inline" data-help="EXECUTION_MODE" title="주문 체결 방식 안내">?</button>
+                </label>
                 <select id="cfgLag" class="form-control">
-                  <option value="1" selected>익일(T+1) 종가 체결 (미래참조 방지 권장)</option>
-                  <option value="0">당일(T) 종가 즉시 체결</option>
+                  <option value="NEXT_CLOSE" selected>익일(T+1) 종가 체결 (Next Close · 실전 표준 권장)</option>
+                  <option value="NEXT_OPEN">익일(T+1) 시가 체결 (Next Open · 오전 동시호가)</option>
+                  <option value="SAME_DAY_CLOSE">당일(T) 종가 즉시 체결 (Same-day Close · 이론치)</option>
                 </select>
               </div>
             </div>

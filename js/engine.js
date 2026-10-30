@@ -91,8 +91,10 @@
       case "<=":
         return curL <= curR;
       case "CROSS_UP":
+      case "CROSS_ABOVE":
         return idx > 0 && prevL <= prevR && curL > curR;
       case "CROSS_DOWN":
+      case "CROSS_BELOW":
         return idx > 0 && prevL >= prevR && curL < curR;
       default:
         return false;
@@ -196,6 +198,28 @@
       return marketData.series[ticker] ? marketData.series[ticker][gIdx] : 0;
     }
 
+    // Open Price & Open FX accessors for NEXT_OPEN execution
+    function getOpenRawPrice(ticker, gIdx) {
+      if (marketData.openSeries && marketData.openSeries[ticker] && marketData.openSeries[ticker][gIdx]) {
+        return Number(marketData.openSeries[ticker][gIdx]);
+      }
+      return getRawPrice(ticker, gIdx);
+    }
+
+    function getOpenExchangeRate(gIdx) {
+      if (marketData.openSeries && marketData.openSeries["USDKRW"] && marketData.openSeries["USDKRW"][gIdx]) {
+        return Number(marketData.openSeries["USDKRW"][gIdx]);
+      }
+      return getExchangeRate(gIdx);
+    }
+
+    function getOpenPriceKrw(ticker, gIdx) {
+      const cur = catalogMap[ticker]?.currency || "USD";
+      const rawPx = getOpenRawPrice(ticker, gIdx);
+      if (cur === "KRW") return rawPx;
+      return rawPx * getOpenExchangeRate(gIdx);
+    }
+
     // Find start and end indices
     const reqStart = config.startDate || dates[0];
     const reqEnd = config.endDate || dates[totalDays - 1];
@@ -271,7 +295,11 @@
     // Initial capital in KRW (default: 10,000,000 KRW)
     const initialCapital = Math.max(1000, Number(config.initialCapital || 10000000));
     const feeRate = Math.max(0, Number(config.feeRatePct ?? 0.05)) / 100.0;
-    const executionLag = Number(config.executionLag ?? 1) === 0 ? 0 : 1;
+
+    // Execution Mode: NEXT_CLOSE (default), NEXT_OPEN, SAME_DAY_CLOSE
+    let executionMode = config.executionMode || (config.executionLag === 0 || config.executionLag === "0" ? "SAME_DAY_CLOSE" : (config.executionLag === "NEXT_OPEN" ? "NEXT_OPEN" : "NEXT_CLOSE"));
+    const executionLag = executionMode === "SAME_DAY_CLOSE" ? 0 : 1;
+    const isExecuteAtOpen = executionMode === "NEXT_OPEN";
     const cashYieldMode = config.cashYieldMode || "US3M";
 
     const trackedTickers = Array.from(trackedTickersSet);
@@ -544,10 +572,10 @@
             }
 
             if (sellDollar > 10.0) {
-              const px = getRawPrice(t, gIdx);
-              const pxKrw = getPriceKrw(t, gIdx);
+              const px = isExecuteAtOpen ? getOpenRawPrice(t, gIdx) : getRawPrice(t, gIdx);
+              const pxKrw = isExecuteAtOpen ? getOpenPriceKrw(t, gIdx) : getPriceKrw(t, gIdx);
               const cur = catalogMap[t]?.currency || "USD";
-              const rate = getExchangeRate(gIdx);
+              const rate = isExecuteAtOpen ? getOpenExchangeRate(gIdx) : getExchangeRate(gIdx);
               const sellSh = sellDollar / pxKrw;
               const fee = sellDollar * feeRate;
               shares[t] = Math.max(0, shares[t] - sellSh);
@@ -576,6 +604,7 @@
                   amountKrw: sellDollar,
                   feeKrw: fee,
                   price: px,
+                  execType: isExecuteAtOpen ? "익일시가" : (executionLag === 0 ? "당일종가" : "익일종가"),
                   equityAfter: getPortfolioValuation(gIdx).total,
                 });
               }
@@ -647,10 +676,10 @@
 
             const actualSpend = Math.min(cash, desiredBuyDollar);
             if (actualSpend > 100.0) {
-              const px = getRawPrice(t, gIdx);
-              const pxKrw = getPriceKrw(t, gIdx);
+              const px = isExecuteAtOpen ? getOpenRawPrice(t, gIdx) : getRawPrice(t, gIdx);
+              const pxKrw = isExecuteAtOpen ? getOpenPriceKrw(t, gIdx) : getPriceKrw(t, gIdx);
               const cur = catalogMap[t]?.currency || "USD";
-              const rate = getExchangeRate(gIdx);
+              const rate = isExecuteAtOpen ? getOpenExchangeRate(gIdx) : getExchangeRate(gIdx);
               const fee = actualSpend * feeRate;
               const netBuy = actualSpend - fee;
               if (pxKrw > 0) {
@@ -681,6 +710,7 @@
                     amountKrw: actualSpend,
                     feeKrw: fee,
                     price: px,
+                    execType: isExecuteAtOpen ? "익일시가" : (executionLag === 0 ? "당일종가" : "익일종가"),
                     equityAfter: getPortfolioValuation(gIdx).total,
                   });
                 }
@@ -853,6 +883,7 @@
         tradingDays: numDays,
         years: Math.round(years * 10) / 10,
         benchmarkTicker,
+        executionMode,
         benchFinal,
         benchTotalReturnPct,
         benchCagrPct,

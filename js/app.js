@@ -96,6 +96,17 @@
         <p>모든 달러 자산(S&P 500, 나스닥 등)은 당일 원달러 환율이 반영된 원화 환산 총수익률 곡선으로 동일하게 평가되므로 정확한 상대 성과(알파)를 확인할 수 있습니다.</p>
       `,
     },
+    EXECUTION_MODE: {
+      title: "신호 발생 후 주문 / 체결 방식 (Execution Mode)",
+      content: `
+        <p>기술적/거시적 시그널 조건이 만족되었을 때, <strong>실제 매매 주문이 체결되는 시점과 가격 기준</strong>을 결정합니다.</p>
+        <ul>
+          <li><strong>익일(T+1) 종가 체결 (Next Close · 실전 표준 권장):</strong> 전일(T-1) 종가로 시그널을 확인한 뒤, 다음 영업일(T) 장중 안정화된 <strong>종가(Close)</strong>에 체결합니다. 아침 동시호가 갭하락 투매와 극심한 슬리피지를 회피할 수 있어 실전 퀀트에서 가장 추천됩니다.</li>
+          <li><strong>익일(T+1) 시가 체결 (Next Open · 오전 동시호가):</strong> 전일(T-1) 시그널 확인 후 다음 영업일(T) <strong>장 시작 시가(Open)</strong>에 즉시 매매합니다. 빠른 진입이 가능하지만 갭하락/갭상승에 노출될 수 있습니다.</li>
+          <li><strong>당일(T) 종가 즉시 체결 (Same-day Close · 이론치):</strong> 신호가 발생한 당일 종가에 즉시 체결되는 것으로 가정합니다. 장 마감 직전 동시호가에 주문을 집행할 수 있는 환경에 적합합니다.</li>
+        </ul>
+      `,
+    },
     REBALANCE_COND: {
       title: "리밸런싱 발동 조건",
       content: `
@@ -254,6 +265,152 @@
 
   // Built-in Strategy Presets
   const STRATEGY_PRESETS = [
+    {
+      id: "preset_kospi_nextclose_k18",
+      title: "🥇 [코스피 익일종가 1위] 60일선 돌파 & 현금대피 (K18)",
+      desc: "27.8년 CAGR +8.68%, MDD -31.41%(코스피 -55.7% 대비 대폭 방어). 60일선 상향돌파 시 코스피 매수, 하향이탈 시 현금 50% 대피",
+      config: {
+        name: "[K18] 코스피 60일선 돌파 & 현금대피 (익일종가 1위)",
+        initialCapital: 10000000,
+        startDate: "1999-01-04",
+        endDate: "2026-10-27",
+        executionMode: "NEXT_CLOSE",
+        executionLag: 1,
+        feeRatePct: 0.05,
+        cashYieldMode: "US3M",
+        benchmarkTicker: "KPI200",
+        allocations: [{ ticker: "KPI200", weightPct: 45 }],
+        rebalance: {
+          periodMode: "NONE",
+          customDays: 60,
+          bandMode: "NONE",
+          bandThreshold: 10,
+        },
+        rebalanceEnabled: false,
+        rulesEnabled: true,
+        rules: [
+          {
+            id: "r_k18_buy",
+            name: "코스피 60일선 상향돌파 시 현금 55% 매수",
+            enabled: true,
+            logic: "AND",
+            cooldownDays: 5,
+            conditions: [
+              {
+                left: { ticker: "KPI200", transform: "PRICE", p1: 20, p2: 2, p3: 9 },
+                operator: "CROSS_UP",
+                rightMode: "INDICATOR",
+                rightIndicator: { ticker: "KPI200", transform: "SMA", p1: 60, p2: 2, p3: 9 },
+                rightValue: null,
+              },
+            ],
+            action: {
+              type: "BUY",
+              targetTicker: "KPI200",
+              sizingMode: "BALANCE_PCT",
+              sizingValue: 55,
+              fundingSource: "CASH_THEN_PRORATA",
+            },
+          },
+          {
+            id: "r_k18_sell",
+            name: "코스피 60일선 하향이탈 시 보유잔액 50% 현금화",
+            enabled: true,
+            logic: "AND",
+            cooldownDays: 5,
+            conditions: [
+              {
+                left: { ticker: "KPI200", transform: "PRICE", p1: 20, p2: 2, p3: 9 },
+                operator: "CROSS_DOWN",
+                rightMode: "INDICATOR",
+                rightIndicator: { ticker: "KPI200", transform: "SMA", p1: 60, p2: 2, p3: 9 },
+                rightValue: null,
+              },
+            ],
+            action: {
+              type: "SELL",
+              targetTicker: "KPI200",
+              sizingMode: "BALANCE_PCT",
+              sizingValue: 50,
+              fundingSource: "CASH_THEN_PRORATA",
+            },
+          },
+        ],
+      },
+    },
+    {
+      id: "preset_ndx_nextclose_n13",
+      title: "🥇 [나스닥 익일종가 1위] 20/60 EMA 골든·데드 스윙 (N13)",
+      desc: "27.8년 CAGR +8.53%, 닷컴버블 -80.9% 대폭락을 -38.8%로 철통 방어! 20/60 EMA 골든크로스 시 매수, 데드크로스 시 현금화",
+      config: {
+        name: "[N13] 나스닥 20/60일 EMA 스윙 (익일종가 1위)",
+        initialCapital: 10000000,
+        startDate: "1999-01-04",
+        endDate: "2026-10-27",
+        executionMode: "NEXT_CLOSE",
+        executionLag: 1,
+        feeRatePct: 0.05,
+        cashYieldMode: "US3M",
+        benchmarkTicker: "NDX",
+        allocations: [{ ticker: "NDX", weightPct: 40 }],
+        rebalance: {
+          periodMode: "NONE",
+          customDays: 60,
+          bandMode: "NONE",
+          bandThreshold: 10,
+        },
+        rebalanceEnabled: false,
+        rulesEnabled: true,
+        rules: [
+          {
+            id: "r_n13_buy",
+            name: "나스닥 20일선이 60일선 상향돌파 시 현금 50% 매수",
+            enabled: true,
+            logic: "AND",
+            cooldownDays: 5,
+            conditions: [
+              {
+                left: { ticker: "NDX", transform: "EMA", p1: 20, p2: 2, p3: 9 },
+                operator: "CROSS_UP",
+                rightMode: "INDICATOR",
+                rightIndicator: { ticker: "NDX", transform: "EMA", p1: 60, p2: 2, p3: 9 },
+                rightValue: null,
+              },
+            ],
+            action: {
+              type: "BUY",
+              targetTicker: "NDX",
+              sizingMode: "BALANCE_PCT",
+              sizingValue: 50,
+              fundingSource: "CASH_THEN_PRORATA",
+            },
+          },
+          {
+            id: "r_n13_sell",
+            name: "나스닥 20일선이 60일선 하향이탈 시 보유잔액 50% 현금화",
+            enabled: true,
+            logic: "AND",
+            cooldownDays: 5,
+            conditions: [
+              {
+                left: { ticker: "NDX", transform: "EMA", p1: 20, p2: 2, p3: 9 },
+                operator: "CROSS_DOWN",
+                rightMode: "INDICATOR",
+                rightIndicator: { ticker: "NDX", transform: "EMA", p1: 60, p2: 2, p3: 9 },
+                rightValue: null,
+              },
+            ],
+            action: {
+              type: "SELL",
+              targetTicker: "NDX",
+              sizingMode: "BALANCE_PCT",
+              sizingValue: 50,
+              fundingSource: "CASH_THEN_PRORATA",
+            },
+          },
+        ],
+      },
+    },
     {
       id: "preset_yield_curve_ndx",
       title: "📈 10Y-2Y 장단기 금리차 + 나스닥/국채 교차전략",
@@ -1062,7 +1219,14 @@
     document.getElementById("cfgCapital").value = currentConfig.initialCapital || 10000000;
     document.getElementById("cfgStartDate").value = currentConfig.startDate || marketData.startDate;
     document.getElementById("cfgEndDate").value = currentConfig.endDate || marketData.endDate;
-    document.getElementById("cfgLag").value = String(currentConfig.executionLag ?? 1);
+    let execModeVal = currentConfig.executionMode || "NEXT_CLOSE";
+    if (currentConfig.executionLag === 0 || currentConfig.executionLag === "0") {
+      execModeVal = "SAME_DAY_CLOSE";
+    } else if (currentConfig.executionLag === "NEXT_OPEN") {
+      execModeVal = "NEXT_OPEN";
+    }
+    const lagSelect = document.getElementById("cfgLag");
+    if (lagSelect) lagSelect.value = execModeVal;
     document.getElementById("cfgFee").value = currentConfig.feeRatePct ?? 0.05;
     document.getElementById("cfgCashYield").value = currentConfig.cashYieldMode || "US3M";
     document.getElementById("cfgBenchmark").value = currentConfig.benchmarkTicker || "SPX";
@@ -1682,7 +1846,9 @@
     currentConfig.initialCapital = Math.max(100, parseFloat(document.getElementById("cfgCapital").value) || 10000000);
     currentConfig.startDate = document.getElementById("cfgStartDate").value || marketData.startDate;
     currentConfig.endDate = document.getElementById("cfgEndDate").value || marketData.endDate;
-    currentConfig.executionLag = parseInt(document.getElementById("cfgLag").value, 10) === 0 ? 0 : 1;
+    const rawExec = document.getElementById("cfgLag").value;
+    currentConfig.executionMode = rawExec;
+    currentConfig.executionLag = rawExec === "SAME_DAY_CLOSE" || rawExec === "0" ? 0 : 1;
     currentConfig.feeRatePct = Math.max(0, parseFloat(document.getElementById("cfgFee").value) || 0);
     currentConfig.cashYieldMode = document.getElementById("cfgCashYield").value;
     currentConfig.benchmarkTicker = document.getElementById("cfgBenchmark").value || "SPX";
