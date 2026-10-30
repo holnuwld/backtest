@@ -1,0 +1,3726 @@
+{
+  "protocol": "QUANTCROSS_BLIND_EVAL_V1",
+  "generatedAt": "2026-10-29T10:19:44.895Z",
+  "blindNotice": "All strategy names, asset weights, rebalancing rules, and indicator parameters have been stripped. Evaluate candidates strictly on risk-adjusted return (Low MDD + High CAGR), multi-regime consistency, crisis defense, and parameter stability.",
+  "constraintsEnforced": {
+    "tradableUniverse": [
+      "KPI200",
+      "NDX",
+      "KRX_GOLD"
+    ],
+    "signalBasis": "Previous Day Close (T-1 Close)",
+    "executionBasis": "Next Day Open (T Open)",
+    "maxWeeklyTradesLimit": 3,
+    "primaryPeriod": "1996-07-01 ~ 2026-10-27 (30.32 years, 100% genuine market data)",
+    "modernOOSPeriod": "2011-01-03 ~ 2026-10-27 (15.82 years)"
+  },
+  "referenceBaselines": {
+    "Asset_1_Single_BuyHold": {
+      "startDate": "1996-07-01",
+      "endDate": "2026-10-27",
+      "tradingDays": 7630,
+      "years": 30.28,
+      "initialCapital": 10000000,
+      "finalEquity": 71797533,
+      "totalReturnPct": 617.98,
+      "cagrPct": 6.73,
+      "maxDrawdownPct": -64.66,
+      "maxDrawdownPeakDate": "1997-06-17",
+      "maxDrawdownDate": "1998-06-16",
+      "maxDrawdownRecoveryDate": "1999-04-27",
+      "mddPeakToTroughDays": 251,
+      "mddTotalUnderwaterDays": 468,
+      "mddEventDescription": "1997~1998 IMF 외환위기 (국가부도 위기 및 고금리·실물 쇼크)",
+      "ulcerIndex": 22.47,
+      "maxUnderwaterDays": 1511,
+      "annualVolPct": 27.02,
+      "sharpe": 0.284,
+      "sortino": 0.402,
+      "calmar": 0.104,
+      "upi": 0.188,
+      "winRateYearlyPct": 67.7,
+      "worstYearReturnPct": -50.92,
+      "ruleTradeCount": 0,
+      "rebalanceCount": 0,
+      "totalTrades": 0,
+      "avgTradesPerYear": 0,
+      "avgTradesPerWeek": 0,
+      "maxTradesInSingleWeek": 0,
+      "weeklyCapBlockedCount": 0,
+      "totalFeesPaid": 5000,
+      "paretoScore": -69.67
+    },
+    "Asset_2_Single_BuyHold": {
+      "startDate": "1996-07-01",
+      "endDate": "2026-10-27",
+      "tradingDays": 7630,
+      "years": 30.28,
+      "initialCapital": 10000000,
+      "finalEquity": 714866361,
+      "totalReturnPct": 7048.66,
+      "cagrPct": 15.14,
+      "maxDrawdownPct": -80.92,
+      "maxDrawdownPeakDate": "2000-03-27",
+      "maxDrawdownDate": "2002-10-07",
+      "maxDrawdownRecoveryDate": "2015-07-16",
+      "mddPeakToTroughDays": 634,
+      "mddTotalUnderwaterDays": 3849,
+      "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+      "ulcerIndex": 41.37,
+      "maxUnderwaterDays": 3848,
+      "annualVolPct": 29.45,
+      "sharpe": 0.539,
+      "sortino": 0.793,
+      "calmar": 0.187,
+      "upi": 0.306,
+      "winRateYearlyPct": 74.2,
+      "worstYearReturnPct": -43.63,
+      "ruleTradeCount": 0,
+      "rebalanceCount": 0,
+      "totalTrades": 0,
+      "avgTradesPerYear": 0,
+      "avgTradesPerWeek": 0,
+      "maxTradesInSingleWeek": 0,
+      "weeklyCapBlockedCount": 0,
+      "totalFeesPaid": 5000,
+      "paretoScore": -79.15
+    },
+    "Asset_3_Single_BuyHold": {
+      "startDate": "1996-07-01",
+      "endDate": "2026-10-27",
+      "tradingDays": 7630,
+      "years": 30.28,
+      "initialCapital": 10000000,
+      "finalEquity": 169892970,
+      "totalReturnPct": 1598.93,
+      "cagrPct": 9.81,
+      "maxDrawdownPct": -47.79,
+      "maxDrawdownPeakDate": "1997-12-23",
+      "maxDrawdownDate": "1999-07-13",
+      "maxDrawdownRecoveryDate": "2006-04-12",
+      "mddPeakToTroughDays": 389,
+      "mddTotalUnderwaterDays": 2087,
+      "mddEventDescription": "2024~2026 글로벌 매크로 금리·관세 변동성 조정기",
+      "ulcerIndex": 23.85,
+      "maxUnderwaterDays": 2152,
+      "annualVolPct": 20.36,
+      "sharpe": 0.439,
+      "sortino": 0.652,
+      "calmar": 0.205,
+      "upi": 0.306,
+      "winRateYearlyPct": 74.2,
+      "worstYearReturnPct": -29.28,
+      "ruleTradeCount": 0,
+      "rebalanceCount": 0,
+      "totalTrades": 0,
+      "avgTradesPerYear": 0,
+      "avgTradesPerWeek": 0,
+      "maxTradesInSingleWeek": 0,
+      "weeklyCapBlockedCount": 0,
+      "totalFeesPaid": 5000,
+      "paretoScore": -38.56
+    }
+  },
+  "candidates": [
+    {
+      "blindId": "BLIND_001",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.079,
+        "avgTradesPerYear": 4,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.81,
+        "totalReturnPct": 3743.22,
+        "maxDrawdownPct": -39.92,
+        "maxDrawdownDate": "2001-09-21",
+        "calmar": 0.321,
+        "sortino": 1.017,
+        "sharpe": 0.692,
+        "upi": 0.908,
+        "ulcerIndex": 11.35,
+        "maxUnderwaterDays": 1418,
+        "annualVolPct": 15.56,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -25.88,
+        "finalEquityFrom10M": 384322430
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.09,
+        "totalReturnPct": 505.92,
+        "maxDrawdownPct": -25.59,
+        "calmar": 0.472,
+        "sortino": 1.133,
+        "sharpe": 0.801,
+        "annualVolPct": 12.03,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.37,
+        "worstCrisisMddPct": -39.57,
+        "avgCrisisReturnPct": -2.41,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 23.69,
+            "mddPct": -28.46
+          },
+          "dotcom_2000": {
+            "returnPct": -31.17,
+            "mddPct": -39.57
+          },
+          "gfc_2008": {
+            "returnPct": 3.9,
+            "mddPct": -22.96
+          },
+          "covid_2020": {
+            "returnPct": 8.28,
+            "mddPct": -19.06
+          },
+          "ratehike_2022": {
+            "returnPct": -16.73,
+            "mddPct": -16.79
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 100,
+        "perturbedMinus15_cagrPct": 12.81,
+        "perturbedMinus15_mddPct": -39.92,
+        "perturbedPlus15_cagrPct": 12.81,
+        "perturbedPlus15_mddPct": -39.92
+      },
+      "referenceCompositeScore": -14.73
+    },
+    {
+      "blindId": "BLIND_002",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.258,
+        "avgTradesPerYear": 13.01,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.84,
+        "totalReturnPct": 4966.93,
+        "maxDrawdownPct": -48.36,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.286,
+        "sortino": 1.032,
+        "sharpe": 0.694,
+        "upi": 0.754,
+        "ulcerIndex": 15.05,
+        "maxUnderwaterDays": 1890,
+        "annualVolPct": 17.21,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -19.43,
+        "finalEquityFrom10M": 506693263
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.1,
+        "totalReturnPct": 701.79,
+        "maxDrawdownPct": -22.64,
+        "calmar": 0.623,
+        "sortino": 1.301,
+        "sharpe": 0.9,
+        "annualVolPct": 12.79,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.96,
+        "worstCrisisMddPct": -48.3,
+        "avgCrisisReturnPct": 5.18,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 49.45,
+            "mddPct": -24.93
+          },
+          "dotcom_2000": {
+            "returnPct": -41.77,
+            "mddPct": -48.3
+          },
+          "gfc_2008": {
+            "returnPct": 20.98,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 12.28,
+            "mddPct": -16.7
+          },
+          "ratehike_2022": {
+            "returnPct": -15.06,
+            "mddPct": -15.91
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.3,
+        "perturbedMinus15_cagrPct": 13.51,
+        "perturbedMinus15_mddPct": -48.2,
+        "perturbedPlus15_cagrPct": 13.59,
+        "perturbedPlus15_mddPct": -46.89
+      },
+      "referenceCompositeScore": -22
+    },
+    {
+      "blindId": "BLIND_003",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.094,
+        "avgTradesPerYear": 4.76,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.85,
+        "totalReturnPct": 4977.54,
+        "maxDrawdownPct": -49.94,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.277,
+        "sortino": 0.988,
+        "sharpe": 0.665,
+        "upi": 0.777,
+        "ulcerIndex": 14.62,
+        "maxUnderwaterDays": 1889,
+        "annualVolPct": 18.21,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -19.14,
+        "finalEquityFrom10M": 507754003
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.22,
+        "totalReturnPct": 715.88,
+        "maxDrawdownPct": -21.47,
+        "calmar": 0.662,
+        "sortino": 1.259,
+        "sharpe": 0.871,
+        "annualVolPct": 13.43,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.44,
+        "worstCrisisMddPct": -50.03,
+        "avgCrisisReturnPct": 7.13,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 61.04,
+            "mddPct": -24.98
+          },
+          "dotcom_2000": {
+            "returnPct": -42.44,
+            "mddPct": -50.03
+          },
+          "gfc_2008": {
+            "returnPct": 18.13,
+            "mddPct": -19.1
+          },
+          "covid_2020": {
+            "returnPct": 14.17,
+            "mddPct": -16.77
+          },
+          "ratehike_2022": {
+            "returnPct": -15.24,
+            "mddPct": -16.32
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.5,
+        "perturbedMinus15_cagrPct": 13.79,
+        "perturbedMinus15_mddPct": -50.1,
+        "perturbedPlus15_cagrPct": 13.85,
+        "perturbedPlus15_mddPct": -49.84
+      },
+      "referenceCompositeScore": -23.67
+    },
+    {
+      "blindId": "BLIND_004",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.216,
+        "avgTradesPerYear": 10.87,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.16,
+        "totalReturnPct": 3129.96,
+        "maxDrawdownPct": -45.11,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.27,
+        "sortino": 0.898,
+        "sharpe": 0.613,
+        "upi": 0.692,
+        "ulcerIndex": 13.95,
+        "maxUnderwaterDays": 1814,
+        "annualVolPct": 16.98,
+        "winRateYearlyPct": 74.2,
+        "worstYearReturnPct": -20.27,
+        "finalEquityFrom10M": 322995858
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.8,
+        "totalReturnPct": 569.64,
+        "maxDrawdownPct": -25.2,
+        "calmar": 0.508,
+        "sortino": 1.186,
+        "sharpe": 0.828,
+        "annualVolPct": 12.46,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.55,
+        "worstCrisisMddPct": -45.03,
+        "avgCrisisReturnPct": -1.36,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 26.78,
+            "mddPct": -32.31
+          },
+          "dotcom_2000": {
+            "returnPct": -38.24,
+            "mddPct": -45.03
+          },
+          "gfc_2008": {
+            "returnPct": 8.56,
+            "mddPct": -23.26
+          },
+          "covid_2020": {
+            "returnPct": 11.46,
+            "mddPct": -16.49
+          },
+          "ratehike_2022": {
+            "returnPct": -15.37,
+            "mddPct": -15.66
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.6,
+        "perturbedMinus15_cagrPct": 12.26,
+        "perturbedMinus15_mddPct": -45.52,
+        "perturbedPlus15_cagrPct": 12.22,
+        "perturbedPlus15_mddPct": -45.01
+      },
+      "referenceCompositeScore": -27.08
+    },
+    {
+      "blindId": "BLIND_005",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.23,
+        "avgTradesPerYear": 11.59,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.95,
+        "totalReturnPct": 5114.12,
+        "maxDrawdownPct": -48.18,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.29,
+        "sortino": 1.034,
+        "sharpe": 0.699,
+        "upi": 0.787,
+        "ulcerIndex": 14.55,
+        "maxUnderwaterDays": 1853,
+        "annualVolPct": 17.22,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -20.16,
+        "finalEquityFrom10M": 521411955
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.28,
+        "totalReturnPct": 722.6,
+        "maxDrawdownPct": -21.88,
+        "calmar": 0.653,
+        "sortino": 1.299,
+        "sharpe": 0.901,
+        "annualVolPct": 12.97,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.52,
+        "worstCrisisMddPct": -48.12,
+        "avgCrisisReturnPct": 7.79,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 51.32,
+            "mddPct": -24.3
+          },
+          "dotcom_2000": {
+            "returnPct": -40.91,
+            "mddPct": -48.12
+          },
+          "gfc_2008": {
+            "returnPct": 27.37,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 16.31,
+            "mddPct": -15.62
+          },
+          "ratehike_2022": {
+            "returnPct": -15.13,
+            "mddPct": -15.6
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 95.9,
+        "perturbedMinus15_cagrPct": 13.04,
+        "perturbedMinus15_mddPct": -47.35,
+        "perturbedPlus15_cagrPct": 13.63,
+        "perturbedPlus15_mddPct": -45.57
+      },
+      "referenceCompositeScore": -20.18
+    },
+    {
+      "blindId": "BLIND_006",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.173,
+        "avgTradesPerYear": 8.72,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.97,
+        "totalReturnPct": 3916.21,
+        "maxDrawdownPct": -35.81,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.362,
+        "sortino": 1.029,
+        "sharpe": 0.696,
+        "upi": 1.108,
+        "ulcerIndex": 9.45,
+        "maxUnderwaterDays": 1395,
+        "annualVolPct": 15.68,
+        "winRateYearlyPct": 74.2,
+        "worstYearReturnPct": -17.3,
+        "finalEquityFrom10M": 401621269
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.55,
+        "totalReturnPct": 546.68,
+        "maxDrawdownPct": -22.91,
+        "calmar": 0.548,
+        "sortino": 1.179,
+        "sharpe": 0.824,
+        "annualVolPct": 12.22,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -23.28,
+        "worstCrisisMddPct": -35.73,
+        "avgCrisisReturnPct": 3.86,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 36.34,
+            "mddPct": -26.3
+          },
+          "dotcom_2000": {
+            "returnPct": -27.52,
+            "mddPct": -35.73
+          },
+          "gfc_2008": {
+            "returnPct": 12.34,
+            "mddPct": -21.71
+          },
+          "covid_2020": {
+            "returnPct": 12.05,
+            "mddPct": -17.67
+          },
+          "ratehike_2022": {
+            "returnPct": -13.92,
+            "mddPct": -15
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 89,
+        "perturbedMinus15_cagrPct": 13.31,
+        "perturbedMinus15_mddPct": -39.41,
+        "perturbedPlus15_cagrPct": 12.4,
+        "perturbedPlus15_mddPct": -40.48
+      },
+      "referenceCompositeScore": -4.15
+    },
+    {
+      "blindId": "BLIND_007",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.214,
+        "avgTradesPerYear": 10.8,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.81,
+        "totalReturnPct": 3742.49,
+        "maxDrawdownPct": -42.9,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.299,
+        "sortino": 0.976,
+        "sharpe": 0.66,
+        "upi": 0.807,
+        "ulcerIndex": 12.76,
+        "maxUnderwaterDays": 1786,
+        "annualVolPct": 16.54,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -18.22,
+        "finalEquityFrom10M": 384248701
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.11,
+        "totalReturnPct": 599.57,
+        "maxDrawdownPct": -22.62,
+        "calmar": 0.58,
+        "sortino": 1.222,
+        "sharpe": 0.848,
+        "annualVolPct": 12.51,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.1,
+        "worstCrisisMddPct": -42.99,
+        "avgCrisisReturnPct": 5.65,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 43.38,
+            "mddPct": -26.43
+          },
+          "dotcom_2000": {
+            "returnPct": -35.5,
+            "mddPct": -42.99
+          },
+          "gfc_2008": {
+            "returnPct": 20.58,
+            "mddPct": -19.72
+          },
+          "covid_2020": {
+            "returnPct": 13.19,
+            "mddPct": -16.45
+          },
+          "ratehike_2022": {
+            "returnPct": -13.4,
+            "mddPct": -14.92
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.5,
+        "perturbedMinus15_cagrPct": 12.89,
+        "perturbedMinus15_mddPct": -44.29,
+        "perturbedPlus15_cagrPct": 13.11,
+        "perturbedPlus15_mddPct": -42.8
+      },
+      "referenceCompositeScore": -16.85
+    },
+    {
+      "blindId": "BLIND_008",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.325,
+        "avgTradesPerYear": 16.38,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.06,
+        "totalReturnPct": 4009.88,
+        "maxDrawdownPct": -51.3,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.255,
+        "sortino": 0.964,
+        "sharpe": 0.656,
+        "upi": 0.656,
+        "ulcerIndex": 16.11,
+        "maxUnderwaterDays": 1918,
+        "annualVolPct": 17.12,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -20.62,
+        "finalEquityFrom10M": 410987766
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.89,
+        "totalReturnPct": 577.85,
+        "maxDrawdownPct": -23.73,
+        "calmar": 0.543,
+        "sortino": 1.152,
+        "sharpe": 0.812,
+        "annualVolPct": 12.87,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.8,
+        "worstCrisisMddPct": -50.63,
+        "avgCrisisReturnPct": 4.22,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 56.75,
+            "mddPct": -24.71
+          },
+          "dotcom_2000": {
+            "returnPct": -42.83,
+            "mddPct": -50.63
+          },
+          "gfc_2008": {
+            "returnPct": 14.98,
+            "mddPct": -21.03
+          },
+          "covid_2020": {
+            "returnPct": 12.09,
+            "mddPct": -17.4
+          },
+          "ratehike_2022": {
+            "returnPct": -19.89,
+            "mddPct": -20.24
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 68.6,
+        "perturbedMinus15_cagrPct": 13.7,
+        "perturbedMinus15_mddPct": -37.54,
+        "perturbedPlus15_cagrPct": 13.43,
+        "perturbedPlus15_mddPct": -43.97
+      },
+      "referenceCompositeScore": -35.16
+    },
+    {
+      "blindId": "BLIND_009",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.075,
+        "avgTradesPerYear": 3.77,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.33,
+        "totalReturnPct": 4320.33,
+        "maxDrawdownPct": -46.08,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.289,
+        "sortino": 0.989,
+        "sharpe": 0.667,
+        "upi": 0.79,
+        "ulcerIndex": 13.71,
+        "maxUnderwaterDays": 1842,
+        "annualVolPct": 17.21,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -19.31,
+        "finalEquityFrom10M": 442033360
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.46,
+        "totalReturnPct": 634.4,
+        "maxDrawdownPct": -22.33,
+        "calmar": 0.603,
+        "sortino": 1.229,
+        "sharpe": 0.854,
+        "annualVolPct": 12.82,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.16,
+        "worstCrisisMddPct": -45.75,
+        "avgCrisisReturnPct": 4.47,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 47.85,
+            "mddPct": -26.87
+          },
+          "dotcom_2000": {
+            "returnPct": -38.59,
+            "mddPct": -45.75
+          },
+          "gfc_2008": {
+            "returnPct": 17.7,
+            "mddPct": -19.21
+          },
+          "covid_2020": {
+            "returnPct": 12.14,
+            "mddPct": -16.71
+          },
+          "ratehike_2022": {
+            "returnPct": -16.73,
+            "mddPct": -17.24
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.4,
+        "perturbedMinus15_cagrPct": 13.38,
+        "perturbedMinus15_mddPct": -46.88,
+        "perturbedPlus15_cagrPct": 13.49,
+        "perturbedPlus15_mddPct": -44.11
+      },
+      "referenceCompositeScore": -20.53
+    },
+    {
+      "blindId": "BLIND_010",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.166,
+        "avgTradesPerYear": 8.39,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.8,
+        "totalReturnPct": 4909.8,
+        "maxDrawdownPct": -41.62,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.332,
+        "sortino": 0.983,
+        "sharpe": 0.658,
+        "upi": 1.113,
+        "ulcerIndex": 10.16,
+        "maxUnderwaterDays": 1448,
+        "annualVolPct": 18.42,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -16.1,
+        "finalEquityFrom10M": 500980356
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.76,
+        "totalReturnPct": 778.6,
+        "maxDrawdownPct": -22.09,
+        "calmar": 0.668,
+        "sortino": 1.329,
+        "sharpe": 0.91,
+        "annualVolPct": 13.37,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.46,
+        "worstCrisisMddPct": -41.39,
+        "avgCrisisReturnPct": 7.4,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 55.53,
+            "mddPct": -27.26
+          },
+          "dotcom_2000": {
+            "returnPct": -30.1,
+            "mddPct": -41.39
+          },
+          "gfc_2008": {
+            "returnPct": 3.87,
+            "mddPct": -24.83
+          },
+          "covid_2020": {
+            "returnPct": 18.56,
+            "mddPct": -14.94
+          },
+          "ratehike_2022": {
+            "returnPct": -10.87,
+            "mddPct": -13.89
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98,
+        "perturbedMinus15_cagrPct": 14.08,
+        "perturbedMinus15_mddPct": -41.02,
+        "perturbedPlus15_cagrPct": 13.78,
+        "perturbedPlus15_mddPct": -41.28
+      },
+      "referenceCompositeScore": -8.78
+    },
+    {
+      "blindId": "BLIND_011",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.315,
+        "avgTradesPerYear": 15.85,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.03,
+        "totalReturnPct": 3979.31,
+        "maxDrawdownPct": -50.85,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.256,
+        "sortino": 0.946,
+        "sharpe": 0.642,
+        "upi": 0.629,
+        "ulcerIndex": 16.75,
+        "maxUnderwaterDays": 1894,
+        "annualVolPct": 17.56,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -20.52,
+        "finalEquityFrom10M": 407930696
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.23,
+        "totalReturnPct": 611.05,
+        "maxDrawdownPct": -22.46,
+        "calmar": 0.589,
+        "sortino": 1.18,
+        "sharpe": 0.826,
+        "annualVolPct": 13.05,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.85,
+        "worstCrisisMddPct": -51.57,
+        "avgCrisisReturnPct": 5.22,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 50.64,
+            "mddPct": -27.44
+          },
+          "dotcom_2000": {
+            "returnPct": -45.89,
+            "mddPct": -51.57
+          },
+          "gfc_2008": {
+            "returnPct": 26.53,
+            "mddPct": -16.34
+          },
+          "covid_2020": {
+            "returnPct": 12.04,
+            "mddPct": -16.23
+          },
+          "ratehike_2022": {
+            "returnPct": -17.23,
+            "mddPct": -17.69
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 89.5,
+        "perturbedMinus15_cagrPct": 13.57,
+        "perturbedMinus15_mddPct": -45.86,
+        "perturbedPlus15_cagrPct": 12.76,
+        "perturbedPlus15_mddPct": -47.34
+      },
+      "referenceCompositeScore": -31.9
+    },
+    {
+      "blindId": "BLIND_012",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.269,
+        "avgTradesPerYear": 13.57,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.36,
+        "totalReturnPct": 3311.5,
+        "maxDrawdownPct": -56.18,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.22,
+        "sortino": 0.851,
+        "sharpe": 0.584,
+        "upi": 0.501,
+        "ulcerIndex": 19.7,
+        "maxUnderwaterDays": 2004,
+        "annualVolPct": 18.64,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -22.24,
+        "finalEquityFrom10M": 341150150
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.4,
+        "totalReturnPct": 736.36,
+        "maxDrawdownPct": -23.07,
+        "calmar": 0.624,
+        "sortino": 1.242,
+        "sharpe": 0.862,
+        "annualVolPct": 13.81,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -27.44,
+        "worstCrisisMddPct": -56.18,
+        "avgCrisisReturnPct": 3.55,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 51.14,
+            "mddPct": -28.21
+          },
+          "dotcom_2000": {
+            "returnPct": -49.9,
+            "mddPct": -56.18
+          },
+          "gfc_2008": {
+            "returnPct": 12.89,
+            "mddPct": -24.78
+          },
+          "covid_2020": {
+            "returnPct": 18.3,
+            "mddPct": -12.87
+          },
+          "ratehike_2022": {
+            "returnPct": -14.69,
+            "mddPct": -15.16
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.9,
+        "perturbedMinus15_cagrPct": 12.46,
+        "perturbedMinus15_mddPct": -56.97,
+        "perturbedPlus15_cagrPct": 12.21,
+        "perturbedPlus15_mddPct": -56.66
+      },
+      "referenceCompositeScore": -43.52
+    },
+    {
+      "blindId": "BLIND_013",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.105,
+        "avgTradesPerYear": 5.28,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.14,
+        "totalReturnPct": 4104.33,
+        "maxDrawdownPct": -45.99,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.286,
+        "sortino": 0.953,
+        "sharpe": 0.644,
+        "upi": 0.789,
+        "ulcerIndex": 13.49,
+        "maxUnderwaterDays": 1842,
+        "annualVolPct": 17.7,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -17.67,
+        "finalEquityFrom10M": 420433486
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.03,
+        "totalReturnPct": 591.64,
+        "maxDrawdownPct": -21.02,
+        "calmar": 0.62,
+        "sortino": 1.145,
+        "sharpe": 0.802,
+        "annualVolPct": 13.25,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.13,
+        "worstCrisisMddPct": -45.67,
+        "avgCrisisReturnPct": 7.55,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 55.88,
+            "mddPct": -26.13
+          },
+          "dotcom_2000": {
+            "returnPct": -38.34,
+            "mddPct": -45.67
+          },
+          "gfc_2008": {
+            "returnPct": 23.21,
+            "mddPct": -19.65
+          },
+          "covid_2020": {
+            "returnPct": 12.87,
+            "mddPct": -17.73
+          },
+          "ratehike_2022": {
+            "returnPct": -15.88,
+            "mddPct": -16.46
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.5,
+        "perturbedMinus15_cagrPct": 13.06,
+        "perturbedMinus15_mddPct": -49.02,
+        "perturbedPlus15_cagrPct": 13.88,
+        "perturbedPlus15_mddPct": -45.83
+      },
+      "referenceCompositeScore": -20.91
+    },
+    {
+      "blindId": "BLIND_014",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.311,
+        "avgTradesPerYear": 15.66,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.9,
+        "totalReturnPct": 5047.86,
+        "maxDrawdownPct": -50.29,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.276,
+        "sortino": 0.998,
+        "sharpe": 0.67,
+        "upi": 0.763,
+        "ulcerIndex": 14.94,
+        "maxUnderwaterDays": 1889,
+        "annualVolPct": 18.11,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -24.93,
+        "finalEquityFrom10M": 514786338
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14,
+        "totalReturnPct": 691.65,
+        "maxDrawdownPct": -22.48,
+        "calmar": 0.623,
+        "sortino": 1.253,
+        "sharpe": 0.871,
+        "annualVolPct": 13.18,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.7,
+        "worstCrisisMddPct": -50.32,
+        "avgCrisisReturnPct": 5.93,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 50.62,
+            "mddPct": -26.46
+          },
+          "dotcom_2000": {
+            "returnPct": -43.25,
+            "mddPct": -50.32
+          },
+          "gfc_2008": {
+            "returnPct": 24.85,
+            "mddPct": -19.78
+          },
+          "covid_2020": {
+            "returnPct": 11.88,
+            "mddPct": -16.71
+          },
+          "ratehike_2022": {
+            "returnPct": -14.44,
+            "mddPct": -15.23
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 91.8,
+        "perturbedMinus15_cagrPct": 13.03,
+        "perturbedMinus15_mddPct": -52.58,
+        "perturbedPlus15_cagrPct": 13.54,
+        "perturbedPlus15_mddPct": -52.27
+      },
+      "referenceCompositeScore": -25.98
+    },
+    {
+      "blindId": "BLIND_015",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.2,
+        "avgTradesPerYear": 10.07,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.32,
+        "totalReturnPct": 4309.38,
+        "maxDrawdownPct": -46.34,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.287,
+        "sortino": 0.98,
+        "sharpe": 0.663,
+        "upi": 0.81,
+        "ulcerIndex": 13.36,
+        "maxUnderwaterDays": 1745,
+        "annualVolPct": 17.35,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -20.77,
+        "finalEquityFrom10M": 440938071
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.41,
+        "totalReturnPct": 629.11,
+        "maxDrawdownPct": -22.48,
+        "calmar": 0.597,
+        "sortino": 1.221,
+        "sharpe": 0.852,
+        "annualVolPct": 12.8,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.28,
+        "worstCrisisMddPct": -46.28,
+        "avgCrisisReturnPct": 4.84,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 49.79,
+            "mddPct": -25.7
+          },
+          "dotcom_2000": {
+            "returnPct": -39.52,
+            "mddPct": -46.28
+          },
+          "gfc_2008": {
+            "returnPct": 11.99,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 15.23,
+            "mddPct": -16.62
+          },
+          "ratehike_2022": {
+            "returnPct": -13.27,
+            "mddPct": -13.81
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.3,
+        "perturbedMinus15_cagrPct": 13.5,
+        "perturbedMinus15_mddPct": -47.79,
+        "perturbedPlus15_cagrPct": 13.41,
+        "perturbedPlus15_mddPct": -45.72
+      },
+      "referenceCompositeScore": -20.46
+    },
+    {
+      "blindId": "BLIND_016",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.196,
+        "avgTradesPerYear": 9.88,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.91,
+        "totalReturnPct": 3849.17,
+        "maxDrawdownPct": -48.07,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.269,
+        "sortino": 0.95,
+        "sharpe": 0.637,
+        "upi": 0.738,
+        "ulcerIndex": 14.11,
+        "maxUnderwaterDays": 1865,
+        "annualVolPct": 17.52,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -22.62,
+        "finalEquityFrom10M": 394916520
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.92,
+        "totalReturnPct": 580.85,
+        "maxDrawdownPct": -23.04,
+        "calmar": 0.561,
+        "sortino": 1.169,
+        "sharpe": 0.81,
+        "annualVolPct": 12.96,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.57,
+        "worstCrisisMddPct": -47.59,
+        "avgCrisisReturnPct": 4.51,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 46.36,
+            "mddPct": -25.36
+          },
+          "dotcom_2000": {
+            "returnPct": -41.9,
+            "mddPct": -47.59
+          },
+          "gfc_2008": {
+            "returnPct": 21.38,
+            "mddPct": -16.98
+          },
+          "covid_2020": {
+            "returnPct": 13.35,
+            "mddPct": -15.64
+          },
+          "ratehike_2022": {
+            "returnPct": -16.64,
+            "mddPct": -17.27
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.3,
+        "perturbedMinus15_cagrPct": 12.88,
+        "perturbedMinus15_mddPct": -47.62,
+        "perturbedPlus15_cagrPct": 12.85,
+        "perturbedPlus15_mddPct": -48.07
+      },
+      "referenceCompositeScore": -25.98
+    },
+    {
+      "blindId": "BLIND_017",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.385,
+        "avgTradesPerYear": 19.42,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.56,
+        "totalReturnPct": 4604.91,
+        "maxDrawdownPct": -45.35,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.299,
+        "sortino": 1.04,
+        "sharpe": 0.705,
+        "upi": 0.841,
+        "ulcerIndex": 13.16,
+        "maxUnderwaterDays": 1548,
+        "annualVolPct": 16.4,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -21.29,
+        "finalEquityFrom10M": 470491170
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.99,
+        "totalReturnPct": 587.06,
+        "maxDrawdownPct": -23.83,
+        "calmar": 0.545,
+        "sortino": 1.207,
+        "sharpe": 0.845,
+        "annualVolPct": 12.39,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.49,
+        "worstCrisisMddPct": -44.44,
+        "avgCrisisReturnPct": 5.53,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 38.46,
+            "mddPct": -28.24
+          },
+          "dotcom_2000": {
+            "returnPct": -37.75,
+            "mddPct": -44.44
+          },
+          "gfc_2008": {
+            "returnPct": 34.8,
+            "mddPct": -15.79
+          },
+          "covid_2020": {
+            "returnPct": 7.57,
+            "mddPct": -18.34
+          },
+          "ratehike_2022": {
+            "returnPct": -15.43,
+            "mddPct": -15.64
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96,
+        "perturbedMinus15_cagrPct": 12.99,
+        "perturbedMinus15_mddPct": -46.42,
+        "perturbedPlus15_cagrPct": 13.56,
+        "perturbedPlus15_mddPct": -44.67
+      },
+      "referenceCompositeScore": -19.1
+    },
+    {
+      "blindId": "BLIND_018",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.039,
+        "avgTradesPerYear": 1.98,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.39,
+        "totalReturnPct": 3331.69,
+        "maxDrawdownPct": -29.54,
+        "maxDrawdownDate": "1998-08-31",
+        "calmar": 0.419,
+        "sortino": 0.975,
+        "sharpe": 0.655,
+        "upi": 1.036,
+        "ulcerIndex": 9.55,
+        "maxUnderwaterDays": 976,
+        "annualVolPct": 15.95,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -12.89,
+        "finalEquityFrom10M": 343169227
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 11.34,
+        "totalReturnPct": 444.76,
+        "maxDrawdownPct": -22.79,
+        "calmar": 0.498,
+        "sortino": 1.03,
+        "sharpe": 0.721,
+        "annualVolPct": 12.54,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21,
+        "worstCrisisMddPct": -29.54,
+        "avgCrisisReturnPct": 11.81,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 37.12,
+            "mddPct": -29.54
+          },
+          "dotcom_2000": {
+            "returnPct": -18.96,
+            "mddPct": -26.58
+          },
+          "gfc_2008": {
+            "returnPct": 36.05,
+            "mddPct": -22.97
+          },
+          "covid_2020": {
+            "returnPct": 13.35,
+            "mddPct": -14.17
+          },
+          "ratehike_2022": {
+            "returnPct": -8.5,
+            "mddPct": -11.73
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 100,
+        "perturbedMinus15_cagrPct": 12.39,
+        "perturbedMinus15_mddPct": -29.54,
+        "perturbedPlus15_cagrPct": 12.39,
+        "perturbedPlus15_mddPct": -29.54
+      },
+      "referenceCompositeScore": 3.41
+    },
+    {
+      "blindId": "BLIND_019",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.246,
+        "avgTradesPerYear": 12.42,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.88,
+        "totalReturnPct": 3820.77,
+        "maxDrawdownPct": -35.77,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.36,
+        "sortino": 0.985,
+        "sharpe": 0.661,
+        "upi": 1.042,
+        "ulcerIndex": 9.96,
+        "maxUnderwaterDays": 1441,
+        "annualVolPct": 16.64,
+        "winRateYearlyPct": 74.2,
+        "worstYearReturnPct": -12.42,
+        "finalEquityFrom10M": 392076804
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.35,
+        "totalReturnPct": 528.69,
+        "maxDrawdownPct": -22.15,
+        "calmar": 0.558,
+        "sortino": 1.127,
+        "sharpe": 0.783,
+        "annualVolPct": 12.73,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -22.46,
+        "worstCrisisMddPct": -35.62,
+        "avgCrisisReturnPct": 11.45,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 46.72,
+            "mddPct": -27.34
+          },
+          "dotcom_2000": {
+            "returnPct": -27.63,
+            "mddPct": -35.62
+          },
+          "gfc_2008": {
+            "returnPct": 34.62,
+            "mddPct": -21.37
+          },
+          "covid_2020": {
+            "returnPct": 14.27,
+            "mddPct": -15.1
+          },
+          "ratehike_2022": {
+            "returnPct": -10.74,
+            "mddPct": -12.85
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.4,
+        "perturbedMinus15_cagrPct": 12.95,
+        "perturbedMinus15_mddPct": -35.58,
+        "perturbedPlus15_cagrPct": 12.94,
+        "perturbedPlus15_mddPct": -35.89
+      },
+      "referenceCompositeScore": -3.98
+    },
+    {
+      "blindId": "BLIND_020",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.201,
+        "avgTradesPerYear": 10.11,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.23,
+        "totalReturnPct": 3193.46,
+        "maxDrawdownPct": -43.47,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.281,
+        "sortino": 0.949,
+        "sharpe": 0.648,
+        "upi": 0.796,
+        "ulcerIndex": 12.23,
+        "maxUnderwaterDays": 1534,
+        "annualVolPct": 15.9,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -19.67,
+        "finalEquityFrom10M": 329345718
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.66,
+        "totalReturnPct": 556.23,
+        "maxDrawdownPct": -23.52,
+        "calmar": 0.538,
+        "sortino": 1.197,
+        "sharpe": 0.836,
+        "annualVolPct": 12.15,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.56,
+        "worstCrisisMddPct": -43.43,
+        "avgCrisisReturnPct": -2.38,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 8.06,
+            "mddPct": -29.04
+          },
+          "dotcom_2000": {
+            "returnPct": -36.42,
+            "mddPct": -43.43
+          },
+          "gfc_2008": {
+            "returnPct": 20.04,
+            "mddPct": -22.01
+          },
+          "covid_2020": {
+            "returnPct": 11.25,
+            "mddPct": -18.18
+          },
+          "ratehike_2022": {
+            "returnPct": -14.85,
+            "mddPct": -15.13
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.6,
+        "perturbedMinus15_cagrPct": 12.43,
+        "perturbedMinus15_mddPct": -42.43,
+        "perturbedPlus15_cagrPct": 11.92,
+        "perturbedPlus15_mddPct": -46.36
+      },
+      "referenceCompositeScore": -21.26
+    },
+    {
+      "blindId": "BLIND_021",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.252,
+        "avgTradesPerYear": 12.68,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.88,
+        "totalReturnPct": 3813.43,
+        "maxDrawdownPct": -47.35,
+        "maxDrawdownDate": "2002-08-01",
+        "calmar": 0.272,
+        "sortino": 0.947,
+        "sharpe": 0.643,
+        "upi": 0.674,
+        "ulcerIndex": 15.4,
+        "maxUnderwaterDays": 1918,
+        "annualVolPct": 17.26,
+        "winRateYearlyPct": 87.1,
+        "worstYearReturnPct": -22.49,
+        "finalEquityFrom10M": 391343423
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.51,
+        "totalReturnPct": 639.34,
+        "maxDrawdownPct": -21.85,
+        "calmar": 0.618,
+        "sortino": 1.212,
+        "sharpe": 0.85,
+        "annualVolPct": 12.96,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.37,
+        "worstCrisisMddPct": -47.28,
+        "avgCrisisReturnPct": 4.67,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 49.36,
+            "mddPct": -24.86
+          },
+          "dotcom_2000": {
+            "returnPct": -40.97,
+            "mddPct": -47.28
+          },
+          "gfc_2008": {
+            "returnPct": 19.65,
+            "mddPct": -19.7
+          },
+          "covid_2020": {
+            "returnPct": 10.87,
+            "mddPct": -18.95
+          },
+          "ratehike_2022": {
+            "returnPct": -15.55,
+            "mddPct": -16.07
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 90.4,
+        "perturbedMinus15_cagrPct": 13.34,
+        "perturbedMinus15_mddPct": -43.87,
+        "perturbedPlus15_cagrPct": 12.87,
+        "perturbedPlus15_mddPct": -50.98
+      },
+      "referenceCompositeScore": -25.31
+    },
+    {
+      "blindId": "BLIND_022",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.385,
+        "avgTradesPerYear": 19.39,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.24,
+        "totalReturnPct": 4218.83,
+        "maxDrawdownPct": -49.1,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.27,
+        "sortino": 0.958,
+        "sharpe": 0.651,
+        "upi": 0.644,
+        "ulcerIndex": 16.69,
+        "maxUnderwaterDays": 2002,
+        "annualVolPct": 17.63,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -19.58,
+        "finalEquityFrom10M": 431882586
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.5,
+        "totalReturnPct": 638.26,
+        "maxDrawdownPct": -22.06,
+        "calmar": 0.612,
+        "sortino": 1.18,
+        "sharpe": 0.827,
+        "annualVolPct": 13.37,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.45,
+        "worstCrisisMddPct": -47.95,
+        "avgCrisisReturnPct": 4.49,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 46.98,
+            "mddPct": -25.57
+          },
+          "dotcom_2000": {
+            "returnPct": -41.7,
+            "mddPct": -47.95
+          },
+          "gfc_2008": {
+            "returnPct": 23.9,
+            "mddPct": -22.22
+          },
+          "covid_2020": {
+            "returnPct": 10.13,
+            "mddPct": -19.04
+          },
+          "ratehike_2022": {
+            "returnPct": -16.88,
+            "mddPct": -17.46
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 92.2,
+        "perturbedMinus15_cagrPct": 13.49,
+        "perturbedMinus15_mddPct": -50.85,
+        "perturbedPlus15_cagrPct": 13.4,
+        "perturbedPlus15_mddPct": -43.62
+      },
+      "referenceCompositeScore": -28.16
+    },
+    {
+      "blindId": "BLIND_023",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.385,
+        "avgTradesPerYear": 19.39,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.57,
+        "totalReturnPct": 3508.51,
+        "maxDrawdownPct": -51.58,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.244,
+        "sortino": 0.9,
+        "sharpe": 0.612,
+        "upi": 0.63,
+        "ulcerIndex": 15.99,
+        "maxUnderwaterDays": 1907,
+        "annualVolPct": 17.85,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -25.71,
+        "finalEquityFrom10M": 360851141
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.46,
+        "totalReturnPct": 633.92,
+        "maxDrawdownPct": -23.65,
+        "calmar": 0.569,
+        "sortino": 1.225,
+        "sharpe": 0.849,
+        "annualVolPct": 12.9,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.42,
+        "worstCrisisMddPct": -51.41,
+        "avgCrisisReturnPct": 1.05,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 46.26,
+            "mddPct": -26.2
+          },
+          "dotcom_2000": {
+            "returnPct": -44.2,
+            "mddPct": -51.41
+          },
+          "gfc_2008": {
+            "returnPct": 5.57,
+            "mddPct": -20.45
+          },
+          "covid_2020": {
+            "returnPct": 14.26,
+            "mddPct": -16.38
+          },
+          "ratehike_2022": {
+            "returnPct": -16.65,
+            "mddPct": -17.65
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.5,
+        "perturbedMinus15_cagrPct": 13,
+        "perturbedMinus15_mddPct": -53.03,
+        "perturbedPlus15_cagrPct": 12.18,
+        "perturbedPlus15_mddPct": -52.3
+      },
+      "referenceCompositeScore": -34.58
+    },
+    {
+      "blindId": "BLIND_024",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.242,
+        "avgTradesPerYear": 12.19,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.47,
+        "totalReturnPct": 4494.65,
+        "maxDrawdownPct": -47.87,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.281,
+        "sortino": 0.988,
+        "sharpe": 0.665,
+        "upi": 0.747,
+        "ulcerIndex": 14.69,
+        "maxUnderwaterDays": 1898,
+        "annualVolPct": 17.53,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -21.03,
+        "finalEquityFrom10M": 459464522
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.88,
+        "totalReturnPct": 677.65,
+        "maxDrawdownPct": -21.57,
+        "calmar": 0.643,
+        "sortino": 1.245,
+        "sharpe": 0.863,
+        "annualVolPct": 13.16,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.37,
+        "worstCrisisMddPct": -47.81,
+        "avgCrisisReturnPct": 4.85,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 51.97,
+            "mddPct": -25.94
+          },
+          "dotcom_2000": {
+            "returnPct": -40.49,
+            "mddPct": -47.81
+          },
+          "gfc_2008": {
+            "returnPct": 16.99,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 11.99,
+            "mddPct": -17.37
+          },
+          "ratehike_2022": {
+            "returnPct": -16.23,
+            "mddPct": -16.74
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.9,
+        "perturbedMinus15_cagrPct": 13.67,
+        "perturbedMinus15_mddPct": -47.92,
+        "perturbedPlus15_cagrPct": 13.97,
+        "perturbedPlus15_mddPct": -48.27
+      },
+      "referenceCompositeScore": -22.26
+    },
+    {
+      "blindId": "BLIND_025",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.202,
+        "avgTradesPerYear": 10.17,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 11.97,
+        "totalReturnPct": 2967.2,
+        "maxDrawdownPct": -61.27,
+        "maxDrawdownDate": "2002-10-07",
+        "calmar": 0.195,
+        "sortino": 0.83,
+        "sharpe": 0.562,
+        "upi": 0.463,
+        "ulcerIndex": 20.45,
+        "maxUnderwaterDays": 2055,
+        "annualVolPct": 18.76,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -26.75,
+        "finalEquityFrom10M": 306720110
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.21,
+        "totalReturnPct": 714.94,
+        "maxDrawdownPct": -21.79,
+        "calmar": 0.652,
+        "sortino": 1.292,
+        "sharpe": 0.887,
+        "annualVolPct": 13.14,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -28.38,
+        "worstCrisisMddPct": -61.52,
+        "avgCrisisReturnPct": -0.36,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 49.84,
+            "mddPct": -24.18
+          },
+          "dotcom_2000": {
+            "returnPct": -55.74,
+            "mddPct": -61.52
+          },
+          "gfc_2008": {
+            "returnPct": 0.95,
+            "mddPct": -25.36
+          },
+          "covid_2020": {
+            "returnPct": 15.56,
+            "mddPct": -14.86
+          },
+          "ratehike_2022": {
+            "returnPct": -12.43,
+            "mddPct": -16
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93,
+        "perturbedMinus15_cagrPct": 11.57,
+        "perturbedMinus15_mddPct": -63.33,
+        "perturbedPlus15_cagrPct": 12.19,
+        "perturbedPlus15_mddPct": -57.84
+      },
+      "referenceCompositeScore": -52.1
+    },
+    {
+      "blindId": "BLIND_026",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.16,
+        "avgTradesPerYear": 8.06,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.3,
+        "totalReturnPct": 4285.28,
+        "maxDrawdownPct": -44.8,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.297,
+        "sortino": 1.002,
+        "sharpe": 0.676,
+        "upi": 0.877,
+        "ulcerIndex": 12.31,
+        "maxUnderwaterDays": 1545,
+        "annualVolPct": 16.85,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -17.9,
+        "finalEquityFrom10M": 438527951
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.02,
+        "totalReturnPct": 590.6,
+        "maxDrawdownPct": -22.71,
+        "calmar": 0.573,
+        "sortino": 1.215,
+        "sharpe": 0.845,
+        "annualVolPct": 12.44,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -23.9,
+        "worstCrisisMddPct": -44.45,
+        "avgCrisisReturnPct": 5.24,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 48.12,
+            "mddPct": -25.95
+          },
+          "dotcom_2000": {
+            "returnPct": -37.12,
+            "mddPct": -44.45
+          },
+          "gfc_2008": {
+            "returnPct": 16.32,
+            "mddPct": -19.09
+          },
+          "covid_2020": {
+            "returnPct": 13.26,
+            "mddPct": -15.15
+          },
+          "ratehike_2022": {
+            "returnPct": -14.36,
+            "mddPct": -14.85
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 95.5,
+        "perturbedMinus15_cagrPct": 12.86,
+        "perturbedMinus15_mddPct": -46.72,
+        "perturbedPlus15_cagrPct": 13.28,
+        "perturbedPlus15_mddPct": -43.95
+      },
+      "referenceCompositeScore": -17.9
+    },
+    {
+      "blindId": "BLIND_027",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.087,
+        "avgTradesPerYear": 4.36,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.26,
+        "totalReturnPct": 4238.87,
+        "maxDrawdownPct": -43.47,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.305,
+        "sortino": 1.035,
+        "sharpe": 0.698,
+        "upi": 0.858,
+        "ulcerIndex": 12.54,
+        "maxUnderwaterDays": 1545,
+        "annualVolPct": 16.1,
+        "winRateYearlyPct": 74.2,
+        "worstYearReturnPct": -20.84,
+        "finalEquityFrom10M": 433886984
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.94,
+        "totalReturnPct": 582.94,
+        "maxDrawdownPct": -23.54,
+        "calmar": 0.55,
+        "sortino": 1.219,
+        "sharpe": 0.85,
+        "annualVolPct": 12.26,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.41,
+        "worstCrisisMddPct": -43.33,
+        "avgCrisisReturnPct": 2.6,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 35.47,
+            "mddPct": -27.58
+          },
+          "dotcom_2000": {
+            "returnPct": -36.12,
+            "mddPct": -43.33
+          },
+          "gfc_2008": {
+            "returnPct": 15.87,
+            "mddPct": -18.93
+          },
+          "covid_2020": {
+            "returnPct": 12.86,
+            "mddPct": -16.62
+          },
+          "ratehike_2022": {
+            "returnPct": -15.1,
+            "mddPct": -15.57
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.5,
+        "perturbedMinus15_cagrPct": 13.31,
+        "perturbedMinus15_mddPct": -41.94,
+        "perturbedPlus15_cagrPct": 13.15,
+        "perturbedPlus15_mddPct": -42.69
+      },
+      "referenceCompositeScore": -16.48
+    },
+    {
+      "blindId": "BLIND_028",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.423,
+        "avgTradesPerYear": 21.3,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.23,
+        "totalReturnPct": 4203.04,
+        "maxDrawdownPct": -41.34,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.32,
+        "sortino": 0.977,
+        "sharpe": 0.663,
+        "upi": 0.907,
+        "ulcerIndex": 11.83,
+        "maxUnderwaterDays": 1789,
+        "annualVolPct": 17.18,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -19.79,
+        "finalEquityFrom10M": 430304017
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.11,
+        "totalReturnPct": 599.23,
+        "maxDrawdownPct": -21.81,
+        "calmar": 0.601,
+        "sortino": 1.148,
+        "sharpe": 0.804,
+        "annualVolPct": 13.31,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.48,
+        "worstCrisisMddPct": -41.26,
+        "avgCrisisReturnPct": 6,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 50.42,
+            "mddPct": -24.17
+          },
+          "dotcom_2000": {
+            "returnPct": -34.6,
+            "mddPct": -41.26
+          },
+          "gfc_2008": {
+            "returnPct": 23.16,
+            "mddPct": -19.85
+          },
+          "covid_2020": {
+            "returnPct": 5.67,
+            "mddPct": -21.73
+          },
+          "ratehike_2022": {
+            "returnPct": -14.67,
+            "mddPct": -15.37
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.1,
+        "perturbedMinus15_cagrPct": 13.23,
+        "perturbedMinus15_mddPct": -44.31,
+        "perturbedPlus15_cagrPct": 12.09,
+        "perturbedPlus15_mddPct": -40.71
+      },
+      "referenceCompositeScore": -12.87
+    },
+    {
+      "blindId": "BLIND_029",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.211,
+        "avgTradesPerYear": 10.63,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.94,
+        "totalReturnPct": 3877.65,
+        "maxDrawdownPct": -47.44,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.273,
+        "sortino": 0.986,
+        "sharpe": 0.665,
+        "upi": 0.703,
+        "ulcerIndex": 14.84,
+        "maxUnderwaterDays": 1892,
+        "annualVolPct": 16.6,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -20.63,
+        "finalEquityFrom10M": 397764680
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.38,
+        "totalReturnPct": 626.35,
+        "maxDrawdownPct": -22.31,
+        "calmar": 0.6,
+        "sortino": 1.242,
+        "sharpe": 0.864,
+        "annualVolPct": 12.55,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.89,
+        "worstCrisisMddPct": -47.42,
+        "avgCrisisReturnPct": 4.9,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 43.63,
+            "mddPct": -25.78
+          },
+          "dotcom_2000": {
+            "returnPct": -40.23,
+            "mddPct": -47.42
+          },
+          "gfc_2008": {
+            "returnPct": 22.2,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 15.04,
+            "mddPct": -15.67
+          },
+          "ratehike_2022": {
+            "returnPct": -16.16,
+            "mddPct": -16.62
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 94.5,
+        "perturbedMinus15_cagrPct": 12.67,
+        "perturbedMinus15_mddPct": -49.61,
+        "perturbedPlus15_cagrPct": 13.15,
+        "perturbedPlus15_mddPct": -46.18
+      },
+      "referenceCompositeScore": -24.18
+    },
+    {
+      "blindId": "BLIND_030",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.211,
+        "avgTradesPerYear": 10.63,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.41,
+        "totalReturnPct": 4420.39,
+        "maxDrawdownPct": -39.72,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.338,
+        "sortino": 0.994,
+        "sharpe": 0.665,
+        "upi": 1.083,
+        "ulcerIndex": 10.07,
+        "maxUnderwaterDays": 1430,
+        "annualVolPct": 17.43,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -16.08,
+        "finalEquityFrom10M": 452039209
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.61,
+        "totalReturnPct": 650.05,
+        "maxDrawdownPct": -23.8,
+        "calmar": 0.572,
+        "sortino": 1.237,
+        "sharpe": 0.857,
+        "annualVolPct": 12.95,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.24,
+        "worstCrisisMddPct": -39.65,
+        "avgCrisisReturnPct": 2.68,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 33.58,
+            "mddPct": -24.74
+          },
+          "dotcom_2000": {
+            "returnPct": -30.91,
+            "mddPct": -39.65
+          },
+          "gfc_2008": {
+            "returnPct": 12.23,
+            "mddPct": -22.3
+          },
+          "covid_2020": {
+            "returnPct": 14.07,
+            "mddPct": -18.47
+          },
+          "ratehike_2022": {
+            "returnPct": -15.58,
+            "mddPct": -16.05
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 88.5,
+        "perturbedMinus15_cagrPct": 13.42,
+        "perturbedMinus15_mddPct": -42.78,
+        "perturbedPlus15_cagrPct": 12.91,
+        "perturbedPlus15_mddPct": -45.43
+      },
+      "referenceCompositeScore": -10.09
+    },
+    {
+      "blindId": "BLIND_031",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.256,
+        "avgTradesPerYear": 12.91,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.15,
+        "totalReturnPct": 4109.19,
+        "maxDrawdownPct": -46.33,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.284,
+        "sortino": 0.976,
+        "sharpe": 0.66,
+        "upi": 0.794,
+        "ulcerIndex": 13.41,
+        "maxUnderwaterDays": 1795,
+        "annualVolPct": 17.13,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -22.17,
+        "finalEquityFrom10M": 420918851
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.55,
+        "totalReturnPct": 642.87,
+        "maxDrawdownPct": -24.33,
+        "calmar": 0.557,
+        "sortino": 1.219,
+        "sharpe": 0.85,
+        "annualVolPct": 12.99,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.97,
+        "worstCrisisMddPct": -46.47,
+        "avgCrisisReturnPct": 1.86,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 44.47,
+            "mddPct": -24.17
+          },
+          "dotcom_2000": {
+            "returnPct": -37.4,
+            "mddPct": -46.47
+          },
+          "gfc_2008": {
+            "returnPct": 7.38,
+            "mddPct": -19.67
+          },
+          "covid_2020": {
+            "returnPct": 11.46,
+            "mddPct": -17.44
+          },
+          "ratehike_2022": {
+            "returnPct": -16.59,
+            "mddPct": -17.08
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 95.6,
+        "perturbedMinus15_cagrPct": 12.73,
+        "perturbedMinus15_mddPct": -48.42,
+        "perturbedPlus15_cagrPct": 13.14,
+        "perturbedPlus15_mddPct": -45.67
+      },
+      "referenceCompositeScore": -22.85
+    },
+    {
+      "blindId": "BLIND_032",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.193,
+        "avgTradesPerYear": 9.71,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 14.16,
+        "totalReturnPct": 5418.42,
+        "maxDrawdownPct": -40.84,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.347,
+        "sortino": 1.006,
+        "sharpe": 0.673,
+        "upi": 1.144,
+        "ulcerIndex": 10.2,
+        "maxUnderwaterDays": 1395,
+        "annualVolPct": 18.47,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -17.85,
+        "finalEquityFrom10M": 551841749
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.48,
+        "totalReturnPct": 745.39,
+        "maxDrawdownPct": -22.43,
+        "calmar": 0.645,
+        "sortino": 1.293,
+        "sharpe": 0.89,
+        "annualVolPct": 13.39,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.8,
+        "worstCrisisMddPct": -40.77,
+        "avgCrisisReturnPct": 5.1,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 50.91,
+            "mddPct": -27.22
+          },
+          "dotcom_2000": {
+            "returnPct": -28.75,
+            "mddPct": -40.77
+          },
+          "gfc_2008": {
+            "returnPct": -3.17,
+            "mddPct": -25.66
+          },
+          "covid_2020": {
+            "returnPct": 20.71,
+            "mddPct": -15.57
+          },
+          "ratehike_2022": {
+            "returnPct": -14.2,
+            "mddPct": -14.8
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.4,
+        "perturbedMinus15_cagrPct": 13.98,
+        "perturbedMinus15_mddPct": -41.2,
+        "perturbedPlus15_cagrPct": 14.5,
+        "perturbedPlus15_mddPct": -39.84
+      },
+      "referenceCompositeScore": -7.36
+    },
+    {
+      "blindId": "BLIND_033",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.301,
+        "avgTradesPerYear": 15.19,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.97,
+        "totalReturnPct": 3910.8,
+        "maxDrawdownPct": -35.79,
+        "maxDrawdownDate": "2002-07-25",
+        "calmar": 0.362,
+        "sortino": 0.978,
+        "sharpe": 0.654,
+        "upi": 0.898,
+        "ulcerIndex": 11.65,
+        "maxUnderwaterDays": 1147,
+        "annualVolPct": 17.03,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -19.48,
+        "finalEquityFrom10M": 401079513
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 11.58,
+        "totalReturnPct": 463.65,
+        "maxDrawdownPct": -27.63,
+        "calmar": 0.419,
+        "sortino": 0.99,
+        "sharpe": 0.698,
+        "annualVolPct": 13.4,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -22.34,
+        "worstCrisisMddPct": -32.11,
+        "avgCrisisReturnPct": 8.79,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 38.63,
+            "mddPct": -27.63
+          },
+          "dotcom_2000": {
+            "returnPct": -22.71,
+            "mddPct": -32.11
+          },
+          "gfc_2008": {
+            "returnPct": 29.37,
+            "mddPct": -16.97
+          },
+          "covid_2020": {
+            "returnPct": 12.92,
+            "mddPct": -18.71
+          },
+          "ratehike_2022": {
+            "returnPct": -14.27,
+            "mddPct": -16.3
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 95.6,
+        "perturbedMinus15_cagrPct": 12.57,
+        "perturbedMinus15_mddPct": -34.16,
+        "perturbedPlus15_cagrPct": 13.03,
+        "perturbedPlus15_mddPct": -33.62
+      },
+      "referenceCompositeScore": -10.63
+    },
+    {
+      "blindId": "BLIND_034",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.403,
+        "avgTradesPerYear": 20.31,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.65,
+        "totalReturnPct": 4708.64,
+        "maxDrawdownPct": -38.95,
+        "maxDrawdownDate": "2002-10-07",
+        "calmar": 0.35,
+        "sortino": 1.012,
+        "sharpe": 0.676,
+        "upi": 1.228,
+        "ulcerIndex": 9.08,
+        "maxUnderwaterDays": 957,
+        "annualVolPct": 17.46,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -16.39,
+        "finalEquityFrom10M": 480864080
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.2,
+        "totalReturnPct": 607.46,
+        "maxDrawdownPct": -23.36,
+        "calmar": 0.565,
+        "sortino": 1.162,
+        "sharpe": 0.809,
+        "annualVolPct": 13.32,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -23.52,
+        "worstCrisisMddPct": -39.02,
+        "avgCrisisReturnPct": 4.78,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 36.81,
+            "mddPct": -27.56
+          },
+          "dotcom_2000": {
+            "returnPct": -28.3,
+            "mddPct": -39.02
+          },
+          "gfc_2008": {
+            "returnPct": 17.57,
+            "mddPct": -16.99
+          },
+          "covid_2020": {
+            "returnPct": 12.7,
+            "mddPct": -17.56
+          },
+          "ratehike_2022": {
+            "returnPct": -14.88,
+            "mddPct": -16.48
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 81.4,
+        "perturbedMinus15_cagrPct": 12.95,
+        "perturbedMinus15_mddPct": -41.94,
+        "perturbedPlus15_cagrPct": 14.53,
+        "perturbedPlus15_mddPct": -33.11
+      },
+      "referenceCompositeScore": -7.76
+    },
+    {
+      "blindId": "BLIND_035",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.163,
+        "avgTradesPerYear": 8.22,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.1,
+        "totalReturnPct": 4054.83,
+        "maxDrawdownPct": -47.22,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.277,
+        "sortino": 0.995,
+        "sharpe": 0.671,
+        "upi": 0.732,
+        "ulcerIndex": 14.48,
+        "maxUnderwaterDays": 1883,
+        "annualVolPct": 16.69,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -20.64,
+        "finalEquityFrom10M": 415483384
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.57,
+        "totalReturnPct": 645.12,
+        "maxDrawdownPct": -22.48,
+        "calmar": 0.604,
+        "sortino": 1.254,
+        "sharpe": 0.873,
+        "annualVolPct": 12.62,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.05,
+        "worstCrisisMddPct": -47.15,
+        "avgCrisisReturnPct": 4.31,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 44.21,
+            "mddPct": -25.78
+          },
+          "dotcom_2000": {
+            "returnPct": -39.77,
+            "mddPct": -47.15
+          },
+          "gfc_2008": {
+            "returnPct": 19.63,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 13.67,
+            "mddPct": -16.71
+          },
+          "ratehike_2022": {
+            "returnPct": -16.19,
+            "mddPct": -16.65
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.4,
+        "perturbedMinus15_cagrPct": 12.9,
+        "perturbedMinus15_mddPct": -49.01,
+        "perturbedPlus15_cagrPct": 13.12,
+        "perturbedPlus15_mddPct": -46.29
+      },
+      "referenceCompositeScore": -22.97
+    },
+    {
+      "blindId": "BLIND_036",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.149,
+        "avgTradesPerYear": 7.5,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.05,
+        "totalReturnPct": 4004.95,
+        "maxDrawdownPct": -50.49,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.259,
+        "sortino": 0.946,
+        "sharpe": 0.638,
+        "upi": 0.689,
+        "ulcerIndex": 15.32,
+        "maxUnderwaterDays": 1879,
+        "annualVolPct": 17.78,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -20.77,
+        "finalEquityFrom10M": 410494617
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.84,
+        "totalReturnPct": 673.45,
+        "maxDrawdownPct": -22.6,
+        "calmar": 0.612,
+        "sortino": 1.244,
+        "sharpe": 0.862,
+        "annualVolPct": 13.13,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.46,
+        "worstCrisisMddPct": -50.29,
+        "avgCrisisReturnPct": 3.61,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 50.92,
+            "mddPct": -25.6
+          },
+          "dotcom_2000": {
+            "returnPct": -43.4,
+            "mddPct": -50.29
+          },
+          "gfc_2008": {
+            "returnPct": 11.96,
+            "mddPct": -19.98
+          },
+          "covid_2020": {
+            "returnPct": 12.87,
+            "mddPct": -16.57
+          },
+          "ratehike_2022": {
+            "returnPct": -14.28,
+            "mddPct": -14.84
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.2,
+        "perturbedMinus15_cagrPct": 13.45,
+        "perturbedMinus15_mddPct": -50.8,
+        "perturbedPlus15_cagrPct": 13.63,
+        "perturbedPlus15_mddPct": -47.25
+      },
+      "referenceCompositeScore": -29.35
+    },
+    {
+      "blindId": "BLIND_037",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.383,
+        "avgTradesPerYear": 19.29,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.57,
+        "totalReturnPct": 4617.18,
+        "maxDrawdownPct": -46.57,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.291,
+        "sortino": 0.993,
+        "sharpe": 0.672,
+        "upi": 0.807,
+        "ulcerIndex": 13.72,
+        "maxUnderwaterDays": 1828,
+        "annualVolPct": 17.47,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -19.13,
+        "finalEquityFrom10M": 471717943
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.82,
+        "totalReturnPct": 671.68,
+        "maxDrawdownPct": -22.9,
+        "calmar": 0.604,
+        "sortino": 1.241,
+        "sharpe": 0.864,
+        "annualVolPct": 13.07,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.76,
+        "worstCrisisMddPct": -46.54,
+        "avgCrisisReturnPct": 1.52,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 42.59,
+            "mddPct": -24.66
+          },
+          "dotcom_2000": {
+            "returnPct": -39.65,
+            "mddPct": -46.54
+          },
+          "gfc_2008": {
+            "returnPct": 7.99,
+            "mddPct": -21.1
+          },
+          "covid_2020": {
+            "returnPct": 13.68,
+            "mddPct": -18.98
+          },
+          "ratehike_2022": {
+            "returnPct": -17.02,
+            "mddPct": -17.52
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 95.9,
+        "perturbedMinus15_cagrPct": 13.08,
+        "perturbedMinus15_mddPct": -49.06,
+        "perturbedPlus15_cagrPct": 13.52,
+        "perturbedPlus15_mddPct": -46.46
+      },
+      "referenceCompositeScore": -20.99
+    },
+    {
+      "blindId": "BLIND_038",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.315,
+        "avgTradesPerYear": 15.89,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.65,
+        "totalReturnPct": 4720.41,
+        "maxDrawdownPct": -53.25,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.256,
+        "sortino": 1.001,
+        "sharpe": 0.678,
+        "upi": 0.646,
+        "ulcerIndex": 17.27,
+        "maxUnderwaterDays": 2013,
+        "annualVolPct": 17.4,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -24.92,
+        "finalEquityFrom10M": 482041442
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.41,
+        "totalReturnPct": 736.88,
+        "maxDrawdownPct": -22.82,
+        "calmar": 0.631,
+        "sortino": 1.31,
+        "sharpe": 0.91,
+        "annualVolPct": 12.96,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.37,
+        "worstCrisisMddPct": -53.21,
+        "avgCrisisReturnPct": 2.53,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 54.75,
+            "mddPct": -25.79
+          },
+          "dotcom_2000": {
+            "returnPct": -47.33,
+            "mddPct": -53.21
+          },
+          "gfc_2008": {
+            "returnPct": 7.89,
+            "mddPct": -18.98
+          },
+          "covid_2020": {
+            "returnPct": 14.36,
+            "mddPct": -16.63
+          },
+          "ratehike_2022": {
+            "returnPct": -17.01,
+            "mddPct": -17.22
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 94.7,
+        "perturbedMinus15_cagrPct": 14,
+        "perturbedMinus15_mddPct": -50.23,
+        "perturbedPlus15_cagrPct": 13.78,
+        "perturbedPlus15_mddPct": -52.94
+      },
+      "referenceCompositeScore": -31.93
+    },
+    {
+      "blindId": "BLIND_039",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.119,
+        "avgTradesPerYear": 6.01,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.57,
+        "totalReturnPct": 3507.36,
+        "maxDrawdownPct": -32.64,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.385,
+        "sortino": 1.024,
+        "sharpe": 0.691,
+        "upi": 1.075,
+        "ulcerIndex": 9.37,
+        "maxUnderwaterDays": 1409,
+        "annualVolPct": 15.19,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -17.04,
+        "finalEquityFrom10M": 360736246
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 11.87,
+        "totalReturnPct": 487.31,
+        "maxDrawdownPct": -23.68,
+        "calmar": 0.501,
+        "sortino": 1.126,
+        "sharpe": 0.788,
+        "annualVolPct": 11.99,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21.68,
+        "worstCrisisMddPct": -31.87,
+        "avgCrisisReturnPct": 6.41,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 31.35,
+            "mddPct": -26.79
+          },
+          "dotcom_2000": {
+            "returnPct": -24.31,
+            "mddPct": -31.87
+          },
+          "gfc_2008": {
+            "returnPct": 24.53,
+            "mddPct": -20.66
+          },
+          "covid_2020": {
+            "returnPct": 11.82,
+            "mddPct": -16.05
+          },
+          "ratehike_2022": {
+            "returnPct": -11.32,
+            "mddPct": -13.04
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.7,
+        "perturbedMinus15_cagrPct": 12.57,
+        "perturbedMinus15_mddPct": -32.9,
+        "perturbedPlus15_cagrPct": 12.56,
+        "perturbedPlus15_mddPct": -33.25
+      },
+      "referenceCompositeScore": -0.32
+    },
+    {
+      "blindId": "BLIND_040",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.23,
+        "avgTradesPerYear": 11.59,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.05,
+        "totalReturnPct": 4004.78,
+        "maxDrawdownPct": -44.74,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.292,
+        "sortino": 0.982,
+        "sharpe": 0.665,
+        "upi": 0.847,
+        "ulcerIndex": 12.45,
+        "maxUnderwaterDays": 1739,
+        "annualVolPct": 16.78,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -19.9,
+        "finalEquityFrom10M": 410478135
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.28,
+        "totalReturnPct": 615.56,
+        "maxDrawdownPct": -22.33,
+        "calmar": 0.595,
+        "sortino": 1.215,
+        "sharpe": 0.848,
+        "annualVolPct": 12.71,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.4,
+        "worstCrisisMddPct": -44.67,
+        "avgCrisisReturnPct": 4.81,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 43.95,
+            "mddPct": -26.26
+          },
+          "dotcom_2000": {
+            "returnPct": -35.92,
+            "mddPct": -44.67
+          },
+          "gfc_2008": {
+            "returnPct": 18.33,
+            "mddPct": -18.68
+          },
+          "covid_2020": {
+            "returnPct": 13.1,
+            "mddPct": -16.39
+          },
+          "ratehike_2022": {
+            "returnPct": -15.41,
+            "mddPct": -16.01
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.6,
+        "perturbedMinus15_cagrPct": 13.05,
+        "perturbedMinus15_mddPct": -45.75,
+        "perturbedPlus15_cagrPct": 13.03,
+        "perturbedPlus15_mddPct": -44.51
+      },
+      "referenceCompositeScore": -18.16
+    },
+    {
+      "blindId": "BLIND_041",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.025,
+        "avgTradesPerYear": 1.26,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.47,
+        "totalReturnPct": 4486.11,
+        "maxDrawdownPct": -45.82,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.294,
+        "sortino": 0.976,
+        "sharpe": 0.657,
+        "upi": 0.82,
+        "ulcerIndex": 13.38,
+        "maxUnderwaterDays": 1842,
+        "annualVolPct": 17.81,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -16.94,
+        "finalEquityFrom10M": 458610813
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.49,
+        "totalReturnPct": 637.54,
+        "maxDrawdownPct": -22.6,
+        "calmar": 0.597,
+        "sortino": 1.203,
+        "sharpe": 0.838,
+        "annualVolPct": 13.15,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.43,
+        "worstCrisisMddPct": -45.85,
+        "avgCrisisReturnPct": 8.45,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 57,
+            "mddPct": -26.69
+          },
+          "dotcom_2000": {
+            "returnPct": -38.68,
+            "mddPct": -45.85
+          },
+          "gfc_2008": {
+            "returnPct": 23.91,
+            "mddPct": -19.41
+          },
+          "covid_2020": {
+            "returnPct": 13.55,
+            "mddPct": -16.05
+          },
+          "ratehike_2022": {
+            "returnPct": -13.51,
+            "mddPct": -14.17
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.9,
+        "perturbedMinus15_cagrPct": 13.83,
+        "perturbedMinus15_mddPct": -44.73,
+        "perturbedPlus15_cagrPct": 13.51,
+        "perturbedPlus15_mddPct": -45.47
+      },
+      "referenceCompositeScore": -19.74
+    },
+    {
+      "blindId": "BLIND_042",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.265,
+        "avgTradesPerYear": 13.38,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.3,
+        "totalReturnPct": 4287.62,
+        "maxDrawdownPct": -50.13,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.265,
+        "sortino": 0.973,
+        "sharpe": 0.657,
+        "upi": 0.696,
+        "ulcerIndex": 15.53,
+        "maxUnderwaterDays": 1898,
+        "annualVolPct": 17.53,
+        "winRateYearlyPct": 83.9,
+        "worstYearReturnPct": -20.94,
+        "finalEquityFrom10M": 438761958
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.84,
+        "totalReturnPct": 674.3,
+        "maxDrawdownPct": -22.6,
+        "calmar": 0.613,
+        "sortino": 1.263,
+        "sharpe": 0.876,
+        "annualVolPct": 12.9,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.14,
+        "worstCrisisMddPct": -50.05,
+        "avgCrisisReturnPct": 5.64,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 51.07,
+            "mddPct": -25.7
+          },
+          "dotcom_2000": {
+            "returnPct": -42.05,
+            "mddPct": -50.05
+          },
+          "gfc_2008": {
+            "returnPct": 17.63,
+            "mddPct": -18.46
+          },
+          "covid_2020": {
+            "returnPct": 14.43,
+            "mddPct": -16.71
+          },
+          "ratehike_2022": {
+            "returnPct": -12.89,
+            "mddPct": -14.79
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.8,
+        "perturbedMinus15_cagrPct": 13.84,
+        "perturbedMinus15_mddPct": -47.79,
+        "perturbedPlus15_cagrPct": 13.86,
+        "perturbedPlus15_mddPct": -50.74
+      },
+      "referenceCompositeScore": -27.75
+    },
+    {
+      "blindId": "BLIND_043",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.196,
+        "avgTradesPerYear": 9.88,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.98,
+        "totalReturnPct": 5156.39,
+        "maxDrawdownPct": -42.91,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.326,
+        "sortino": 1.025,
+        "sharpe": 0.684,
+        "upi": 0.981,
+        "ulcerIndex": 11.71,
+        "maxUnderwaterDays": 1534,
+        "annualVolPct": 17.75,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -17.38,
+        "finalEquityFrom10M": 525638854
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.33,
+        "totalReturnPct": 727.96,
+        "maxDrawdownPct": -22.49,
+        "calmar": 0.637,
+        "sortino": 1.308,
+        "sharpe": 0.901,
+        "annualVolPct": 13.02,
+        "winRateYearlyPct": 93.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.65,
+        "worstCrisisMddPct": -42.85,
+        "avgCrisisReturnPct": 5.06,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 50.6,
+            "mddPct": -26.89
+          },
+          "dotcom_2000": {
+            "returnPct": -34.77,
+            "mddPct": -42.85
+          },
+          "gfc_2008": {
+            "returnPct": 9.71,
+            "mddPct": -21.54
+          },
+          "covid_2020": {
+            "returnPct": 15.77,
+            "mddPct": -15.5
+          },
+          "ratehike_2022": {
+            "returnPct": -15.99,
+            "mddPct": -16.47
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.6,
+        "perturbedMinus15_cagrPct": 14.02,
+        "perturbedMinus15_mddPct": -46.1,
+        "perturbedPlus15_cagrPct": 13.98,
+        "perturbedPlus15_mddPct": -42.85
+      },
+      "referenceCompositeScore": -11.54
+    },
+    {
+      "blindId": "BLIND_044",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.092,
+        "avgTradesPerYear": 4.62,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.54,
+        "totalReturnPct": 4571.72,
+        "maxDrawdownPct": -52.66,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.257,
+        "sortino": 0.986,
+        "sharpe": 0.67,
+        "upi": 0.676,
+        "ulcerIndex": 16.33,
+        "maxUnderwaterDays": 1878,
+        "annualVolPct": 17.47,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -26.05,
+        "finalEquityFrom10M": 467172057
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 14.02,
+        "totalReturnPct": 693.02,
+        "maxDrawdownPct": -23.74,
+        "calmar": 0.59,
+        "sortino": 1.253,
+        "sharpe": 0.876,
+        "annualVolPct": 13.09,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -28.74,
+        "worstCrisisMddPct": -52.69,
+        "avgCrisisReturnPct": -3.45,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 37.33,
+            "mddPct": -27.46
+          },
+          "dotcom_2000": {
+            "returnPct": -45.56,
+            "mddPct": -52.69
+          },
+          "gfc_2008": {
+            "returnPct": 1.66,
+            "mddPct": -23.07
+          },
+          "covid_2020": {
+            "returnPct": 9.42,
+            "mddPct": -20
+          },
+          "ratehike_2022": {
+            "returnPct": -20.08,
+            "mddPct": -20.48
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.4,
+        "perturbedMinus15_cagrPct": 13.57,
+        "perturbedMinus15_mddPct": -53.11,
+        "perturbedPlus15_cagrPct": 13.66,
+        "perturbedPlus15_mddPct": -52.73
+      },
+      "referenceCompositeScore": -32.9
+    },
+    {
+      "blindId": "BLIND_045",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.073,
+        "avgTradesPerYear": 3.7,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.93,
+        "totalReturnPct": 3874.22,
+        "maxDrawdownPct": -36.87,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.351,
+        "sortino": 1.014,
+        "sharpe": 0.682,
+        "upi": 1.027,
+        "ulcerIndex": 10.16,
+        "maxUnderwaterDays": 1455,
+        "annualVolPct": 16.05,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -15.29,
+        "finalEquityFrom10M": 397421556
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.47,
+        "totalReturnPct": 539.23,
+        "maxDrawdownPct": -22.79,
+        "calmar": 0.547,
+        "sortino": 1.164,
+        "sharpe": 0.811,
+        "annualVolPct": 12.36,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -22.58,
+        "worstCrisisMddPct": -37.14,
+        "avgCrisisReturnPct": 8.17,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 40.63,
+            "mddPct": -26.58
+          },
+          "dotcom_2000": {
+            "returnPct": -29.29,
+            "mddPct": -37.14
+          },
+          "gfc_2008": {
+            "returnPct": 28.92,
+            "mddPct": -20
+          },
+          "covid_2020": {
+            "returnPct": 13.08,
+            "mddPct": -15.39
+          },
+          "ratehike_2022": {
+            "returnPct": -12.51,
+            "mddPct": -13.8
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.7,
+        "perturbedMinus15_cagrPct": 12.88,
+        "perturbedMinus15_mddPct": -35.94,
+        "perturbedPlus15_cagrPct": 12.99,
+        "perturbedPlus15_mddPct": -36.81
+      },
+      "referenceCompositeScore": -5.53
+    },
+    {
+      "blindId": "BLIND_046",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.218,
+        "avgTradesPerYear": 11,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.32,
+        "totalReturnPct": 4307.26,
+        "maxDrawdownPct": -52.81,
+        "maxDrawdownDate": "2002-07-25",
+        "calmar": 0.252,
+        "sortino": 0.93,
+        "sharpe": 0.621,
+        "upi": 0.728,
+        "ulcerIndex": 14.85,
+        "maxUnderwaterDays": 1787,
+        "annualVolPct": 18.99,
+        "winRateYearlyPct": 74.2,
+        "worstYearReturnPct": -23.77,
+        "finalEquityFrom10M": 440725558
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.78,
+        "totalReturnPct": 667.29,
+        "maxDrawdownPct": -24.33,
+        "calmar": 0.566,
+        "sortino": 1.177,
+        "sharpe": 0.819,
+        "annualVolPct": 13.88,
+        "winRateYearlyPct": 81.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.97,
+        "worstCrisisMddPct": -52.75,
+        "avgCrisisReturnPct": 3.79,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 53.39,
+            "mddPct": -27.09
+          },
+          "dotcom_2000": {
+            "returnPct": -41.9,
+            "mddPct": -52.75
+          },
+          "gfc_2008": {
+            "returnPct": 6.56,
+            "mddPct": -21.49
+          },
+          "covid_2020": {
+            "returnPct": 11.23,
+            "mddPct": -18.58
+          },
+          "ratehike_2022": {
+            "returnPct": -10.34,
+            "mddPct": -14.92
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.8,
+        "perturbedMinus15_cagrPct": 13.4,
+        "perturbedMinus15_mddPct": -53.35,
+        "perturbedPlus15_cagrPct": 13.5,
+        "perturbedPlus15_mddPct": -51.54
+      },
+      "referenceCompositeScore": -33.88
+    },
+    {
+      "blindId": "BLIND_047",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.288,
+        "avgTradesPerYear": 14.5,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.4,
+        "totalReturnPct": 3341.18,
+        "maxDrawdownPct": -50.38,
+        "maxDrawdownDate": "2002-10-09",
+        "calmar": 0.246,
+        "sortino": 0.961,
+        "sharpe": 0.652,
+        "upi": 0.656,
+        "ulcerIndex": 15.09,
+        "maxUnderwaterDays": 1798,
+        "annualVolPct": 16.05,
+        "winRateYearlyPct": 71,
+        "worstYearReturnPct": -25.58,
+        "finalEquityFrom10M": 344117896
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 12.12,
+        "totalReturnPct": 508.59,
+        "maxDrawdownPct": -25.92,
+        "calmar": 0.468,
+        "sortino": 1.108,
+        "sharpe": 0.78,
+        "annualVolPct": 12.46,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.21,
+        "worstCrisisMddPct": -48.76,
+        "avgCrisisReturnPct": 0.53,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 28.76,
+            "mddPct": -25.55
+          },
+          "dotcom_2000": {
+            "returnPct": -42.62,
+            "mddPct": -48.76
+          },
+          "gfc_2008": {
+            "returnPct": 22.16,
+            "mddPct": -17
+          },
+          "covid_2020": {
+            "returnPct": 11.48,
+            "mddPct": -17.46
+          },
+          "ratehike_2022": {
+            "returnPct": -17.13,
+            "mddPct": -17.29
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.6,
+        "perturbedMinus15_cagrPct": 12.34,
+        "perturbedMinus15_mddPct": -49.45,
+        "perturbedPlus15_cagrPct": 12.34,
+        "perturbedPlus15_mddPct": -50.69
+      },
+      "referenceCompositeScore": -34.15
+    },
+    {
+      "blindId": "BLIND_048",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.19,
+        "avgTradesPerYear": 9.58,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 12.97,
+        "totalReturnPct": 3908.96,
+        "maxDrawdownPct": -51.63,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.251,
+        "sortino": 0.946,
+        "sharpe": 0.638,
+        "upi": 0.717,
+        "ulcerIndex": 14.6,
+        "maxUnderwaterDays": 1825,
+        "annualVolPct": 17.61,
+        "winRateYearlyPct": 77.4,
+        "worstYearReturnPct": -22.15,
+        "finalEquityFrom10M": 400895981
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.62,
+        "totalReturnPct": 650.47,
+        "maxDrawdownPct": -23.43,
+        "calmar": 0.581,
+        "sortino": 1.224,
+        "sharpe": 0.85,
+        "annualVolPct": 13.08,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -26.89,
+        "worstCrisisMddPct": -51.92,
+        "avgCrisisReturnPct": -0.23,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 41.66,
+            "mddPct": -27.08
+          },
+          "dotcom_2000": {
+            "returnPct": -44.13,
+            "mddPct": -51.92
+          },
+          "gfc_2008": {
+            "returnPct": 4.92,
+            "mddPct": -21.18
+          },
+          "covid_2020": {
+            "returnPct": 13.1,
+            "mddPct": -17.06
+          },
+          "ratehike_2022": {
+            "returnPct": -16.71,
+            "mddPct": -17.22
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97,
+        "perturbedMinus15_cagrPct": 13.21,
+        "perturbedMinus15_mddPct": -49.77,
+        "perturbedPlus15_cagrPct": 12.9,
+        "perturbedPlus15_mddPct": -51.22
+      },
+      "referenceCompositeScore": -31.88
+    },
+    {
+      "blindId": "BLIND_049",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.417,
+        "avgTradesPerYear": 21.04,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.77,
+        "totalReturnPct": 4866.04,
+        "maxDrawdownPct": -52.12,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.264,
+        "sortino": 1.028,
+        "sharpe": 0.691,
+        "upi": 0.718,
+        "ulcerIndex": 15.69,
+        "maxUnderwaterDays": 1903,
+        "annualVolPct": 17.16,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -20.68,
+        "finalEquityFrom10M": 496604312
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.51,
+        "totalReturnPct": 638.92,
+        "maxDrawdownPct": -22.4,
+        "calmar": 0.603,
+        "sortino": 1.235,
+        "sharpe": 0.861,
+        "annualVolPct": 12.76,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.26,
+        "worstCrisisMddPct": -51.44,
+        "avgCrisisReturnPct": 6.86,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 45.44,
+            "mddPct": -26.12
+          },
+          "dotcom_2000": {
+            "returnPct": -42.88,
+            "mddPct": -51.44
+          },
+          "gfc_2008": {
+            "returnPct": 33.59,
+            "mddPct": -17.97
+          },
+          "covid_2020": {
+            "returnPct": 11.92,
+            "mddPct": -16.71
+          },
+          "ratehike_2022": {
+            "returnPct": -13.79,
+            "mddPct": -14.07
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.1,
+        "perturbedMinus15_cagrPct": 13.52,
+        "perturbedMinus15_mddPct": -52.77,
+        "perturbedPlus15_cagrPct": 14.15,
+        "perturbedPlus15_mddPct": -53.11
+      },
+      "referenceCompositeScore": -28.45
+    },
+    {
+      "blindId": "BLIND_050",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.047,
+        "avgTradesPerYear": 2.34,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_full_1996_2026": {
+        "cagrPct": 13.28,
+        "totalReturnPct": 4255.95,
+        "maxDrawdownPct": -42.14,
+        "maxDrawdownDate": "2002-08-05",
+        "calmar": 0.315,
+        "sortino": 1.019,
+        "sharpe": 0.687,
+        "upi": 0.921,
+        "ulcerIndex": 11.71,
+        "maxUnderwaterDays": 1532,
+        "annualVolPct": 16.47,
+        "winRateYearlyPct": 80.6,
+        "worstYearReturnPct": -17.95,
+        "finalEquityFrom10M": 435594829
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 13.17,
+        "totalReturnPct": 604.76,
+        "maxDrawdownPct": -22.42,
+        "calmar": 0.587,
+        "sortino": 1.223,
+        "sharpe": 0.852,
+        "annualVolPct": 12.51,
+        "winRateYearlyPct": 87.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -23.92,
+        "worstCrisisMddPct": -42.18,
+        "avgCrisisReturnPct": 6.89,
+        "byCrisis": {
+          "imf_1997": {
+            "returnPct": 45.06,
+            "mddPct": -26.9
+          },
+          "dotcom_2000": {
+            "returnPct": -34.43,
+            "mddPct": -42.18
+          },
+          "gfc_2008": {
+            "returnPct": 24.78,
+            "mddPct": -19.1
+          },
+          "covid_2020": {
+            "returnPct": 12.79,
+            "mddPct": -16.01
+          },
+          "ratehike_2022": {
+            "returnPct": -13.75,
+            "mddPct": -15.39
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.8,
+        "perturbedMinus15_cagrPct": 13.23,
+        "perturbedMinus15_mddPct": -42.21,
+        "perturbedPlus15_cagrPct": 13.25,
+        "perturbedPlus15_mddPct": -42.1
+      },
+      "referenceCompositeScore": -12.7
+    }
+  ]
+}

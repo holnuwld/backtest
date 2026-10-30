@@ -1,0 +1,3875 @@
+{
+  "protocol": "QUANTCROSS_BLIND_EVAL_KOSPI_CASH_POST_IMF_V1",
+  "generatedAt": "2026-10-29T12:01:04.462Z",
+  "blindNotice": "Evaluates KOSPI 200 + Cash strategies starting POST-IMF (1999-01-04 ~ 2026-10-27, 27.77 years). Select Top 10 Pareto-optimal strategies with realistic CAGR (> 6~10%) and controlled MDD (< 25~35%).",
+  "constraintsEnforced": {
+    "tradableUniverse": [
+      "KPI200 (KOSPI 200)",
+      "CASH (US3M Yield)"
+    ],
+    "signalBasis": "Previous Day Close (T-1 Close)",
+    "executionBasis": "Next Day Open (T Open)",
+    "maxWeeklyTradesLimit": 3,
+    "primaryPeriod": "1999-01-04 ~ 2026-10-27 (27.77 years, post-IMF modern era)",
+    "modernOOSPeriod": "2011-01-03 ~ 2026-10-27 (15.82 years)"
+  },
+  "referenceBaselines": {
+    "KOSPI200_100_BuyHold": {
+      "startDate": "1999-01-04",
+      "endDate": "2026-10-27",
+      "tradingDays": 6997,
+      "years": 27.77,
+      "initialCapital": 10000000,
+      "finalEquity": 97939348,
+      "totalReturnPct": 879.39,
+      "cagrPct": 8.56,
+      "maxDrawdownPct": -55.73,
+      "maxDrawdownPeakDate": "2000-01-04",
+      "maxDrawdownDate": "2001-09-17",
+      "maxDrawdownRecoveryDate": "2005-07-14",
+      "mddPeakToTroughDays": 425,
+      "mddTotalUnderwaterDays": 1388,
+      "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+      "ulcerIndex": 20.88,
+      "maxUnderwaterDays": 1511,
+      "annualVolPct": 25.25,
+      "sharpe": 0.35,
+      "sortino": 0.491,
+      "calmar": 0.154,
+      "upi": 0.29,
+      "winRateYearlyPct": 71.4,
+      "worstYearReturnPct": -50.92,
+      "ruleTradeCount": 0,
+      "rebalanceCount": 0,
+      "totalTrades": 0,
+      "avgTradesPerYear": 0,
+      "avgTradesPerWeek": 0,
+      "maxTradesInSingleWeek": 0,
+      "weeklyCapBlockedCount": 0,
+      "totalFeesPaid": 5000,
+      "paretoScore": -51.94
+    },
+    "Cash_US3M_100": {
+      "startDate": "1999-01-04",
+      "endDate": "2026-10-27",
+      "tradingDays": 6997,
+      "years": 27.77,
+      "initialCapital": 10000000,
+      "finalEquity": 17618617,
+      "totalReturnPct": 76.19,
+      "cagrPct": 2.06,
+      "maxDrawdownPct": 0,
+      "maxDrawdownPeakDate": "1999-01-04",
+      "maxDrawdownDate": "1999-01-04",
+      "maxDrawdownRecoveryDate": "1999-01-05",
+      "mddPeakToTroughDays": 1,
+      "mddTotalUnderwaterDays": 2,
+      "mddEventDescription": "1997~1998 IMF 외환위기 (국가부도 위기 및 고금리·실물 쇼크)",
+      "ulcerIndex": 0,
+      "maxUnderwaterDays": 0,
+      "annualVolPct": 0.12,
+      "sharpe": -3.725,
+      "sortino": 0,
+      "calmar": 2.061,
+      "upi": 2.061,
+      "winRateYearlyPct": 100,
+      "worstYearReturnPct": 0.03,
+      "ruleTradeCount": 0,
+      "rebalanceCount": 0,
+      "totalTrades": 0,
+      "avgTradesPerYear": 0,
+      "avgTradesPerWeek": 0,
+      "maxTradesInSingleWeek": 0,
+      "weeklyCapBlockedCount": 0,
+      "totalFeesPaid": 0,
+      "paretoScore": -3.51
+    },
+    "KOSPI50_Cash50_NoReb": {
+      "startDate": "1999-01-04",
+      "endDate": "2026-10-27",
+      "tradingDays": 6997,
+      "years": 27.77,
+      "initialCapital": 10000000,
+      "finalEquity": 57778982,
+      "totalReturnPct": 477.79,
+      "cagrPct": 6.52,
+      "maxDrawdownPct": -39.17,
+      "maxDrawdownPeakDate": "2007-10-31",
+      "maxDrawdownDate": "2008-10-24",
+      "maxDrawdownRecoveryDate": "2010-12-30",
+      "mddPeakToTroughDays": 248,
+      "mddTotalUnderwaterDays": 797,
+      "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+      "ulcerIndex": 13.55,
+      "maxUnderwaterDays": 1511,
+      "annualVolPct": 16.78,
+      "sharpe": 0.309,
+      "sortino": 0.432,
+      "calmar": 0.166,
+      "upi": 0.297,
+      "winRateYearlyPct": 71.4,
+      "worstYearReturnPct": -29.88,
+      "ruleTradeCount": 0,
+      "rebalanceCount": 0,
+      "totalTrades": 0,
+      "avgTradesPerYear": 0,
+      "avgTradesPerWeek": 0,
+      "maxTradesInSingleWeek": 0,
+      "weeklyCapBlockedCount": 0,
+      "totalFeesPaid": 2500,
+      "paretoScore": -31.41
+    }
+  },
+  "candidates": [
+    {
+      "blindId": "POST_IMF_BLIND_001",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.062,
+        "avgTradesPerYear": 3.13,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.21,
+        "totalReturnPct": 310.18,
+        "maxDrawdownPct": -21.76,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-08-03",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 693,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.24,
+        "sortino": 0.472,
+        "sharpe": 0.335,
+        "upi": 0.468,
+        "ulcerIndex": 5.79,
+        "maxUnderwaterDays": 999,
+        "annualVolPct": 8.8,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -16.67,
+        "finalEquityFrom10M": 41017707
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.93,
+        "totalReturnPct": 83.77,
+        "maxDrawdownPct": -14.92,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.263,
+        "sortino": 0.307,
+        "sharpe": 0.219,
+        "annualVolPct": 7.44,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -14.88,
+        "worstCrisisMddPct": -21.59,
+        "avgCrisisReturnPct": -4.61,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 3.49,
+            "mddPct": -15.01
+          },
+          "gfc_2008": {
+            "returnPct": -11.74,
+            "mddPct": -21.59
+          },
+          "covid_2020": {
+            "returnPct": -2.46,
+            "mddPct": -13.35
+          },
+          "ratehike_2022": {
+            "returnPct": -7.73,
+            "mddPct": -9.57
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.1,
+        "perturbedMinus15_cagrPct": 5.12,
+        "perturbedMinus15_mddPct": -22.17,
+        "perturbedPlus15_cagrPct": 5.12,
+        "perturbedPlus15_mddPct": -21.76
+      },
+      "referenceCompositeScore": 8.78
+    },
+    {
+      "blindId": "POST_IMF_BLIND_002",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.201,
+        "avgTradesPerYear": 10.12,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.71,
+        "totalReturnPct": 367.69,
+        "maxDrawdownPct": -29.7,
+        "maxDrawdownPeakDate": "2007-12-06",
+        "maxDrawdownDate": "2008-11-20",
+        "maxDrawdownRecoveryDate": "2009-09-01",
+        "mddPeakToTroughDays": 242,
+        "mddTotalUnderwaterDays": 437,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.192,
+        "sortino": 0.44,
+        "sharpe": 0.31,
+        "upi": 0.5,
+        "ulcerIndex": 6.43,
+        "maxUnderwaterDays": 753,
+        "annualVolPct": 12.14,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -20.85,
+        "finalEquityFrom10M": 46768583
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.43,
+        "totalReturnPct": 70.4,
+        "maxDrawdownPct": -22.45,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.153,
+        "sortino": 0.196,
+        "sharpe": 0.139,
+        "annualVolPct": 9.48,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21.76,
+        "worstCrisisMddPct": -29.7,
+        "avgCrisisReturnPct": -5.08,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -0.26,
+            "mddPct": -25.12
+          },
+          "gfc_2008": {
+            "returnPct": -7.83,
+            "mddPct": -29.7
+          },
+          "covid_2020": {
+            "returnPct": -2.59,
+            "mddPct": -19.91
+          },
+          "ratehike_2022": {
+            "returnPct": -9.63,
+            "mddPct": -12.3
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.2,
+        "perturbedMinus15_cagrPct": 6.17,
+        "perturbedMinus15_mddPct": -30.65,
+        "perturbedPlus15_cagrPct": 5.48,
+        "perturbedPlus15_mddPct": -31.32
+      },
+      "referenceCompositeScore": -8.84
+    },
+    {
+      "blindId": "POST_IMF_BLIND_003",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.385,
+        "avgTradesPerYear": 19.41,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.79,
+        "totalReturnPct": 377.32,
+        "maxDrawdownPct": -29.24,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2003-03-31",
+        "maxDrawdownRecoveryDate": "2005-08-01",
+        "mddPeakToTroughDays": 811,
+        "mddTotalUnderwaterDays": 1400,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.198,
+        "sortino": 0.475,
+        "sharpe": 0.336,
+        "upi": 0.328,
+        "ulcerIndex": 10.05,
+        "maxUnderwaterDays": 1477,
+        "annualVolPct": 11.04,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -25.1,
+        "finalEquityFrom10M": 47732487
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5,
+        "totalReturnPct": 116.07,
+        "maxDrawdownPct": -23.24,
+        "maxDrawdownPeakDate": "2026-06-03",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.215,
+        "sortino": 0.403,
+        "sharpe": 0.285,
+        "annualVolPct": 10.14,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.84,
+        "worstCrisisMddPct": -24,
+        "avgCrisisReturnPct": -10.83,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -13.54,
+            "mddPct": -24
+          },
+          "gfc_2008": {
+            "returnPct": -11.39,
+            "mddPct": -20.99
+          },
+          "covid_2020": {
+            "returnPct": -5.7,
+            "mddPct": -13.58
+          },
+          "ratehike_2022": {
+            "returnPct": -12.71,
+            "mddPct": -12.81
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 90.9,
+        "perturbedMinus15_cagrPct": 5.1,
+        "perturbedMinus15_mddPct": -26.74,
+        "perturbedPlus15_cagrPct": 6.02,
+        "perturbedPlus15_mddPct": -26.54
+      },
+      "referenceCompositeScore": -5.91
+    },
+    {
+      "blindId": "POST_IMF_BLIND_004",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.182,
+        "avgTradesPerYear": 9.18,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 8.87,
+        "totalReturnPct": 958.96,
+        "maxDrawdownPct": -34.67,
+        "maxDrawdownPeakDate": "1999-07-09",
+        "maxDrawdownDate": "2001-04-10",
+        "maxDrawdownRecoveryDate": "2002-03-18",
+        "mddPeakToTroughDays": 443,
+        "mddTotalUnderwaterDays": 674,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.256,
+        "sortino": 0.684,
+        "sharpe": 0.48,
+        "upi": 0.626,
+        "ulcerIndex": 10.18,
+        "maxUnderwaterDays": 1480,
+        "annualVolPct": 14.68,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -26.45,
+        "finalEquityFrom10M": 105896354
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 6.28,
+        "totalReturnPct": 161.6,
+        "maxDrawdownPct": -25.17,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.25,
+        "sortino": 0.49,
+        "sharpe": 0.349,
+        "annualVolPct": 12.54,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.48,
+        "worstCrisisMddPct": -23.79,
+        "avgCrisisReturnPct": -5.03,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 13.58,
+            "mddPct": -20.47
+          },
+          "gfc_2008": {
+            "returnPct": -16.69,
+            "mddPct": -23.79
+          },
+          "covid_2020": {
+            "returnPct": -4.96,
+            "mddPct": -13.49
+          },
+          "ratehike_2022": {
+            "returnPct": -12.06,
+            "mddPct": -12.19
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 94.5,
+        "perturbedMinus15_cagrPct": 8.64,
+        "perturbedMinus15_mddPct": -35.93,
+        "perturbedPlus15_cagrPct": 7.68,
+        "perturbedPlus15_mddPct": -31.44
+      },
+      "referenceCompositeScore": 4.25
+    },
+    {
+      "blindId": "POST_IMF_BLIND_005",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.191,
+        "avgTradesPerYear": 9.62,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.59,
+        "totalReturnPct": 352.31,
+        "maxDrawdownPct": -33.89,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-11-20",
+        "maxDrawdownRecoveryDate": "2017-05-25",
+        "mddPeakToTroughDays": 267,
+        "mddTotalUnderwaterDays": 2408,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.165,
+        "sortino": 0.436,
+        "sharpe": 0.309,
+        "upi": 0.397,
+        "ulcerIndex": 7.77,
+        "maxUnderwaterDays": 2407,
+        "annualVolPct": 11.6,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -22.37,
+        "finalEquityFrom10M": 45231021
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.53,
+        "totalReturnPct": 101.25,
+        "maxDrawdownPct": -18.23,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.248,
+        "sortino": 0.365,
+        "sharpe": 0.257,
+        "annualVolPct": 9.11,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -20.43,
+        "worstCrisisMddPct": -33.8,
+        "avgCrisisReturnPct": -5.34,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 6.93,
+            "mddPct": -21.35
+          },
+          "gfc_2008": {
+            "returnPct": -21.36,
+            "mddPct": -33.8
+          },
+          "covid_2020": {
+            "returnPct": 1.94,
+            "mddPct": -15.54
+          },
+          "ratehike_2022": {
+            "returnPct": -8.86,
+            "mddPct": -11.03
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93,
+        "perturbedMinus15_cagrPct": 6.01,
+        "perturbedMinus15_mddPct": -32.99,
+        "perturbedPlus15_cagrPct": 6.01,
+        "perturbedPlus15_mddPct": -35.13
+      },
+      "referenceCompositeScore": -9.94
+    },
+    {
+      "blindId": "POST_IMF_BLIND_006",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.024,
+        "avgTradesPerYear": 1.22,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.98,
+        "totalReturnPct": 550.66,
+        "maxDrawdownPct": -35.58,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-10-26",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 752,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.196,
+        "sortino": 0.493,
+        "sharpe": 0.352,
+        "upi": 0.391,
+        "ulcerIndex": 11.44,
+        "maxUnderwaterDays": 1505,
+        "annualVolPct": 15.24,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -30.75,
+        "finalEquityFrom10M": 65065977
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.39,
+        "totalReturnPct": 129.11,
+        "maxDrawdownPct": -26.3,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.205,
+        "sortino": 0.387,
+        "sharpe": 0.276,
+        "annualVolPct": 13.02,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.6,
+        "worstCrisisMddPct": -35.2,
+        "avgCrisisReturnPct": -12,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -8.72,
+            "mddPct": -29.35
+          },
+          "gfc_2008": {
+            "returnPct": -22.6,
+            "mddPct": -35.2
+          },
+          "covid_2020": {
+            "returnPct": -2.52,
+            "mddPct": -21.49
+          },
+          "ratehike_2022": {
+            "returnPct": -14.15,
+            "mddPct": -16.35
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.7,
+        "perturbedMinus15_cagrPct": 6.99,
+        "perturbedMinus15_mddPct": -35.6,
+        "perturbedPlus15_cagrPct": 6.99,
+        "perturbedPlus15_mddPct": -35.41
+      },
+      "referenceCompositeScore": -12.88
+    },
+    {
+      "blindId": "POST_IMF_BLIND_007",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.412,
+        "avgTradesPerYear": 20.74,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.25,
+        "totalReturnPct": 314.07,
+        "maxDrawdownPct": -21.61,
+        "maxDrawdownPeakDate": "2002-04-18",
+        "maxDrawdownDate": "2003-03-17",
+        "maxDrawdownRecoveryDate": "2004-01-09",
+        "mddPeakToTroughDays": 229,
+        "mddTotalUnderwaterDays": 436,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.243,
+        "sortino": 0.437,
+        "sharpe": 0.313,
+        "upi": 0.325,
+        "ulcerIndex": 8.47,
+        "maxUnderwaterDays": 1559,
+        "annualVolPct": 9.81,
+        "winRateYearlyPct": 64.3,
+        "worstYearReturnPct": -18.73,
+        "finalEquityFrom10M": 41407471
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.42,
+        "totalReturnPct": 70.16,
+        "maxDrawdownPct": -18.06,
+        "maxDrawdownPeakDate": "2021-07-06",
+        "maxDrawdownDate": "2022-10-13",
+        "calmar": 0.19,
+        "sortino": 0.197,
+        "sharpe": 0.143,
+        "annualVolPct": 8.65,
+        "winRateYearlyPct": 56.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -15.32,
+        "worstCrisisMddPct": -20.93,
+        "avgCrisisReturnPct": -6.14,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 1.84,
+            "mddPct": -16.19
+          },
+          "gfc_2008": {
+            "returnPct": -13.84,
+            "mddPct": -20.93
+          },
+          "covid_2020": {
+            "returnPct": -2.38,
+            "mddPct": -11.29
+          },
+          "ratehike_2022": {
+            "returnPct": -10.19,
+            "mddPct": -12.86
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 95.5,
+        "perturbedMinus15_cagrPct": 5.95,
+        "perturbedMinus15_mddPct": -23.52,
+        "perturbedPlus15_cagrPct": 5.56,
+        "perturbedPlus15_mddPct": -21.83
+      },
+      "referenceCompositeScore": 3.37
+    },
+    {
+      "blindId": "POST_IMF_BLIND_008",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.132,
+        "avgTradesPerYear": 6.66,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 8.19,
+        "totalReturnPct": 790.45,
+        "maxDrawdownPct": -33.64,
+        "maxDrawdownPeakDate": "1999-07-09",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2002-03-19",
+        "mddPeakToTroughDays": 549,
+        "mddTotalUnderwaterDays": 675,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.244,
+        "sortino": 0.639,
+        "sharpe": 0.452,
+        "upi": 0.479,
+        "ulcerIndex": 11.89,
+        "maxUnderwaterDays": 1637,
+        "annualVolPct": 14,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -27.52,
+        "finalEquityFrom10M": 89044600
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 6.15,
+        "totalReturnPct": 156.57,
+        "maxDrawdownPct": -21.12,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.291,
+        "sortino": 0.481,
+        "sharpe": 0.342,
+        "annualVolPct": 12.39,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -16.19,
+        "worstCrisisMddPct": -21.53,
+        "avgCrisisReturnPct": -3.38,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 9.4,
+            "mddPct": -21.53
+          },
+          "gfc_2008": {
+            "returnPct": -11.35,
+            "mddPct": -20.05
+          },
+          "covid_2020": {
+            "returnPct": -3.1,
+            "mddPct": -13.02
+          },
+          "ratehike_2022": {
+            "returnPct": -8.47,
+            "mddPct": -10.15
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 77.5,
+        "perturbedMinus15_cagrPct": 8.71,
+        "perturbedMinus15_mddPct": -26.87,
+        "perturbedPlus15_cagrPct": 8.05,
+        "perturbedPlus15_mddPct": -29.31
+      },
+      "referenceCompositeScore": 2.65
+    },
+    {
+      "blindId": "POST_IMF_BLIND_009",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.157,
+        "avgTradesPerYear": 7.92,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.76,
+        "totalReturnPct": 263.68,
+        "maxDrawdownPct": -30.03,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-11-20",
+        "maxDrawdownRecoveryDate": "2011-04-21",
+        "mddPeakToTroughDays": 267,
+        "mddTotalUnderwaterDays": 875,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.158,
+        "sortino": 0.355,
+        "sharpe": 0.253,
+        "upi": 0.327,
+        "ulcerIndex": 6.92,
+        "maxUnderwaterDays": 874,
+        "annualVolPct": 10.62,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -21.65,
+        "finalEquityFrom10M": 36368014
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.56,
+        "totalReturnPct": 73.75,
+        "maxDrawdownPct": -20.57,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.173,
+        "sortino": 0.227,
+        "sharpe": 0.158,
+        "annualVolPct": 8.6,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -20.14,
+        "worstCrisisMddPct": -30.03,
+        "avgCrisisReturnPct": -7.75,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -0.58,
+            "mddPct": -21.46
+          },
+          "gfc_2008": {
+            "returnPct": -18.16,
+            "mddPct": -30.03
+          },
+          "covid_2020": {
+            "returnPct": -3.35,
+            "mddPct": -18.21
+          },
+          "ratehike_2022": {
+            "returnPct": -8.93,
+            "mddPct": -10.88
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 94.9,
+        "perturbedMinus15_cagrPct": 5,
+        "perturbedMinus15_mddPct": -31.67,
+        "perturbedPlus15_cagrPct": 4.99,
+        "perturbedPlus15_mddPct": -28.74
+      },
+      "referenceCompositeScore": -12.74
+    },
+    {
+      "blindId": "POST_IMF_BLIND_010",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.078,
+        "avgTradesPerYear": 3.93,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.99,
+        "totalReturnPct": 402.92,
+        "maxDrawdownPct": -24.08,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-10",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 720,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.249,
+        "sortino": 0.531,
+        "sharpe": 0.375,
+        "upi": 0.475,
+        "ulcerIndex": 7.35,
+        "maxUnderwaterDays": 999,
+        "annualVolPct": 10.16,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -18.52,
+        "finalEquityFrom10M": 50292301
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.48,
+        "totalReturnPct": 99.69,
+        "maxDrawdownPct": -17.11,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.262,
+        "sortino": 0.366,
+        "sharpe": 0.261,
+        "annualVolPct": 8.62,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -16.81,
+        "worstCrisisMddPct": -23.61,
+        "avgCrisisReturnPct": -6.57,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 2.52,
+            "mddPct": -18.77
+          },
+          "gfc_2008": {
+            "returnPct": -12.91,
+            "mddPct": -23.61
+          },
+          "covid_2020": {
+            "returnPct": -7.14,
+            "mddPct": -14.31
+          },
+          "ratehike_2022": {
+            "returnPct": -8.75,
+            "mddPct": -10.57
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 88.8,
+        "perturbedMinus15_cagrPct": 5.33,
+        "perturbedMinus15_mddPct": -26.48,
+        "perturbedPlus15_cagrPct": 5.95,
+        "perturbedPlus15_mddPct": -23.12
+      },
+      "referenceCompositeScore": 7.33
+    },
+    {
+      "blindId": "POST_IMF_BLIND_011",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.217,
+        "avgTradesPerYear": 10.91,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.34,
+        "totalReturnPct": 450.45,
+        "maxDrawdownPct": -28.02,
+        "maxDrawdownPeakDate": "2007-10-11",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-30",
+        "mddPeakToTroughDays": 262,
+        "mddTotalUnderwaterDays": 748,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.226,
+        "sortino": 0.525,
+        "sharpe": 0.371,
+        "upi": 0.464,
+        "ulcerIndex": 8.27,
+        "maxUnderwaterDays": 1505,
+        "annualVolPct": 11.52,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -24.13,
+        "finalEquityFrom10M": 55044893
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.92,
+        "totalReturnPct": 113.57,
+        "maxDrawdownPct": -18.49,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.266,
+        "sortino": 0.404,
+        "sharpe": 0.287,
+        "annualVolPct": 9.66,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -19.2,
+        "worstCrisisMddPct": -28.02,
+        "avgCrisisReturnPct": -7.92,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -1.16,
+            "mddPct": -21.54
+          },
+          "gfc_2008": {
+            "returnPct": -18.18,
+            "mddPct": -28.02
+          },
+          "covid_2020": {
+            "returnPct": -2.21,
+            "mddPct": -16.99
+          },
+          "ratehike_2022": {
+            "returnPct": -10.12,
+            "mddPct": -10.27
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 92.3,
+        "perturbedMinus15_cagrPct": 5.9,
+        "perturbedMinus15_mddPct": -27.4,
+        "perturbedPlus15_cagrPct": 6.61,
+        "perturbedPlus15_mddPct": -26.5
+      },
+      "referenceCompositeScore": 2.26
+    },
+    {
+      "blindId": "POST_IMF_BLIND_012",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.086,
+        "avgTradesPerYear": 4.36,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.45,
+        "totalReturnPct": 466.59,
+        "maxDrawdownPct": -33.08,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-11-03",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 758,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.195,
+        "sortino": 0.473,
+        "sharpe": 0.338,
+        "upi": 0.379,
+        "ulcerIndex": 10.4,
+        "maxUnderwaterDays": 1504,
+        "annualVolPct": 13.82,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -29.14,
+        "finalEquityFrom10M": 56658575
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.96,
+        "totalReturnPct": 114.73,
+        "maxDrawdownPct": -24.46,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.203,
+        "sortino": 0.362,
+        "sharpe": 0.258,
+        "annualVolPct": 11.7,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.12,
+        "worstCrisisMddPct": -33.31,
+        "avgCrisisReturnPct": -11.23,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -7.26,
+            "mddPct": -27.04
+          },
+          "gfc_2008": {
+            "returnPct": -20.92,
+            "mddPct": -33.31
+          },
+          "covid_2020": {
+            "returnPct": -3.3,
+            "mddPct": -20.43
+          },
+          "ratehike_2022": {
+            "returnPct": -13.46,
+            "mddPct": -15.71
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.9,
+        "perturbedMinus15_cagrPct": 6.27,
+        "perturbedMinus15_mddPct": -33.51,
+        "perturbedPlus15_cagrPct": 6.34,
+        "perturbedPlus15_mddPct": -33.28
+      },
+      "referenceCompositeScore": -10.91
+    },
+    {
+      "blindId": "POST_IMF_BLIND_013",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.437,
+        "avgTradesPerYear": 22.04,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.79,
+        "totalReturnPct": 266.81,
+        "maxDrawdownPct": -33.3,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-10-25",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 751,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.144,
+        "sortino": 0.331,
+        "sharpe": 0.236,
+        "upi": 0.243,
+        "ulcerIndex": 9.42,
+        "maxUnderwaterDays": 1281,
+        "annualVolPct": 12.35,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -25.5,
+        "finalEquityFrom10M": 36680989
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.83,
+        "totalReturnPct": 80.92,
+        "maxDrawdownPct": -27.44,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.139,
+        "sortino": 0.246,
+        "sharpe": 0.174,
+        "annualVolPct": 10.13,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -24.28,
+        "worstCrisisMddPct": -33.73,
+        "avgCrisisReturnPct": -12.66,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -14.19,
+            "mddPct": -26.4
+          },
+          "gfc_2008": {
+            "returnPct": -17.27,
+            "mddPct": -33.73
+          },
+          "covid_2020": {
+            "returnPct": -7.1,
+            "mddPct": -23.7
+          },
+          "ratehike_2022": {
+            "returnPct": -12.08,
+            "mddPct": -13.3
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93,
+        "perturbedMinus15_cagrPct": 4.7,
+        "perturbedMinus15_mddPct": -34.11,
+        "perturbedPlus15_cagrPct": 4.68,
+        "perturbedPlus15_mddPct": -36.23
+      },
+      "referenceCompositeScore": -23.52
+    },
+    {
+      "blindId": "POST_IMF_BLIND_014",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.337,
+        "avgTradesPerYear": 16.96,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.36,
+        "totalReturnPct": 326.27,
+        "maxDrawdownPct": -25.07,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2002-03-27",
+        "mddPeakToTroughDays": 425,
+        "mddTotalUnderwaterDays": 557,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.214,
+        "sortino": 0.429,
+        "sharpe": 0.304,
+        "upi": 0.298,
+        "ulcerIndex": 9.59,
+        "maxUnderwaterDays": 2286,
+        "annualVolPct": 10.78,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -21.81,
+        "finalEquityFrom10M": 42627146
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4,
+        "totalReturnPct": 85.78,
+        "maxDrawdownPct": -22.73,
+        "maxDrawdownPeakDate": "2026-06-25",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.176,
+        "sortino": 0.276,
+        "sharpe": 0.195,
+        "annualVolPct": 9.66,
+        "winRateYearlyPct": 56.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -15.41,
+        "worstCrisisMddPct": -22.93,
+        "avgCrisisReturnPct": -7.13,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -3.96,
+            "mddPct": -20.6
+          },
+          "gfc_2008": {
+            "returnPct": -18.05,
+            "mddPct": -22.93
+          },
+          "covid_2020": {
+            "returnPct": 1.25,
+            "mddPct": -9.41
+          },
+          "ratehike_2022": {
+            "returnPct": -7.77,
+            "mddPct": -8.69
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 84.1,
+        "perturbedMinus15_cagrPct": 6.05,
+        "perturbedMinus15_mddPct": -23.45,
+        "perturbedPlus15_cagrPct": 5.81,
+        "perturbedPlus15_mddPct": -24.45
+      },
+      "referenceCompositeScore": -4.29
+    },
+    {
+      "blindId": "POST_IMF_BLIND_015",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.24,
+        "avgTradesPerYear": 12.1,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.13,
+        "totalReturnPct": 422.38,
+        "maxDrawdownPct": -30.52,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-10-06",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 738,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.201,
+        "sortino": 0.471,
+        "sharpe": 0.336,
+        "upi": 0.395,
+        "ulcerIndex": 9.19,
+        "maxUnderwaterDays": 1480,
+        "annualVolPct": 12.53,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -26.54,
+        "finalEquityFrom10M": 52237667
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.74,
+        "totalReturnPct": 107.78,
+        "maxDrawdownPct": -21.97,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.216,
+        "sortino": 0.357,
+        "sharpe": 0.254,
+        "annualVolPct": 10.57,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21.77,
+        "worstCrisisMddPct": -30.52,
+        "avgCrisisReturnPct": -9.53,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -4.84,
+            "mddPct": -23.77
+          },
+          "gfc_2008": {
+            "returnPct": -18.63,
+            "mddPct": -30.52
+          },
+          "covid_2020": {
+            "returnPct": -3,
+            "mddPct": -18.68
+          },
+          "ratehike_2022": {
+            "returnPct": -11.67,
+            "mddPct": -14.12
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.5,
+        "perturbedMinus15_cagrPct": 6.11,
+        "perturbedMinus15_mddPct": -30.6,
+        "perturbedPlus15_cagrPct": 6.14,
+        "perturbedPlus15_mddPct": -30.42
+      },
+      "referenceCompositeScore": -6.15
+    },
+    {
+      "blindId": "POST_IMF_BLIND_016",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.195,
+        "avgTradesPerYear": 9.83,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.15,
+        "totalReturnPct": 424.9,
+        "maxDrawdownPct": -30.95,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-11-20",
+        "maxDrawdownRecoveryDate": "2009-09-17",
+        "mddPeakToTroughDays": 267,
+        "mddTotalUnderwaterDays": 473,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.199,
+        "sortino": 0.474,
+        "sharpe": 0.332,
+        "upi": 0.442,
+        "ulcerIndex": 8.27,
+        "maxUnderwaterDays": 1475,
+        "annualVolPct": 12.87,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -27.45,
+        "finalEquityFrom10M": 52489695
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.12,
+        "totalReturnPct": 89.2,
+        "maxDrawdownPct": -24.49,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.168,
+        "sortino": 0.285,
+        "sharpe": 0.201,
+        "annualVolPct": 10.25,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -22.56,
+        "worstCrisisMddPct": -30.94,
+        "avgCrisisReturnPct": -6.47,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -4.64,
+            "mddPct": -27.73
+          },
+          "gfc_2008": {
+            "returnPct": -10.02,
+            "mddPct": -30.94
+          },
+          "covid_2020": {
+            "returnPct": -2.33,
+            "mddPct": -19.62
+          },
+          "ratehike_2022": {
+            "returnPct": -8.9,
+            "mddPct": -11.95
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 88.2,
+        "perturbedMinus15_cagrPct": 6.11,
+        "perturbedMinus15_mddPct": -29.68,
+        "perturbedPlus15_cagrPct": 6.06,
+        "perturbedPlus15_mddPct": -37.99
+      },
+      "referenceCompositeScore": -9.81
+    },
+    {
+      "blindId": "POST_IMF_BLIND_017",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.199,
+        "avgTradesPerYear": 10.01,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.79,
+        "totalReturnPct": 518.91,
+        "maxDrawdownPct": -26.7,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-04-10",
+        "maxDrawdownRecoveryDate": "2002-02-27",
+        "mddPeakToTroughDays": 319,
+        "mddTotalUnderwaterDays": 537,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.254,
+        "sortino": 0.571,
+        "sharpe": 0.403,
+        "upi": 0.541,
+        "ulcerIndex": 7.93,
+        "maxUnderwaterDays": 681,
+        "annualVolPct": 11.72,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -23.49,
+        "finalEquityFrom10M": 61890526
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.78,
+        "totalReturnPct": 142.86,
+        "maxDrawdownPct": -22.88,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.253,
+        "sortino": 0.514,
+        "sharpe": 0.36,
+        "annualVolPct": 10.06,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -18.05,
+        "worstCrisisMddPct": -26.19,
+        "avgCrisisReturnPct": -4.67,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 0.91,
+            "mddPct": -21.21
+          },
+          "gfc_2008": {
+            "returnPct": -14,
+            "mddPct": -26.19
+          },
+          "covid_2020": {
+            "returnPct": 2.96,
+            "mddPct": -12.31
+          },
+          "ratehike_2022": {
+            "returnPct": -8.57,
+            "mddPct": -12.49
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 90.4,
+        "perturbedMinus15_cagrPct": 6.4,
+        "perturbedMinus15_mddPct": -28.35,
+        "perturbedPlus15_cagrPct": 7.1,
+        "perturbedPlus15_mddPct": -25.83
+      },
+      "referenceCompositeScore": 5.71
+    },
+    {
+      "blindId": "POST_IMF_BLIND_018",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.221,
+        "avgTradesPerYear": 11.13,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.23,
+        "totalReturnPct": 311.98,
+        "maxDrawdownPct": -25.11,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-11-03",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 758,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.208,
+        "sortino": 0.403,
+        "sharpe": 0.284,
+        "upi": 0.317,
+        "ulcerIndex": 8.61,
+        "maxUnderwaterDays": 1536,
+        "annualVolPct": 11.31,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -21.52,
+        "finalEquityFrom10M": 41197643
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.84,
+        "totalReturnPct": 110.83,
+        "maxDrawdownPct": -22.36,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.216,
+        "sortino": 0.404,
+        "sharpe": 0.278,
+        "annualVolPct": 9.67,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -19.31,
+        "worstCrisisMddPct": -25.11,
+        "avgCrisisReturnPct": -8.27,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -5.89,
+            "mddPct": -21.3
+          },
+          "gfc_2008": {
+            "returnPct": -14.84,
+            "mddPct": -25.11
+          },
+          "covid_2020": {
+            "returnPct": -0.57,
+            "mddPct": -18.95
+          },
+          "ratehike_2022": {
+            "returnPct": -11.77,
+            "mddPct": -11.89
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.8,
+        "perturbedMinus15_cagrPct": 5.01,
+        "perturbedMinus15_mddPct": -24.92,
+        "perturbedPlus15_cagrPct": 5.6,
+        "perturbedPlus15_mddPct": -24.62
+      },
+      "referenceCompositeScore": -3.79
+    },
+    {
+      "blindId": "POST_IMF_BLIND_019",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.262,
+        "avgTradesPerYear": 13.18,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.48,
+        "totalReturnPct": 339.44,
+        "maxDrawdownPct": -27.27,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2002-04-03",
+        "mddPeakToTroughDays": 425,
+        "mddTotalUnderwaterDays": 561,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.201,
+        "sortino": 0.42,
+        "sharpe": 0.299,
+        "upi": 0.334,
+        "ulcerIndex": 8.92,
+        "maxUnderwaterDays": 1513,
+        "annualVolPct": 11.63,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -24.36,
+        "finalEquityFrom10M": 43943666
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.19,
+        "totalReturnPct": 91.25,
+        "maxDrawdownPct": -20.65,
+        "maxDrawdownPeakDate": "2026-06-03",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.203,
+        "sortino": 0.298,
+        "sharpe": 0.212,
+        "annualVolPct": 9.84,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.94,
+        "worstCrisisMddPct": -25.31,
+        "avgCrisisReturnPct": -9.45,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -4.79,
+            "mddPct": -22.33
+          },
+          "gfc_2008": {
+            "returnPct": -18.76,
+            "mddPct": -25.31
+          },
+          "covid_2020": {
+            "returnPct": -4.92,
+            "mddPct": -13.6
+          },
+          "ratehike_2022": {
+            "returnPct": -9.33,
+            "mddPct": -10.53
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.5,
+        "perturbedMinus15_cagrPct": 5.36,
+        "perturbedMinus15_mddPct": -26.35,
+        "perturbedPlus15_cagrPct": 5.21,
+        "perturbedPlus15_mddPct": -27.36
+      },
+      "referenceCompositeScore": -4.65
+    },
+    {
+      "blindId": "POST_IMF_BLIND_020",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.22,
+        "avgTradesPerYear": 11.09,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.82,
+        "totalReturnPct": 269.72,
+        "maxDrawdownPct": -26.04,
+        "maxDrawdownPeakDate": "2008-05-16",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-10-06",
+        "mddPeakToTroughDays": 112,
+        "mddTotalUnderwaterDays": 602,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.185,
+        "sortino": 0.395,
+        "sharpe": 0.278,
+        "upi": 0.424,
+        "ulcerIndex": 5.48,
+        "maxUnderwaterDays": 672,
+        "annualVolPct": 9.45,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -17.08,
+        "finalEquityFrom10M": 36972271
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.51,
+        "totalReturnPct": 72.39,
+        "maxDrawdownPct": -16.2,
+        "maxDrawdownPeakDate": "2020-01-22",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.217,
+        "sortino": 0.232,
+        "sharpe": 0.162,
+        "annualVolPct": 7.65,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.58,
+        "worstCrisisMddPct": -26.04,
+        "avgCrisisReturnPct": -5.33,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 0.58,
+            "mddPct": -17.61
+          },
+          "gfc_2008": {
+            "returnPct": -10.73,
+            "mddPct": -26.04
+          },
+          "covid_2020": {
+            "returnPct": -3.19,
+            "mddPct": -16.09
+          },
+          "ratehike_2022": {
+            "returnPct": -7.98,
+            "mddPct": -10.57
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.5,
+        "perturbedMinus15_cagrPct": 4.52,
+        "perturbedMinus15_mddPct": -24.73,
+        "perturbedPlus15_cagrPct": 4.94,
+        "perturbedPlus15_mddPct": -26.74
+      },
+      "referenceCompositeScore": -2.15
+    },
+    {
+      "blindId": "POST_IMF_BLIND_021",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.222,
+        "avgTradesPerYear": 11.16,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.63,
+        "totalReturnPct": 358.14,
+        "maxDrawdownPct": -27.78,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2017-05-25",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 2408,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.203,
+        "sortino": 0.451,
+        "sharpe": 0.32,
+        "upi": 0.386,
+        "ulcerIndex": 8.12,
+        "maxUnderwaterDays": 2407,
+        "annualVolPct": 11.16,
+        "winRateYearlyPct": 64.3,
+        "worstYearReturnPct": -18.8,
+        "finalEquityFrom10M": 45814432
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.48,
+        "totalReturnPct": 99.68,
+        "maxDrawdownPct": -19.42,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.231,
+        "sortino": 0.335,
+        "sharpe": 0.238,
+        "annualVolPct": 9.94,
+        "winRateYearlyPct": 56.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -18.25,
+        "worstCrisisMddPct": -27.79,
+        "avgCrisisReturnPct": -7.08,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -5.13,
+            "mddPct": -21.27
+          },
+          "gfc_2008": {
+            "returnPct": -15.88,
+            "mddPct": -27.79
+          },
+          "covid_2020": {
+            "returnPct": 1.34,
+            "mddPct": -13.39
+          },
+          "ratehike_2022": {
+            "returnPct": -8.64,
+            "mddPct": -10.54
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.8,
+        "perturbedMinus15_cagrPct": 5.65,
+        "perturbedMinus15_mddPct": -27.78,
+        "perturbedPlus15_cagrPct": 5.76,
+        "perturbedPlus15_mddPct": -27.78
+      },
+      "referenceCompositeScore": -2.14
+    },
+    {
+      "blindId": "POST_IMF_BLIND_022",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.197,
+        "avgTradesPerYear": 9.9,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.24,
+        "totalReturnPct": 312.62,
+        "maxDrawdownPct": -28.26,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-29",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 733,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.185,
+        "sortino": 0.405,
+        "sharpe": 0.291,
+        "upi": 0.317,
+        "ulcerIndex": 8.63,
+        "maxUnderwaterDays": 988,
+        "annualVolPct": 10.9,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -23.69,
+        "finalEquityFrom10M": 41262158
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.13,
+        "totalReturnPct": 89.37,
+        "maxDrawdownPct": -20.28,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.204,
+        "sortino": 0.294,
+        "sharpe": 0.213,
+        "annualVolPct": 9.22,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -19.8,
+        "worstCrisisMddPct": -28.32,
+        "avgCrisisReturnPct": -9.15,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -5.15,
+            "mddPct": -21.59
+          },
+          "gfc_2008": {
+            "returnPct": -18.24,
+            "mddPct": -28.32
+          },
+          "covid_2020": {
+            "returnPct": -2.33,
+            "mddPct": -16.8
+          },
+          "ratehike_2022": {
+            "returnPct": -10.9,
+            "mddPct": -12.49
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 90.8,
+        "perturbedMinus15_cagrPct": 4.97,
+        "perturbedMinus15_mddPct": -28.67,
+        "perturbedPlus15_cagrPct": 5.79,
+        "perturbedPlus15_mddPct": -27.96
+      },
+      "referenceCompositeScore": -7.82
+    },
+    {
+      "blindId": "POST_IMF_BLIND_023",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.223,
+        "avgTradesPerYear": 11.24,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.24,
+        "totalReturnPct": 313.17,
+        "maxDrawdownPct": -24.55,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2004-04-23",
+        "mddPeakToTroughDays": 425,
+        "mddTotalUnderwaterDays": 1080,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.214,
+        "sortino": 0.425,
+        "sharpe": 0.303,
+        "upi": 0.347,
+        "ulcerIndex": 7.89,
+        "maxUnderwaterDays": 1561,
+        "annualVolPct": 10.27,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -21.89,
+        "finalEquityFrom10M": 41316631
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.73,
+        "totalReturnPct": 78.39,
+        "maxDrawdownPct": -16.36,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.228,
+        "sortino": 0.252,
+        "sharpe": 0.18,
+        "annualVolPct": 8.43,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -16.12,
+        "worstCrisisMddPct": -20.8,
+        "avgCrisisReturnPct": -7.32,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -9.87,
+            "mddPct": -20.68
+          },
+          "gfc_2008": {
+            "returnPct": -6.92,
+            "mddPct": -20.8
+          },
+          "covid_2020": {
+            "returnPct": -3.33,
+            "mddPct": -12.33
+          },
+          "ratehike_2022": {
+            "returnPct": -9.16,
+            "mddPct": -10.68
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 85.5,
+        "perturbedMinus15_cagrPct": 5.31,
+        "perturbedMinus15_mddPct": -25.15,
+        "perturbedPlus15_cagrPct": 6.04,
+        "perturbedPlus15_mddPct": -22.1
+      },
+      "referenceCompositeScore": 0.23
+    },
+    {
+      "blindId": "POST_IMF_BLIND_024",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.262,
+        "avgTradesPerYear": 13.18,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.42,
+        "totalReturnPct": 232.03,
+        "maxDrawdownPct": -24.32,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-12-09",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 783,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.182,
+        "sortino": 0.329,
+        "sharpe": 0.236,
+        "upi": 0.279,
+        "ulcerIndex": 6.86,
+        "maxUnderwaterDays": 1478,
+        "annualVolPct": 9.53,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -19.12,
+        "finalEquityFrom10M": 33203410
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.22,
+        "totalReturnPct": 64.88,
+        "maxDrawdownPct": -19.43,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.166,
+        "sortino": 0.17,
+        "sharpe": 0.122,
+        "annualVolPct": 8.1,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.99,
+        "worstCrisisMddPct": -24.32,
+        "avgCrisisReturnPct": -8.37,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -5.38,
+            "mddPct": -18.7
+          },
+          "gfc_2008": {
+            "returnPct": -13.64,
+            "mddPct": -24.32
+          },
+          "covid_2020": {
+            "returnPct": -5.52,
+            "mddPct": -17.93
+          },
+          "ratehike_2022": {
+            "returnPct": -8.96,
+            "mddPct": -11.03
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 89.6,
+        "perturbedMinus15_cagrPct": 4.48,
+        "perturbedMinus15_mddPct": -24.02,
+        "perturbedPlus15_cagrPct": 5.14,
+        "perturbedPlus15_mddPct": -23.79
+      },
+      "referenceCompositeScore": -7.37
+    },
+    {
+      "blindId": "POST_IMF_BLIND_025",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.201,
+        "avgTradesPerYear": 10.12,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.4,
+        "totalReturnPct": 230.96,
+        "maxDrawdownPct": -21.77,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2011-01-12",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 806,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.202,
+        "sortino": 0.376,
+        "sharpe": 0.267,
+        "upi": 0.391,
+        "ulcerIndex": 4.87,
+        "maxUnderwaterDays": 952,
+        "annualVolPct": 7.86,
+        "winRateYearlyPct": 78.6,
+        "worstYearReturnPct": -14.63,
+        "finalEquityFrom10M": 33095671
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.18,
+        "totalReturnPct": 63.98,
+        "maxDrawdownPct": -15.05,
+        "maxDrawdownPeakDate": "2020-01-22",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.212,
+        "sortino": 0.183,
+        "sharpe": 0.13,
+        "annualVolPct": 6.39,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -15.03,
+        "worstCrisisMddPct": -21.77,
+        "avgCrisisReturnPct": -5.29,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 2.3,
+            "mddPct": -13.69
+          },
+          "gfc_2008": {
+            "returnPct": -12.57,
+            "mddPct": -21.77
+          },
+          "covid_2020": {
+            "returnPct": -3.63,
+            "mddPct": -15.04
+          },
+          "ratehike_2022": {
+            "returnPct": -7.25,
+            "mddPct": -9.64
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 94.8,
+        "perturbedMinus15_cagrPct": 4.23,
+        "perturbedMinus15_mddPct": -23.01,
+        "perturbedPlus15_cagrPct": 4.33,
+        "perturbedPlus15_mddPct": -21.73
+      },
+      "referenceCompositeScore": 2.12
+    },
+    {
+      "blindId": "POST_IMF_BLIND_026",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.099,
+        "avgTradesPerYear": 4.97,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.13,
+        "totalReturnPct": 421.07,
+        "maxDrawdownPct": -30.84,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-10-06",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 738,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.199,
+        "sortino": 0.469,
+        "sharpe": 0.335,
+        "upi": 0.397,
+        "ulcerIndex": 9.14,
+        "maxUnderwaterDays": 1480,
+        "annualVolPct": 12.55,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -26.12,
+        "finalEquityFrom10M": 52106645
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.62,
+        "totalReturnPct": 103.88,
+        "maxDrawdownPct": -22.42,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.206,
+        "sortino": 0.338,
+        "sharpe": 0.242,
+        "annualVolPct": 10.65,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21.72,
+        "worstCrisisMddPct": -30.84,
+        "avgCrisisReturnPct": -9.3,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -2.9,
+            "mddPct": -22.99
+          },
+          "gfc_2008": {
+            "returnPct": -18.6,
+            "mddPct": -30.84
+          },
+          "covid_2020": {
+            "returnPct": -3.66,
+            "mddPct": -18.83
+          },
+          "ratehike_2022": {
+            "returnPct": -12.03,
+            "mddPct": -14.22
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.2,
+        "perturbedMinus15_cagrPct": 6.13,
+        "perturbedMinus15_mddPct": -30.46,
+        "perturbedPlus15_cagrPct": 6.16,
+        "perturbedPlus15_mddPct": -30.77
+      },
+      "referenceCompositeScore": -7.03
+    },
+    {
+      "blindId": "POST_IMF_BLIND_027",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.266,
+        "avgTradesPerYear": 13.4,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.3,
+        "totalReturnPct": 319.2,
+        "maxDrawdownPct": -31.4,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2005-07-12",
+        "mddPeakToTroughDays": 425,
+        "mddTotalUnderwaterDays": 1386,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.169,
+        "sortino": 0.405,
+        "sharpe": 0.288,
+        "upi": 0.266,
+        "ulcerIndex": 10.53,
+        "maxUnderwaterDays": 2334,
+        "annualVolPct": 11.38,
+        "winRateYearlyPct": 64.3,
+        "worstYearReturnPct": -23.02,
+        "finalEquityFrom10M": 41919639
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.89,
+        "totalReturnPct": 82.74,
+        "maxDrawdownPct": -23.32,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.167,
+        "sortino": 0.252,
+        "sharpe": 0.179,
+        "annualVolPct": 10.27,
+        "winRateYearlyPct": 56.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.94,
+        "worstCrisisMddPct": -25.69,
+        "avgCrisisReturnPct": -7.14,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -9.65,
+            "mddPct": -25.69
+          },
+          "gfc_2008": {
+            "returnPct": -8.43,
+            "mddPct": -22.44
+          },
+          "covid_2020": {
+            "returnPct": -0.12,
+            "mddPct": -11.49
+          },
+          "ratehike_2022": {
+            "returnPct": -10.35,
+            "mddPct": -12.16
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 83.4,
+        "perturbedMinus15_cagrPct": 5.09,
+        "perturbedMinus15_mddPct": -31.61,
+        "perturbedPlus15_cagrPct": 5.68,
+        "perturbedPlus15_mddPct": -26.14
+      },
+      "referenceCompositeScore": -14.63
+    },
+    {
+      "blindId": "POST_IMF_BLIND_028",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.027,
+        "avgTradesPerYear": 1.37,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.8,
+        "totalReturnPct": 379.09,
+        "maxDrawdownPct": -27.64,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-27",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 731,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.21,
+        "sortino": 0.465,
+        "sharpe": 0.331,
+        "upi": 0.403,
+        "ulcerIndex": 8.2,
+        "maxUnderwaterDays": 1478,
+        "annualVolPct": 11.33,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -23.68,
+        "finalEquityFrom10M": 47908684
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.35,
+        "totalReturnPct": 95.78,
+        "maxDrawdownPct": -19.9,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.218,
+        "sortino": 0.322,
+        "sharpe": 0.229,
+        "annualVolPct": 9.66,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -19.55,
+        "worstCrisisMddPct": -27.86,
+        "avgCrisisReturnPct": -8.09,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -1.64,
+            "mddPct": -20.76
+          },
+          "gfc_2008": {
+            "returnPct": -16.85,
+            "mddPct": -27.86
+          },
+          "covid_2020": {
+            "returnPct": -3.34,
+            "mddPct": -17.02
+          },
+          "ratehike_2022": {
+            "returnPct": -10.54,
+            "mddPct": -12.57
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 97.4,
+        "perturbedMinus15_cagrPct": 5.79,
+        "perturbedMinus15_mddPct": -28.02,
+        "perturbedPlus15_cagrPct": 5.93,
+        "perturbedPlus15_mddPct": -27.25
+      },
+      "referenceCompositeScore": -2.2
+    },
+    {
+      "blindId": "POST_IMF_BLIND_029",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.095,
+        "avgTradesPerYear": 4.79,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.3,
+        "totalReturnPct": 221.88,
+        "maxDrawdownPct": -15.7,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-13",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 721,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.274,
+        "sortino": 0.426,
+        "sharpe": 0.302,
+        "upi": 0.466,
+        "ulcerIndex": 3.86,
+        "maxUnderwaterDays": 996,
+        "annualVolPct": 6.26,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -10.84,
+        "finalEquityFrom10M": 32188463
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.27,
+        "totalReturnPct": 66.17,
+        "maxDrawdownPct": -10.55,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-07-30",
+        "calmar": 0.31,
+        "sortino": 0.226,
+        "sharpe": 0.161,
+        "annualVolPct": 5.31,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -10.58,
+        "worstCrisisMddPct": -15.69,
+        "avgCrisisReturnPct": -2.54,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 5.26,
+            "mddPct": -10.23
+          },
+          "gfc_2008": {
+            "returnPct": -8.77,
+            "mddPct": -15.69
+          },
+          "covid_2020": {
+            "returnPct": -1.52,
+            "mddPct": -9.59
+          },
+          "ratehike_2022": {
+            "returnPct": -5.14,
+            "mddPct": -6.8
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.5,
+        "perturbedMinus15_cagrPct": 4.3,
+        "perturbedMinus15_mddPct": -15.7,
+        "perturbedPlus15_cagrPct": 4.32,
+        "perturbedPlus15_mddPct": -15.61
+      },
+      "referenceCompositeScore": 17.22
+    },
+    {
+      "blindId": "POST_IMF_BLIND_030",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.261,
+        "avgTradesPerYear": 13.15,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.21,
+        "totalReturnPct": 309.14,
+        "maxDrawdownPct": -27.47,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-20",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 726,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.189,
+        "sortino": 0.408,
+        "sharpe": 0.286,
+        "upi": 0.383,
+        "ulcerIndex": 7.07,
+        "maxUnderwaterDays": 1466,
+        "annualVolPct": 11,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -19.71,
+        "finalEquityFrom10M": 40914446
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.62,
+        "totalReturnPct": 75.23,
+        "maxDrawdownPct": -25.79,
+        "maxDrawdownPeakDate": "2018-05-01",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.14,
+        "sortino": 0.228,
+        "sharpe": 0.159,
+        "annualVolPct": 9.36,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -20.3,
+        "worstCrisisMddPct": -27.47,
+        "avgCrisisReturnPct": -7.59,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 0.35,
+            "mddPct": -18.92
+          },
+          "gfc_2008": {
+            "returnPct": -14.37,
+            "mddPct": -27.47
+          },
+          "covid_2020": {
+            "returnPct": -5.51,
+            "mddPct": -21.93
+          },
+          "ratehike_2022": {
+            "returnPct": -10.83,
+            "mddPct": -12.87
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.1,
+        "perturbedMinus15_cagrPct": 4.93,
+        "perturbedMinus15_mddPct": -30.28,
+        "perturbedPlus15_cagrPct": 5.32,
+        "perturbedPlus15_mddPct": -28.09
+      },
+      "referenceCompositeScore": -10.21
+    },
+    {
+      "blindId": "POST_IMF_BLIND_031",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.272,
+        "avgTradesPerYear": 13.69,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.86,
+        "totalReturnPct": 273.37,
+        "maxDrawdownPct": -24.77,
+        "maxDrawdownPeakDate": "2002-04-18",
+        "maxDrawdownDate": "2003-03-17",
+        "maxDrawdownRecoveryDate": "2005-07-13",
+        "mddPeakToTroughDays": 229,
+        "mddTotalUnderwaterDays": 815,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.196,
+        "sortino": 0.378,
+        "sharpe": 0.272,
+        "upi": 0.266,
+        "ulcerIndex": 8.87,
+        "maxUnderwaterDays": 1623,
+        "annualVolPct": 9.99,
+        "winRateYearlyPct": 64.3,
+        "worstYearReturnPct": -16.29,
+        "finalEquityFrom10M": 37337237
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.01,
+        "totalReturnPct": 85.88,
+        "maxDrawdownPct": -20.82,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.192,
+        "sortino": 0.289,
+        "sharpe": 0.211,
+        "annualVolPct": 8.44,
+        "winRateYearlyPct": 56.3
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.12,
+        "worstCrisisMddPct": -24.53,
+        "avgCrisisReturnPct": -6.19,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -2.36,
+            "mddPct": -22.26
+          },
+          "gfc_2008": {
+            "returnPct": -15.19,
+            "mddPct": -24.53
+          },
+          "covid_2020": {
+            "returnPct": -0.09,
+            "mddPct": -12.13
+          },
+          "ratehike_2022": {
+            "returnPct": -7.13,
+            "mddPct": -9.56
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 88.5,
+        "perturbedMinus15_cagrPct": 4.4,
+        "perturbedMinus15_mddPct": -26.22,
+        "perturbedPlus15_cagrPct": 5.05,
+        "perturbedPlus15_mddPct": -23.68
+      },
+      "referenceCompositeScore": -5.56
+    },
+    {
+      "blindId": "POST_IMF_BLIND_032",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.074,
+        "avgTradesPerYear": 3.75,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.87,
+        "totalReturnPct": 532.12,
+        "maxDrawdownPct": -39.86,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2004-04-08",
+        "mddPeakToTroughDays": 425,
+        "mddTotalUnderwaterDays": 1070,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.172,
+        "sortino": 0.49,
+        "sharpe": 0.353,
+        "upi": 0.27,
+        "ulcerIndex": 16.17,
+        "maxUnderwaterDays": 2415,
+        "annualVolPct": 14.78,
+        "winRateYearlyPct": 60.7,
+        "worstYearReturnPct": -33.4,
+        "finalEquityFrom10M": 63212444
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.44,
+        "totalReturnPct": 130.71,
+        "maxDrawdownPct": -27.77,
+        "maxDrawdownPeakDate": "2011-05-02",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.196,
+        "sortino": 0.384,
+        "sharpe": 0.275,
+        "annualVolPct": 13.42,
+        "winRateYearlyPct": 50
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -16.07,
+        "worstCrisisMddPct": -25.23,
+        "avgCrisisReturnPct": -6.51,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 0.32,
+            "mddPct": -25.23
+          },
+          "gfc_2008": {
+            "returnPct": -12.41,
+            "mddPct": -18.74
+          },
+          "covid_2020": {
+            "returnPct": -2.05,
+            "mddPct": -8.3
+          },
+          "ratehike_2022": {
+            "returnPct": -11.89,
+            "mddPct": -12.02
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 73.5,
+        "perturbedMinus15_cagrPct": 7.84,
+        "perturbedMinus15_mddPct": -31.02,
+        "perturbedPlus15_cagrPct": 6.55,
+        "perturbedPlus15_mddPct": -40.5
+      },
+      "referenceCompositeScore": -20.52
+    },
+    {
+      "blindId": "POST_IMF_BLIND_033",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.088,
+        "avgTradesPerYear": 4.43,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.48,
+        "totalReturnPct": 339.93,
+        "maxDrawdownPct": -24.91,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-10-04",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 736,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.22,
+        "sortino": 0.464,
+        "sharpe": 0.33,
+        "upi": 0.425,
+        "ulcerIndex": 7.01,
+        "maxUnderwaterDays": 999,
+        "annualVolPct": 10.05,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -19.66,
+        "finalEquityFrom10M": 43993121
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.17,
+        "totalReturnPct": 90.68,
+        "maxDrawdownPct": -17.45,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.239,
+        "sortino": 0.321,
+        "sharpe": 0.228,
+        "annualVolPct": 8.54,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.12,
+        "worstCrisisMddPct": -24.91,
+        "avgCrisisReturnPct": -6.39,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 0.77,
+            "mddPct": -17.27
+          },
+          "gfc_2008": {
+            "returnPct": -14.85,
+            "mddPct": -24.91
+          },
+          "covid_2020": {
+            "returnPct": -2.17,
+            "mddPct": -15.02
+          },
+          "ratehike_2022": {
+            "returnPct": -9.31,
+            "mddPct": -11.3
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.9,
+        "perturbedMinus15_cagrPct": 5.43,
+        "perturbedMinus15_mddPct": -25.02,
+        "perturbedPlus15_cagrPct": 5.52,
+        "perturbedPlus15_mddPct": -24.91
+      },
+      "referenceCompositeScore": 2.93
+    },
+    {
+      "blindId": "POST_IMF_BLIND_034",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.289,
+        "avgTradesPerYear": 14.59,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.83,
+        "totalReturnPct": 381.89,
+        "maxDrawdownPct": -33.74,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-11-20",
+        "maxDrawdownRecoveryDate": "2010-12-09",
+        "mddPeakToTroughDays": 267,
+        "mddTotalUnderwaterDays": 783,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.173,
+        "sortino": 0.423,
+        "sharpe": 0.303,
+        "upi": 0.333,
+        "ulcerIndex": 9.99,
+        "maxUnderwaterDays": 1623,
+        "annualVolPct": 13.25,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -24.94,
+        "finalEquityFrom10M": 48189155
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.26,
+        "totalReturnPct": 66.05,
+        "maxDrawdownPct": -30.07,
+        "maxDrawdownPeakDate": "2026-06-03",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.109,
+        "sortino": 0.164,
+        "sharpe": 0.119,
+        "annualVolPct": 11.16,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -22.64,
+        "worstCrisisMddPct": -33.74,
+        "avgCrisisReturnPct": -4.5,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 14.78,
+            "mddPct": -21.22
+          },
+          "gfc_2008": {
+            "returnPct": -21.55,
+            "mddPct": -33.74
+          },
+          "covid_2020": {
+            "returnPct": -3.3,
+            "mddPct": -23.67
+          },
+          "ratehike_2022": {
+            "returnPct": -7.95,
+            "mddPct": -11.95
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 92.8,
+        "perturbedMinus15_cagrPct": 5.9,
+        "perturbedMinus15_mddPct": -33.14,
+        "perturbedPlus15_cagrPct": 6.2,
+        "perturbedPlus15_mddPct": -32.05
+      },
+      "referenceCompositeScore": -20.47
+    },
+    {
+      "blindId": "POST_IMF_BLIND_035",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.221,
+        "avgTradesPerYear": 11.13,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.03,
+        "totalReturnPct": 290.33,
+        "maxDrawdownPct": -39.37,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2017-05-25",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 2408,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.128,
+        "sortino": 0.357,
+        "sharpe": 0.255,
+        "upi": 0.28,
+        "ulcerIndex": 9.03,
+        "maxUnderwaterDays": 2407,
+        "annualVolPct": 12.33,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -25.12,
+        "finalEquityFrom10M": 39033346
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.12,
+        "totalReturnPct": 89.21,
+        "maxDrawdownPct": -30.17,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.137,
+        "sortino": 0.289,
+        "sharpe": 0.202,
+        "annualVolPct": 10.1,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.85,
+        "worstCrisisMddPct": -39.37,
+        "avgCrisisReturnPct": -10.22,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 0.39,
+            "mddPct": -21.99
+          },
+          "gfc_2008": {
+            "returnPct": -22.6,
+            "mddPct": -39.37
+          },
+          "covid_2020": {
+            "returnPct": -10.22,
+            "mddPct": -29.14
+          },
+          "ratehike_2022": {
+            "returnPct": -8.46,
+            "mddPct": -12.9
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 80,
+        "perturbedMinus15_cagrPct": 4.87,
+        "perturbedMinus15_mddPct": -40.2,
+        "perturbedPlus15_cagrPct": 5.68,
+        "perturbedPlus15_mddPct": -31.4
+      },
+      "referenceCompositeScore": -31.21
+    },
+    {
+      "blindId": "POST_IMF_BLIND_036",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.222,
+        "avgTradesPerYear": 11.2,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.01,
+        "totalReturnPct": 288.22,
+        "maxDrawdownPct": -28.17,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-12-21",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 791,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.178,
+        "sortino": 0.38,
+        "sharpe": 0.272,
+        "upi": 0.285,
+        "ulcerIndex": 8.79,
+        "maxUnderwaterDays": 1264,
+        "annualVolPct": 10.8,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -26.65,
+        "finalEquityFrom10M": 38822129
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.02,
+        "totalReturnPct": 86.36,
+        "maxDrawdownPct": -22.17,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.181,
+        "sortino": 0.295,
+        "sharpe": 0.209,
+        "annualVolPct": 8.7,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21.24,
+        "worstCrisisMddPct": -28.17,
+        "avgCrisisReturnPct": -10,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -4.79,
+            "mddPct": -22.93
+          },
+          "gfc_2008": {
+            "returnPct": -16.64,
+            "mddPct": -28.17
+          },
+          "covid_2020": {
+            "returnPct": -6.99,
+            "mddPct": -19.79
+          },
+          "ratehike_2022": {
+            "returnPct": -11.59,
+            "mddPct": -14.09
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.3,
+        "perturbedMinus15_cagrPct": 5.04,
+        "perturbedMinus15_mddPct": -28.85,
+        "perturbedPlus15_cagrPct": 4.96,
+        "perturbedPlus15_mddPct": -28.31
+      },
+      "referenceCompositeScore": -10.47
+    },
+    {
+      "blindId": "POST_IMF_BLIND_037",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.044,
+        "avgTradesPerYear": 2.23,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 7.47,
+        "totalReturnPct": 638.94,
+        "maxDrawdownPct": -40.74,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-11-10",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 763,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.183,
+        "sortino": 0.493,
+        "sharpe": 0.352,
+        "upi": 0.366,
+        "ulcerIndex": 13.56,
+        "maxUnderwaterDays": 1505,
+        "annualVolPct": 17.71,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -36.1,
+        "finalEquityFrom10M": 73894123
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.83,
+        "totalReturnPct": 144.74,
+        "maxDrawdownPct": -30.98,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.188,
+        "sortino": 0.401,
+        "sharpe": 0.285,
+        "annualVolPct": 15.11,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -29.89,
+        "worstCrisisMddPct": -40.63,
+        "avgCrisisReturnPct": -15.02,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -12.81,
+            "mddPct": -34.25
+          },
+          "gfc_2008": {
+            "returnPct": -26.35,
+            "mddPct": -40.63
+          },
+          "covid_2020": {
+            "returnPct": -3.79,
+            "mddPct": -25.06
+          },
+          "ratehike_2022": {
+            "returnPct": -17.13,
+            "mddPct": -19.64
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.4,
+        "perturbedMinus15_cagrPct": 7.37,
+        "perturbedMinus15_mddPct": -41.02,
+        "perturbedPlus15_cagrPct": 7.55,
+        "perturbedPlus15_mddPct": -40.59
+      },
+      "referenceCompositeScore": -22.07
+    },
+    {
+      "blindId": "POST_IMF_BLIND_038",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.222,
+        "avgTradesPerYear": 11.2,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 4.73,
+        "totalReturnPct": 260.36,
+        "maxDrawdownPct": -25.03,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-24",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 730,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.189,
+        "sortino": 0.381,
+        "sharpe": 0.269,
+        "upi": 0.38,
+        "ulcerIndex": 5.86,
+        "maxUnderwaterDays": 1524,
+        "annualVolPct": 9.43,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -16.6,
+        "finalEquityFrom10M": 36035836
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.16,
+        "totalReturnPct": 63.41,
+        "maxDrawdownPct": -20.04,
+        "maxDrawdownPeakDate": "2018-05-01",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.158,
+        "sortino": 0.164,
+        "sharpe": 0.116,
+        "annualVolPct": 7.86,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.77,
+        "worstCrisisMddPct": -25.03,
+        "avgCrisisReturnPct": -4.73,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 5.12,
+            "mddPct": -15.99
+          },
+          "gfc_2008": {
+            "returnPct": -12.82,
+            "mddPct": -25.03
+          },
+          "covid_2020": {
+            "returnPct": -2.9,
+            "mddPct": -19.34
+          },
+          "ratehike_2022": {
+            "returnPct": -8.34,
+            "mddPct": -10.74
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 98.1,
+        "perturbedMinus15_cagrPct": 4.79,
+        "perturbedMinus15_mddPct": -24.92,
+        "perturbedPlus15_cagrPct": 4.83,
+        "perturbedPlus15_mddPct": -25
+      },
+      "referenceCompositeScore": -5.03
+    },
+    {
+      "blindId": "POST_IMF_BLIND_039",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.221,
+        "avgTradesPerYear": 11.13,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.78,
+        "totalReturnPct": 375.85,
+        "maxDrawdownPct": -26.51,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-17",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 725,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.218,
+        "sortino": 0.511,
+        "sharpe": 0.361,
+        "upi": 0.467,
+        "ulcerIndex": 7.02,
+        "maxUnderwaterDays": 1513,
+        "annualVolPct": 9.93,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -17.83,
+        "finalEquityFrom10M": 47584590
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.07,
+        "totalReturnPct": 87.76,
+        "maxDrawdownPct": -18.86,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.216,
+        "sortino": 0.307,
+        "sharpe": 0.22,
+        "annualVolPct": 8.32,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -16.28,
+        "worstCrisisMddPct": -26.5,
+        "avgCrisisReturnPct": -2.45,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 9.27,
+            "mddPct": -16.85
+          },
+          "gfc_2008": {
+            "returnPct": -13.29,
+            "mddPct": -26.5
+          },
+          "covid_2020": {
+            "returnPct": 2.51,
+            "mddPct": -11.26
+          },
+          "ratehike_2022": {
+            "returnPct": -8.31,
+            "mddPct": -10.5
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 91.7,
+        "perturbedMinus15_cagrPct": 6.05,
+        "perturbedMinus15_mddPct": -26.79,
+        "perturbedPlus15_cagrPct": 5.55,
+        "perturbedPlus15_mddPct": -22.57
+      },
+      "referenceCompositeScore": 1.72
+    },
+    {
+      "blindId": "POST_IMF_BLIND_040",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.32,
+        "avgTradesPerYear": 16.13,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.52,
+        "totalReturnPct": 345.02,
+        "maxDrawdownPct": -36.35,
+        "maxDrawdownPeakDate": "1999-07-09",
+        "maxDrawdownDate": "2001-09-17",
+        "maxDrawdownRecoveryDate": "2005-02-15",
+        "mddPeakToTroughDays": 549,
+        "mddTotalUnderwaterDays": 1409,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.152,
+        "sortino": 0.413,
+        "sharpe": 0.294,
+        "upi": 0.273,
+        "ulcerIndex": 11.09,
+        "maxUnderwaterDays": 1524,
+        "annualVolPct": 12.2,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -26.84,
+        "finalEquityFrom10M": 44502361
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.53,
+        "totalReturnPct": 101.12,
+        "maxDrawdownPct": -24.28,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.186,
+        "sortino": 0.332,
+        "sharpe": 0.235,
+        "annualVolPct": 10.5,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -20.52,
+        "worstCrisisMddPct": -29.89,
+        "avgCrisisReturnPct": -10.21,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -9.75,
+            "mddPct": -29.89
+          },
+          "gfc_2008": {
+            "returnPct": -19.77,
+            "mddPct": -25.93
+          },
+          "covid_2020": {
+            "returnPct": -0.01,
+            "mddPct": -13.08
+          },
+          "ratehike_2022": {
+            "returnPct": -11.31,
+            "mddPct": -13.2
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 96.7,
+        "perturbedMinus15_cagrPct": 5.66,
+        "perturbedMinus15_mddPct": -34.97,
+        "perturbedPlus15_cagrPct": 5.26,
+        "perturbedPlus15_mddPct": -34.57
+      },
+      "referenceCompositeScore": -18.97
+    },
+    {
+      "blindId": "POST_IMF_BLIND_041",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.215,
+        "avgTradesPerYear": 10.84,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.69,
+        "totalReturnPct": 364.3,
+        "maxDrawdownPct": -25.41,
+        "maxDrawdownPeakDate": "2007-10-11",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-29",
+        "mddPeakToTroughDays": 262,
+        "mddTotalUnderwaterDays": 747,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.224,
+        "sortino": 0.465,
+        "sharpe": 0.329,
+        "upi": 0.422,
+        "ulcerIndex": 7.55,
+        "maxUnderwaterDays": 1511,
+        "annualVolPct": 10.92,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -21.5,
+        "finalEquityFrom10M": 46430482
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.22,
+        "totalReturnPct": 91.89,
+        "maxDrawdownPct": -19.06,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.221,
+        "sortino": 0.313,
+        "sharpe": 0.222,
+        "annualVolPct": 9.24,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -18,
+        "worstCrisisMddPct": -25.49,
+        "avgCrisisReturnPct": -7.46,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -3.17,
+            "mddPct": -19.05
+          },
+          "gfc_2008": {
+            "returnPct": -14.54,
+            "mddPct": -25.49
+          },
+          "covid_2020": {
+            "returnPct": -2.91,
+            "mddPct": -16.02
+          },
+          "ratehike_2022": {
+            "returnPct": -9.22,
+            "mddPct": -11.45
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 90.6,
+        "perturbedMinus15_cagrPct": 5.46,
+        "perturbedMinus15_mddPct": -26.83,
+        "perturbedPlus15_cagrPct": 5.52,
+        "perturbedPlus15_mddPct": -27.36
+      },
+      "referenceCompositeScore": 0.81
+    },
+    {
+      "blindId": "POST_IMF_BLIND_042",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 3,
+        "avgTradesPerWeek": 0.265,
+        "avgTradesPerYear": 13.36,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.1,
+        "totalReturnPct": 297.42,
+        "maxDrawdownPct": -29.55,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-09-25",
+        "maxDrawdownRecoveryDate": "2004-01-20",
+        "mddPeakToTroughDays": 431,
+        "mddTotalUnderwaterDays": 1014,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.172,
+        "sortino": 0.386,
+        "sharpe": 0.275,
+        "upi": 0.267,
+        "ulcerIndex": 9.74,
+        "maxUnderwaterDays": 2407,
+        "annualVolPct": 11.08,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -26.89,
+        "finalEquityFrom10M": 39742025
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.34,
+        "totalReturnPct": 95.51,
+        "maxDrawdownPct": -18.8,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.231,
+        "sortino": 0.324,
+        "sharpe": 0.229,
+        "annualVolPct": 9.6,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -19.75,
+        "worstCrisisMddPct": -28.63,
+        "avgCrisisReturnPct": -9.68,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -3.09,
+            "mddPct": -25
+          },
+          "gfc_2008": {
+            "returnPct": -21.97,
+            "mddPct": -28.63
+          },
+          "covid_2020": {
+            "returnPct": -3.95,
+            "mddPct": -15.3
+          },
+          "ratehike_2022": {
+            "returnPct": -9.7,
+            "mddPct": -10.08
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.9,
+        "perturbedMinus15_cagrPct": 5.65,
+        "perturbedMinus15_mddPct": -31.94,
+        "perturbedPlus15_cagrPct": 5.08,
+        "perturbedPlus15_mddPct": -32.55
+      },
+      "referenceCompositeScore": -9.39
+    },
+    {
+      "blindId": "POST_IMF_BLIND_043",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.324,
+        "avgTradesPerYear": 16.35,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.29,
+        "totalReturnPct": 444.48,
+        "maxDrawdownPct": -27.82,
+        "maxDrawdownPeakDate": "2002-04-18",
+        "maxDrawdownDate": "2003-03-17",
+        "maxDrawdownRecoveryDate": "2004-03-02",
+        "mddPeakToTroughDays": 229,
+        "mddTotalUnderwaterDays": 471,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.226,
+        "sortino": 0.531,
+        "sharpe": 0.377,
+        "upi": 0.462,
+        "ulcerIndex": 8.21,
+        "maxUnderwaterDays": 1629,
+        "annualVolPct": 11.12,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -13.76,
+        "finalEquityFrom10M": 54448317
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.71,
+        "totalReturnPct": 106.79,
+        "maxDrawdownPct": -20.83,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.226,
+        "sortino": 0.374,
+        "sharpe": 0.265,
+        "annualVolPct": 9.67,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -17.72,
+        "worstCrisisMddPct": -24.29,
+        "avgCrisisReturnPct": -7.87,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -1.62,
+            "mddPct": -21.18
+          },
+          "gfc_2008": {
+            "returnPct": -15.31,
+            "mddPct": -24.29
+          },
+          "covid_2020": {
+            "returnPct": -7.67,
+            "mddPct": -17.92
+          },
+          "ratehike_2022": {
+            "returnPct": -6.87,
+            "mddPct": -7.49
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 83.2,
+        "perturbedMinus15_cagrPct": 5.44,
+        "perturbedMinus15_mddPct": -28.57,
+        "perturbedPlus15_cagrPct": 5.29,
+        "perturbedPlus15_mddPct": -28.48
+      },
+      "referenceCompositeScore": 0.42
+    },
+    {
+      "blindId": "POST_IMF_BLIND_044",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.194,
+        "avgTradesPerYear": 9.76,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.73,
+        "totalReturnPct": 369.3,
+        "maxDrawdownPct": -29.38,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2003-03-17",
+        "maxDrawdownRecoveryDate": "2005-07-07",
+        "mddPeakToTroughDays": 801,
+        "mddTotalUnderwaterDays": 1383,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.195,
+        "sortino": 0.455,
+        "sharpe": 0.322,
+        "upi": 0.32,
+        "ulcerIndex": 10.08,
+        "maxUnderwaterDays": 1525,
+        "annualVolPct": 11.46,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -25.61,
+        "finalEquityFrom10M": 46929975
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.74,
+        "totalReturnPct": 107.76,
+        "maxDrawdownPct": -18.94,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.25,
+        "sortino": 0.376,
+        "sharpe": 0.265,
+        "annualVolPct": 9.85,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -18.02,
+        "worstCrisisMddPct": -25.92,
+        "avgCrisisReturnPct": -7.45,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -11.56,
+            "mddPct": -23.51
+          },
+          "gfc_2008": {
+            "returnPct": -14.71,
+            "mddPct": -25.92
+          },
+          "covid_2020": {
+            "returnPct": 6,
+            "mddPct": -10.17
+          },
+          "ratehike_2022": {
+            "returnPct": -9.52,
+            "mddPct": -12.49
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 90,
+        "perturbedMinus15_cagrPct": 6.54,
+        "perturbedMinus15_mddPct": -28.02,
+        "perturbedPlus15_cagrPct": 5.55,
+        "perturbedPlus15_mddPct": -28.59
+      },
+      "referenceCompositeScore": -4.65
+    },
+    {
+      "blindId": "POST_IMF_BLIND_045",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.086,
+        "avgTradesPerYear": 4.36,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 3.77,
+        "totalReturnPct": 179.32,
+        "maxDrawdownPct": -39.72,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2001-04-10",
+        "maxDrawdownRecoveryDate": "2005-08-12",
+        "mddPeakToTroughDays": 319,
+        "mddTotalUnderwaterDays": 1409,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.095,
+        "sortino": 0.212,
+        "sharpe": 0.153,
+        "upi": 0.079,
+        "ulcerIndex": 16.05,
+        "maxUnderwaterDays": 2009,
+        "annualVolPct": 14.28,
+        "winRateYearlyPct": 60.7,
+        "worstYearReturnPct": -37.87,
+        "finalEquityFrom10M": 27931529
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 1.02,
+        "totalReturnPct": 17.44,
+        "maxDrawdownPct": -35.07,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.029,
+        "sortino": -0.112,
+        "sharpe": -0.083,
+        "annualVolPct": 10.85,
+        "winRateYearlyPct": 50
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -22.06,
+        "worstCrisisMddPct": -32.36,
+        "avgCrisisReturnPct": -8.66,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -6.63,
+            "mddPct": -32.36
+          },
+          "gfc_2008": {
+            "returnPct": -11.36,
+            "mddPct": -17.24
+          },
+          "covid_2020": {
+            "returnPct": -5.22,
+            "mddPct": -25.19
+          },
+          "ratehike_2022": {
+            "returnPct": -11.45,
+            "mddPct": -13.46
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 57.7,
+        "perturbedMinus15_cagrPct": 4.97,
+        "perturbedMinus15_mddPct": -43.36,
+        "perturbedPlus15_cagrPct": 7.66,
+        "perturbedPlus15_mddPct": -37.84
+      },
+      "referenceCompositeScore": -51.22
+    },
+    {
+      "blindId": "POST_IMF_BLIND_046",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.178,
+        "avgTradesPerYear": 8.97,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.44,
+        "totalReturnPct": 465.4,
+        "maxDrawdownPct": -34.25,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-11-20",
+        "maxDrawdownRecoveryDate": "2010-07-14",
+        "mddPeakToTroughDays": 267,
+        "mddTotalUnderwaterDays": 679,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.188,
+        "sortino": 0.529,
+        "sharpe": 0.371,
+        "upi": 0.583,
+        "ulcerIndex": 6.76,
+        "maxUnderwaterDays": 720,
+        "annualVolPct": 11.9,
+        "winRateYearlyPct": 75,
+        "worstYearReturnPct": -20.02,
+        "finalEquityFrom10M": 56539934
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.46,
+        "totalReturnPct": 131.47,
+        "maxDrawdownPct": -19.57,
+        "maxDrawdownPeakDate": "2020-01-22",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.279,
+        "sortino": 0.491,
+        "sharpe": 0.342,
+        "annualVolPct": 9.57,
+        "winRateYearlyPct": 75
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -21.65,
+        "worstCrisisMddPct": -34.25,
+        "avgCrisisReturnPct": -4.77,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 1.6,
+            "mddPct": -21.86
+          },
+          "gfc_2008": {
+            "returnPct": -15.48,
+            "mddPct": -34.25
+          },
+          "covid_2020": {
+            "returnPct": 3.71,
+            "mddPct": -19.57
+          },
+          "ratehike_2022": {
+            "returnPct": -8.91,
+            "mddPct": -10.91
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99.5,
+        "perturbedMinus15_cagrPct": 6.41,
+        "perturbedMinus15_mddPct": -34.25,
+        "perturbedPlus15_cagrPct": 6.4,
+        "perturbedPlus15_mddPct": -34.25
+      },
+      "referenceCompositeScore": -3.84
+    },
+    {
+      "blindId": "POST_IMF_BLIND_047",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.207,
+        "avgTradesPerYear": 10.41,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 7.53,
+        "totalReturnPct": 650.78,
+        "maxDrawdownPct": -38.39,
+        "maxDrawdownPeakDate": "1999-07-09",
+        "maxDrawdownDate": "2000-12-22",
+        "maxDrawdownRecoveryDate": "2002-03-19",
+        "mddPeakToTroughDays": 370,
+        "mddTotalUnderwaterDays": 675,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.196,
+        "sortino": 0.503,
+        "sharpe": 0.36,
+        "upi": 0.328,
+        "ulcerIndex": 15.33,
+        "maxUnderwaterDays": 1706,
+        "annualVolPct": 17.27,
+        "winRateYearlyPct": 64.3,
+        "worstYearReturnPct": -35.22,
+        "finalEquityFrom10M": 75077509
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.36,
+        "totalReturnPct": 128.03,
+        "maxDrawdownPct": -32.42,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.165,
+        "sortino": 0.352,
+        "sharpe": 0.255,
+        "annualVolPct": 15.15,
+        "winRateYearlyPct": 50
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -23.76,
+        "worstCrisisMddPct": -32.13,
+        "avgCrisisReturnPct": -9.43,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -3.38,
+            "mddPct": -32.13
+          },
+          "gfc_2008": {
+            "returnPct": -19,
+            "mddPct": -32.03
+          },
+          "covid_2020": {
+            "returnPct": -1.71,
+            "mddPct": -16.15
+          },
+          "ratehike_2022": {
+            "returnPct": -13.64,
+            "mddPct": -14.72
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 85.2,
+        "perturbedMinus15_cagrPct": 7.32,
+        "perturbedMinus15_mddPct": -39.1,
+        "perturbedPlus15_cagrPct": 6.98,
+        "perturbedPlus15_mddPct": -47.64
+      },
+      "referenceCompositeScore": -20.49
+    },
+    {
+      "blindId": "POST_IMF_BLIND_048",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.3,
+        "avgTradesPerYear": 15.13,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.5,
+        "totalReturnPct": 474.26,
+        "maxDrawdownPct": -26.58,
+        "maxDrawdownPeakDate": "2007-10-29",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-09-17",
+        "mddPeakToTroughDays": 250,
+        "mddTotalUnderwaterDays": 727,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.244,
+        "sortino": 0.513,
+        "sharpe": 0.364,
+        "upi": 0.47,
+        "ulcerIndex": 8.5,
+        "maxUnderwaterDays": 1513,
+        "annualVolPct": 12.47,
+        "winRateYearlyPct": 67.9,
+        "worstYearReturnPct": -17.74,
+        "finalEquityFrom10M": 57425691
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 3.97,
+        "totalReturnPct": 84.91,
+        "maxDrawdownPct": -24.26,
+        "maxDrawdownPeakDate": "2026-06-22",
+        "maxDrawdownDate": "2026-10-26",
+        "calmar": 0.164,
+        "sortino": 0.253,
+        "sharpe": 0.183,
+        "annualVolPct": 10.8,
+        "winRateYearlyPct": 62.5
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -18.8,
+        "worstCrisisMddPct": -28.17,
+        "avgCrisisReturnPct": -5.54,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": 8.08,
+            "mddPct": -18.7
+          },
+          "gfc_2008": {
+            "returnPct": -17.4,
+            "mddPct": -28.17
+          },
+          "covid_2020": {
+            "returnPct": -2.24,
+            "mddPct": -17.16
+          },
+          "ratehike_2022": {
+            "returnPct": -10.62,
+            "mddPct": -11.17
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 93.2,
+        "perturbedMinus15_cagrPct": 6.25,
+        "perturbedMinus15_mddPct": -27.51,
+        "perturbedPlus15_cagrPct": 6.92,
+        "perturbedPlus15_mddPct": -26.58
+      },
+      "referenceCompositeScore": -0.84
+    },
+    {
+      "blindId": "POST_IMF_BLIND_049",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 2,
+        "avgTradesPerWeek": 0.337,
+        "avgTradesPerYear": 16.96,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 5.46,
+        "totalReturnPct": 337.26,
+        "maxDrawdownPct": -34.03,
+        "maxDrawdownPeakDate": "2000-01-04",
+        "maxDrawdownDate": "2003-03-17",
+        "maxDrawdownRecoveryDate": "2005-07-25",
+        "mddPeakToTroughDays": 801,
+        "mddTotalUnderwaterDays": 1395,
+        "mddEventDescription": "2000~2002 IT·닷컴버블 붕괴 및 9·11 테러·국내 카드채 사태",
+        "calmar": 0.16,
+        "sortino": 0.41,
+        "sharpe": 0.293,
+        "upi": 0.252,
+        "ulcerIndex": 11.75,
+        "maxUnderwaterDays": 1527,
+        "annualVolPct": 11.9,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -31.5,
+        "finalEquityFrom10M": 43726378
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 4.85,
+        "totalReturnPct": 111.35,
+        "maxDrawdownPct": -18.29,
+        "maxDrawdownPeakDate": "2011-05-02",
+        "maxDrawdownDate": "2011-09-26",
+        "calmar": 0.265,
+        "sortino": 0.383,
+        "sharpe": 0.271,
+        "annualVolPct": 10.15,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -20.58,
+        "worstCrisisMddPct": -27.56,
+        "avgCrisisReturnPct": -13.1,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -16.62,
+            "mddPct": -27.56
+          },
+          "gfc_2008": {
+            "returnPct": -21.62,
+            "mddPct": -26.82
+          },
+          "covid_2020": {
+            "returnPct": -3.69,
+            "mddPct": -14.8
+          },
+          "ratehike_2022": {
+            "returnPct": -10.46,
+            "mddPct": -13.15
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 91.2,
+        "perturbedMinus15_cagrPct": 5.02,
+        "perturbedMinus15_mddPct": -35.6,
+        "perturbedPlus15_cagrPct": 5.45,
+        "perturbedPlus15_mddPct": -36.07
+      },
+      "referenceCompositeScore": -13.16
+    },
+    {
+      "blindId": "POST_IMF_BLIND_050",
+      "executionConstraintCheck": {
+        "signalTiming": "PREV_DAY_CLOSE (T-1)",
+        "executionTiming": "NEXT_DAY_OPEN (T)",
+        "maxTradesInAnySingleWeek": 1,
+        "avgTradesPerWeek": 0.086,
+        "avgTradesPerYear": 4.32,
+        "weeklyCapCompliant": true
+      },
+      "regimeA_postIMF_1999_2026": {
+        "cagrPct": 6.9,
+        "totalReturnPct": 538.19,
+        "maxDrawdownPct": -36.06,
+        "maxDrawdownPeakDate": "2007-10-31",
+        "maxDrawdownDate": "2008-10-24",
+        "maxDrawdownRecoveryDate": "2010-11-10",
+        "mddPeakToTroughDays": 248,
+        "mddTotalUnderwaterDays": 763,
+        "mddEventDescription": "2008 글로벌 금융위기 (리먼브라더스 파산 및 신용경색 폭락장)",
+        "calmar": 0.191,
+        "sortino": 0.491,
+        "sharpe": 0.35,
+        "upi": 0.393,
+        "ulcerIndex": 11.21,
+        "maxUnderwaterDays": 1504,
+        "annualVolPct": 15.09,
+        "winRateYearlyPct": 71.4,
+        "worstYearReturnPct": -30.44,
+        "finalEquityFrom10M": 63818588
+      },
+      "regimeB_modernOOS_2011_2026": {
+        "cagrPct": 5.27,
+        "totalReturnPct": 125.1,
+        "maxDrawdownPct": -26.94,
+        "maxDrawdownPeakDate": "2018-01-29",
+        "maxDrawdownDate": "2020-03-19",
+        "calmar": 0.196,
+        "sortino": 0.379,
+        "sharpe": 0.27,
+        "annualVolPct": 12.8,
+        "winRateYearlyPct": 68.8
+      },
+      "regimeC_crisisStress": {
+        "avgCrisisMddPct": -25.82,
+        "worstCrisisMddPct": -36.06,
+        "avgCrisisReturnPct": -11.77,
+        "byCrisis": {
+          "dotcom_2000": {
+            "returnPct": -5.21,
+            "mddPct": -27.85
+          },
+          "gfc_2008": {
+            "returnPct": -22.96,
+            "mddPct": -36.06
+          },
+          "covid_2020": {
+            "returnPct": -4.22,
+            "mddPct": -22.28
+          },
+          "ratehike_2022": {
+            "returnPct": -14.7,
+            "mddPct": -17.08
+          }
+        }
+      },
+      "robustness": {
+        "parameterStabilityPct": 99,
+        "perturbedMinus15_cagrPct": 6.8,
+        "perturbedMinus15_mddPct": -36.16,
+        "perturbedPlus15_cagrPct": 6.91,
+        "perturbedPlus15_mddPct": -36.06
+      },
+      "referenceCompositeScore": -14.32
+    }
+  ]
+}

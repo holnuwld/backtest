@@ -1,0 +1,437 @@
+{
+  "timestamp": "2026-10-29T05:24:35.953Z",
+  "elapsedSeconds": 0.26,
+  "score": 99,
+  "summary": {
+    "totalAssertions": 48,
+    "totalPassed": 46,
+    "totalWarnings": 2,
+    "totalFailures": 0
+  },
+  "tier1_dataIntegrity": {
+    "totalFilesChecked": 29,
+    "passed": 27,
+    "warnings": 2,
+    "failures": 0,
+    "details": [
+      {
+        "assetId": "BTC_KRW",
+        "filename": "BTC_KRW.csv",
+        "rows": 14327,
+        "status": "WARN",
+        "maxFlatCount": 10233,
+        "maxDailyJumpPct": "59.92",
+        "issues": [
+          {
+            "type": "WARN",
+            "code": "BTC_PRE_LAUNCH_FLATLINE",
+            "msg": "Pre-launch constant price: 10233 days flat (1970-01-02 ~ 2010-07-19) at 98. Protected by engine start-date lock."
+          }
+        ]
+      },
+      {
+        "assetId": "BTC_USD",
+        "filename": "BTC_USD.csv",
+        "rows": 14327,
+        "status": "WARN",
+        "maxFlatCount": 10233,
+        "maxDailyJumpPct": "61.06",
+        "issues": [
+          {
+            "type": "WARN",
+            "code": "BTC_PRE_LAUNCH_FLATLINE",
+            "msg": "Pre-launch constant price: 10233 days flat (1970-01-02 ~ 2010-07-19) at 0.08. Protected by engine start-date lock."
+          }
+        ]
+      },
+      {
+        "assetId": "DJI",
+        "filename": "DJI.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 2,
+        "maxDailyJumpPct": "22.61",
+        "issues": []
+      },
+      {
+        "assetId": "DXY",
+        "filename": "DXY.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 12,
+        "maxDailyJumpPct": "4.82",
+        "issues": [
+          {
+            "type": "INFO",
+            "code": "ACCEPTABLE_MACRO_PLATEAU",
+            "msg": "Macro plateau: 12 days flat (1971-08-13 ~ 1971-08-30)."
+          }
+        ]
+      },
+      {
+        "assetId": "GOLD",
+        "filename": "GOLD.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 4,
+        "maxDailyJumpPct": "14.81",
+        "issues": []
+      },
+      {
+        "assetId": "KPI200",
+        "filename": "KPI200.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 11,
+        "maxDailyJumpPct": "17.91",
+        "issues": [
+          {
+            "type": "INFO",
+            "code": "ACCEPTABLE_SHORT_PLATEAU",
+            "msg": "Short plateau: 11 days flat (1970-01-26 ~ 1970-02-09) at value 1.75"
+          }
+        ]
+      },
+      {
+        "assetId": "KRX_GOLD",
+        "filename": "KRX_GOLD.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 4,
+        "maxDailyJumpPct": "27.25",
+        "issues": []
+      },
+      {
+        "assetId": "NDX",
+        "filename": "NDX.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 2,
+        "maxDailyJumpPct": "18.77",
+        "issues": []
+      },
+      {
+        "assetId": "PCR",
+        "filename": "PCR.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "96.43",
+        "issues": []
+      },
+      {
+        "assetId": "SOXX",
+        "filename": "SOXX.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 4,
+        "maxDailyJumpPct": "18.57",
+        "issues": []
+      },
+      {
+        "assetId": "SPX",
+        "filename": "SPX.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "20.47",
+        "issues": []
+      },
+      {
+        "assetId": "T10Y2Y",
+        "filename": "T10Y2Y.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 6,
+        "maxDailyJumpPct": "2200.00",
+        "issues": []
+      },
+      {
+        "assetId": "US10Y",
+        "filename": "US10Y.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 9,
+        "maxDailyJumpPct": "40.74",
+        "issues": []
+      },
+      {
+        "assetId": "US2Y",
+        "filename": "US2Y.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 8,
+        "maxDailyJumpPct": "41.67",
+        "issues": []
+      },
+      {
+        "assetId": "US3M",
+        "filename": "US3M.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 17,
+        "maxDailyJumpPct": "666.67",
+        "issues": [
+          {
+            "type": "INFO",
+            "code": "ACCEPTABLE_MACRO_PLATEAU",
+            "msg": "Macro plateau: 17 days flat (2014-05-23 ~ 2014-06-17)."
+          }
+        ]
+      },
+      {
+        "assetId": "USDKRW",
+        "filename": "USDKRW.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 1287,
+        "maxDailyJumpPct": "21.31",
+        "issues": [
+          {
+            "type": "INFO",
+            "code": "HISTORICAL_FIXED_EXCHANGE_RATE",
+            "msg": "Historical 1970s Korea BOK fixed parity confirmed (1287 days at 484 KRW/USD)."
+          }
+        ]
+      },
+      {
+        "assetId": "UST10Y_TR",
+        "filename": "UST10Y_TR.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "5.94",
+        "issues": []
+      },
+      {
+        "assetId": "UST20Y_TR",
+        "filename": "UST20Y_TR.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 2,
+        "maxDailyJumpPct": "13.06",
+        "issues": []
+      },
+      {
+        "assetId": "UST2Y_TR",
+        "filename": "UST2Y_TR.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 5,
+        "maxDailyJumpPct": "1.63",
+        "issues": []
+      },
+      {
+        "assetId": "VIX",
+        "filename": "VIX.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 4,
+        "maxDailyJumpPct": "312.95",
+        "issues": []
+      },
+      {
+        "assetId": "VNQ",
+        "filename": "VNQ.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 2,
+        "maxDailyJumpPct": "19.51",
+        "issues": []
+      },
+      {
+        "assetId": "WTI",
+        "filename": "WTI.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 9,
+        "maxDailyJumpPct": "301.97",
+        "issues": [
+          {
+            "type": "INFO",
+            "code": "HISTORICAL_NEGATIVE_OIL_SHOCK",
+            "msg": "Confirmed historical 2020-04-20 negative oil price event (-36.98 $/bbl)."
+          }
+        ]
+      },
+      {
+        "assetId": "XLE",
+        "filename": "XLE.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "20.14",
+        "issues": []
+      },
+      {
+        "assetId": "XLF",
+        "filename": "XLF.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "16.67",
+        "issues": []
+      },
+      {
+        "assetId": "XLI",
+        "filename": "XLI.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "20.34",
+        "issues": []
+      },
+      {
+        "assetId": "XLK",
+        "filename": "XLK.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 2,
+        "maxDailyJumpPct": "20.08",
+        "issues": []
+      },
+      {
+        "assetId": "XLP",
+        "filename": "XLP.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "17.04",
+        "issues": []
+      },
+      {
+        "assetId": "XLU",
+        "filename": "XLU.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "12.86",
+        "issues": []
+      },
+      {
+        "assetId": "XLV",
+        "filename": "XLV.csv",
+        "rows": 14327,
+        "status": "PASS",
+        "maxFlatCount": 3,
+        "maxDailyJumpPct": "17.89",
+        "issues": []
+      }
+    ],
+    "marketDataJsonCheck": {
+      "status": "PASS",
+      "totalDays": 14327,
+      "catalogCount": 29,
+      "seriesCount": 29,
+      "startDate": "1970-01-02",
+      "endDate": "2026-10-27"
+    }
+  },
+  "tier2_engineLogic": {
+    "passed": 9,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "Indicator: SMA 5-period exact calculation",
+        "status": "PASS",
+        "detail": "Got 18, expected 18"
+      },
+      {
+        "name": "Indicator: RSI on strictly increasing series == 100",
+        "status": "PASS",
+        "detail": "Got 100"
+      },
+      {
+        "name": "Indicator: Drawdown peak-trough exact calculation (-20%)",
+        "status": "PASS",
+        "detail": "Got -20%"
+      },
+      {
+        "name": "Cash Engine: 100% Cash earns US3M short-rate and protects capital (MDD >= -0.01%)",
+        "status": "PASS",
+        "detail": "Init: 100000000, Final: 105826576.34777504, MDD: 0%, CAGR: 0.5683739245109898%"
+      },
+      {
+        "name": "Invariant: Sum of Asset Weights + Cash == 100% on every trading day",
+        "status": "PASS",
+        "detail": "Found 0 days where total weight violated 100%"
+      },
+      {
+        "name": "Execution: Cross-asset rules trigger trades and accurately deduct fees",
+        "status": "PASS",
+        "detail": "Trades logged: 1, Fees deducted: 494403.06527785026 KRW"
+      },
+      {
+        "name": "Safety Guard: Bitcoin backtest automatically clamps 1970 start to 2010-07-20",
+        "status": "PASS",
+        "detail": "Actual start: 2010-07-20, Notice: 비트코인(BTC)은 2010년 7월 20일 이전 실거래 데이터가 존재하지 않아(1970~2010 $0.08/24원 고정 왜곡 방지), 백테스트 시작일이 2010-07-20으로 자동 제한되었습니다."
+      },
+      {
+        "name": "Financial Metric: CAGR formula matches textbook compound annual return",
+        "status": "PASS",
+        "detail": "Calculated: 11.220264069946051%, Formula: 11.21%, Years: 10"
+      },
+      {
+        "name": "Financial Metric: Sharpe & MDD sign and magnitude consistency",
+        "status": "PASS",
+        "detail": "MDD: -19.36835594858169%, Sharpe: 0.6118578986747295"
+      }
+    ]
+  },
+  "tier3_uiUxIntent": {
+    "passed": 10,
+    "failed": 0,
+    "tests": [
+      {
+        "name": "UI HTML: Essential simulation parameter inputs exist (cfgStartDate, cfgEndDate, cfgCapital, cfgFee)",
+        "status": "PASS",
+        "detail": "Verified all config input tags"
+      },
+      {
+        "name": "UI HTML: Performance visualization canvas exists (chartEquity)",
+        "status": "PASS",
+        "detail": "Verified chart canvas container"
+      },
+      {
+        "name": "UI HTML: Scoreboard experiment log table exists",
+        "status": "PASS",
+        "detail": "Verified scoreboard UI markup"
+      },
+      {
+        "name": "UI HTML: Responsive mobile tab navigation exists",
+        "status": "PASS",
+        "detail": "Verified mobile tab elements"
+      },
+      {
+        "name": "Intent Guard: Allocation weight validation or sum display present",
+        "status": "PASS",
+        "detail": "Verified asset weight processing in app.js"
+      },
+      {
+        "name": "Intent Guard: Standard investment strategy presets exist",
+        "status": "PASS",
+        "detail": "Verified preset strategies definition"
+      },
+      {
+        "name": "Intent Guard: UI handles or acknowledges Bitcoin 2010 constraint",
+        "status": "PASS",
+        "detail": "Verified Bitcoin notice integration in app.js"
+      },
+      {
+        "name": "UI Execution: Chart visualization rendering engine linked",
+        "status": "PASS",
+        "detail": "Verified Chart.js instantiation"
+      },
+      {
+        "name": "Storage Resilience: localStorage / IndexedDB operations wrapped in try-catch",
+        "status": "PASS",
+        "detail": "Verified safe storage persistence logic"
+      },
+      {
+        "name": "UX Design: Responsive layout with mobile media queries & CSS variables",
+        "status": "PASS",
+        "detail": "Verified modern CSS styling"
+      }
+    ]
+  }
+}
