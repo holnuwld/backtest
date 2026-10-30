@@ -296,10 +296,22 @@
     const initialCapital = Math.max(1000, Number(config.initialCapital || 10000000));
     const feeRate = Math.max(0, Number(config.feeRatePct ?? 0.05)) / 100.0;
 
-    // Execution Mode: NEXT_CLOSE (default), NEXT_OPEN, SAME_DAY_CLOSE
-    let executionMode = config.executionMode || (config.executionLag === 0 || config.executionLag === "0" ? "SAME_DAY_CLOSE" : (config.executionLag === "NEXT_OPEN" ? "NEXT_OPEN" : "NEXT_CLOSE"));
-    const executionLag = executionMode === "SAME_DAY_CLOSE" ? 0 : 1;
-    const isExecuteAtOpen = executionMode === "NEXT_OPEN";
+    // Execution Mode: NEXT_CLOSE (default), NEXT_OPEN, DAY2_CLOSE, DAY2_OPEN, SAME_DAY_CLOSE
+    let defaultExecutionMode = config.executionMode || (config.executionLag === 0 || config.executionLag === "0" ? "SAME_DAY_CLOSE" : (config.executionLag === "NEXT_OPEN" ? "NEXT_OPEN" : (config.executionLag === "DAY2_CLOSE" ? "DAY2_CLOSE" : (config.executionLag === "DAY2_OPEN" ? "DAY2_OPEN" : "NEXT_CLOSE"))));
+    let defaultExecutionLag = 1;
+    let defaultIsAtOpen = false;
+    if (defaultExecutionMode === "NEXT_OPEN") {
+      defaultExecutionLag = 1; defaultIsAtOpen = true;
+    } else if (defaultExecutionMode === "DAY2_CLOSE") {
+      defaultExecutionLag = 2; defaultIsAtOpen = false;
+    } else if (defaultExecutionMode === "DAY2_OPEN") {
+      defaultExecutionLag = 2; defaultIsAtOpen = true;
+    } else if (defaultExecutionMode === "SAME_DAY_CLOSE") {
+      defaultExecutionLag = 0; defaultIsAtOpen = false;
+    }
+    const executionMode = defaultExecutionMode;
+    const executionLag = defaultExecutionLag;
+    const isExecuteAtOpen = defaultIsAtOpen;
     const cashYieldMode = config.cashYieldMode || "US3M";
 
     const trackedTickers = Array.from(trackedTickersSet);
@@ -525,61 +537,188 @@
 
       // 2. Evaluate and execute cross-asset rules (if rulesEnabled)
       if (rulesEnabled && step > 0 && rules.length > 0) {
-        const sigIdx = gIdx - executionLag;
-        if (sigIdx >= 0) {
-          const triggeredSells = [];
-          const triggeredBuys = [];
+        const triggeredSells = [];
+        const triggeredBuys = [];
 
-          for (let rIdx = 0; rIdx < rules.length; rIdx++) {
-            const rule = rules[rIdx];
-            const cooldown = Math.max(1, Number(rule.cooldownDays ?? 5));
-            const lastFired = ruleLastFiredIdx.get(rule.id);
-            if (lastFired !== undefined && gIdx - lastFired < cooldown) continue;
+        for (let rIdx = 0; rIdx < rules.length; rIdx++) {
+          const rule = rules[rIdx];
+          const cooldown = Math.max(1, Number(rule.cooldownDays ?? 5));
+          const lastFired = ruleLastFiredIdx.get(rule.id);
+          if (lastFired !== undefined && gIdx - lastFired < cooldown) continue;
 
-            if (evaluateRuleAt(marketData, rule, sigIdx)) {
-              const actType = (rule.action?.type || "BUY").toUpperCase();
-              if (actType === "SELL" || actType === "SELL_ALL") {
-                triggeredSells.push(rule);
-              } else {
-                triggeredBuys.push(rule);
+          // Determine rule execution timing & price mode
+          const rMode = (rule.action?.executionMode && rule.action.executionMode !== "DEFAULT")
+            ? rule.action.executionMode
+            : defaultExecutionMode;
+          let rLag = 1;
+          let rAtOpen = false;
+          let rLabel = "익일종가";
+          if (rMode === "NEXT_OPEN") {
+            rLag = 1; rAtOpen = true; rLabel = "익일시가";
+          } else if (rMode === "DAY2_CLOSE") {
+            rLag = 2; rAtOpen = false; rLabel = "이틀뒤종가";
+          } else if (rMode === "DAY2_OPEN") {
+            rLag = 2; rAtOpen = true; rLabel = "이틀뒤시가";
+          } else if (rMode === "SAME_DAY_CLOSE") {
+            rLag = 0; rAtOpen = false; rLabel = "당일종가";
+          } else {
+            rLag = 1; rAtOpen = false; rLabel = "익일종가";
+          }
+
+          const sigIdx = gIdx - rLag;
+          if (sigIdx < 0) continue;
+
+          if (evaluateRuleAt(marketData, rule, sigIdx)) {
+            const actType = (rule.action?.type || "BUY").toUpperCase();
+            const trigItem = { rule, rLag, rAtOpen, rLabel, sigIdx };
+            if (actType === "SELL" || actType === "SELL_ALL") {
+              triggeredSells.push(trigItem);
+            } else {
+              triggeredBuys.push(trigItem);
+            }
+          }
+        }
+
+        // Execute SELL rules
+        for (let i = 0; i < triggeredSells.length; i++) {
+          const { rule, rAtOpen, rLabel, sigIdx } = triggeredSells[i];
+          const act = rule.action || {};
+          const t = act.targetTicker;
+          if (!t || !marketData.series[t]) continue;
+
+          const val = getPortfolioValuation(gIdx);
+          const holdingVal = val.vals[t] || 0;
+          if (holdingVal <= 10.0) continue;
+
+          let sellDollar = 0;
+          const sMode = (act.sizingMode || "BALANCE_PCT").toUpperCase();
+          const sVal = Math.max(0, Number(act.sizingValue ?? 100));
+
+          if (act.type === "SELL_ALL") {
+            sellDollar = holdingVal;
+          } else if (sMode === "AMOUNT") {
+            sellDollar = Math.min(holdingVal, sVal);
+          } else if (sMode === "TOTAL_PCT") {
+            sellDollar = Math.min(holdingVal, val.total * (sVal / 100.0));
+          } else {
+            sellDollar = holdingVal * Math.min(1.0, sVal / 100.0);
+          }
+
+          if (sellDollar > 10.0) {
+            const px = rAtOpen ? getOpenRawPrice(t, gIdx) : getRawPrice(t, gIdx);
+            const pxKrw = rAtOpen ? getOpenPriceKrw(t, gIdx) : getPriceKrw(t, gIdx);
+            const cur = catalogMap[t]?.currency || "USD";
+            const rate = rAtOpen ? getOpenExchangeRate(gIdx) : getExchangeRate(gIdx);
+            const sellSh = sellDollar / pxKrw;
+            const fee = sellDollar * feeRate;
+            shares[t] = Math.max(0, shares[t] - sellSh);
+            cash += sellDollar - fee;
+            totalFeesPaid += fee;
+            ruleLastFiredIdx.set(rule.id, gIdx);
+            lastRuleTradeIdx = gIdx;
+            ruleTradeCount++;
+
+            if (tradeLogs.length < 1500) {
+              tradeLogs.push({
+                date: curDate,
+                stepIndex: step,
+                globalIndex: gIdx,
+                signalDate: dates[sigIdx],
+                type: "SELL",
+                ruleName: rule.name || "매도 조건",
+                ticker: t,
+                tickerName: catalogMap[t]?.shortName || t,
+                currency: cur,
+                rawPrice: px,
+                rate: rate,
+                priceKrw: pxKrw,
+                shares: sellSh,
+                amount: sellDollar,
+                amountKrw: sellDollar,
+                feeKrw: fee,
+                price: px,
+                execType: rLabel,
+                equityAfter: getPortfolioValuation(gIdx).total,
+              });
+            }
+          }
+        }
+
+        // Execute BUY rules
+        for (let i = 0; i < triggeredBuys.length; i++) {
+          const { rule, rAtOpen, rLabel, sigIdx } = triggeredBuys[i];
+          const act = rule.action || {};
+          const t = act.targetTicker;
+          if (!t || !marketData.series[t]) continue;
+
+          let val = getPortfolioValuation(gIdx);
+          const sMode = (act.sizingMode || "TOTAL_PCT").toUpperCase();
+          const sVal = Math.max(0, Number(act.sizingValue ?? 20));
+          const funding = act.fundingSource || "CASH_THEN_PRORATA";
+
+          let desiredBuyDollar = 0;
+          if (sMode === "AMOUNT") {
+            desiredBuyDollar = Math.min(val.total, sVal);
+          } else if (sMode === "TOTAL_PCT") {
+            desiredBuyDollar = val.total * Math.min(1.0, sVal / 100.0);
+          } else {
+            if (cash > 1000.0 || funding === "CASH_ONLY") {
+              desiredBuyDollar = cash * Math.min(1.0, sVal / 100.0);
+            } else if (funding !== "CASH_ONLY" && funding !== "CASH_THEN_PRORATA" && val.vals[funding] > 1000) {
+              desiredBuyDollar = val.vals[funding] * Math.min(1.0, sVal / 100.0);
+            } else {
+              desiredBuyDollar = (val.total - (val.vals[t] || 0)) * Math.min(1.0, sVal / 100.0);
+            }
+          }
+
+          if (desiredBuyDollar > cash + 10.0 && funding !== "CASH_ONLY") {
+            const shortfall = desiredBuyDollar - cash;
+            if (funding !== "CASH_THEN_PRORATA" && marketData.series[funding] && funding !== t) {
+              const availFund = val.vals[funding] || 0;
+              const toLiquidate = Math.min(availFund, shortfall / (1 - feeRate));
+              if (toLiquidate > 10.0) {
+                const pxFKrw = getPriceKrw(funding, gIdx);
+                const feeF = toLiquidate * feeRate;
+                shares[funding] = Math.max(0, shares[funding] - toLiquidate / pxFKrw);
+                cash += toLiquidate - feeF;
+                totalFeesPaid += feeF;
+              }
+            } else if (funding === "CASH_THEN_PRORATA") {
+              let otherTotal = 0;
+              for (let k = 0; k < trackedTickers.length; k++) {
+                const ot = trackedTickers[k];
+                if (ot !== t) otherTotal += val.vals[ot] || 0;
+              }
+              if (otherTotal > 10.0) {
+                const sellFraction = Math.min(1.0, (shortfall / (1 - feeRate)) / otherTotal);
+                for (let k = 0; k < trackedTickers.length; k++) {
+                  const ot = trackedTickers[k];
+                  if (ot === t) continue;
+                  const otVal = (val.vals[ot] || 0) * sellFraction;
+                  if (otVal > 10.0) {
+                    const pxOKrw = getPriceKrw(ot, gIdx);
+                    const feeO = otVal * feeRate;
+                    shares[ot] = Math.max(0, shares[ot] - otVal / pxOKrw);
+                    cash += otVal - feeO;
+                    totalFeesPaid += feeO;
+                  }
+                }
               }
             }
           }
 
-          // Execute SELL rules
-          for (let i = 0; i < triggeredSells.length; i++) {
-            const rule = triggeredSells[i];
-            const act = rule.action || {};
-            const t = act.targetTicker;
-            if (!t || !marketData.series[t]) continue;
-
-            const val = getPortfolioValuation(gIdx);
-            const holdingVal = val.vals[t] || 0;
-            if (holdingVal <= 10.0) continue;
-
-            let sellDollar = 0;
-            const sMode = (act.sizingMode || "BALANCE_PCT").toUpperCase();
-            const sVal = Math.max(0, Number(act.sizingValue ?? 100));
-
-            if (act.type === "SELL_ALL") {
-              sellDollar = holdingVal;
-            } else if (sMode === "AMOUNT") {
-              sellDollar = Math.min(holdingVal, sVal);
-            } else if (sMode === "TOTAL_PCT") {
-              sellDollar = Math.min(holdingVal, val.total * (sVal / 100.0));
-            } else {
-              sellDollar = holdingVal * Math.min(1.0, sVal / 100.0);
-            }
-
-            if (sellDollar > 10.0) {
-              const px = isExecuteAtOpen ? getOpenRawPrice(t, gIdx) : getRawPrice(t, gIdx);
-              const pxKrw = isExecuteAtOpen ? getOpenPriceKrw(t, gIdx) : getPriceKrw(t, gIdx);
-              const cur = catalogMap[t]?.currency || "USD";
-              const rate = isExecuteAtOpen ? getOpenExchangeRate(gIdx) : getExchangeRate(gIdx);
-              const sellSh = sellDollar / pxKrw;
-              const fee = sellDollar * feeRate;
-              shares[t] = Math.max(0, shares[t] - sellSh);
-              cash += sellDollar - fee;
+          const actualSpend = Math.min(cash, desiredBuyDollar);
+          if (actualSpend > 100.0) {
+            const px = rAtOpen ? getOpenRawPrice(t, gIdx) : getRawPrice(t, gIdx);
+            const pxKrw = rAtOpen ? getOpenPriceKrw(t, gIdx) : getPriceKrw(t, gIdx);
+            const cur = catalogMap[t]?.currency || "USD";
+            const rate = rAtOpen ? getOpenExchangeRate(gIdx) : getExchangeRate(gIdx);
+            const fee = actualSpend * feeRate;
+            const netBuy = actualSpend - fee;
+            if (pxKrw > 0) {
+              const buySh = netBuy / pxKrw;
+              shares[t] += buySh;
+              cash -= actualSpend;
               totalFeesPaid += fee;
               ruleLastFiredIdx.set(rule.id, gIdx);
               lastRuleTradeIdx = gIdx;
@@ -591,129 +730,22 @@
                   stepIndex: step,
                   globalIndex: gIdx,
                   signalDate: dates[sigIdx],
-                  type: "SELL",
-                  ruleName: rule.name || "매도 조건",
+                  type: "BUY",
+                  ruleName: rule.name || "매수 조건",
                   ticker: t,
                   tickerName: catalogMap[t]?.shortName || t,
                   currency: cur,
                   rawPrice: px,
                   rate: rate,
                   priceKrw: pxKrw,
-                  shares: sellSh,
-                  amount: sellDollar,
-                  amountKrw: sellDollar,
+                  shares: buySh,
+                  amount: actualSpend,
+                  amountKrw: actualSpend,
                   feeKrw: fee,
                   price: px,
-                  execType: isExecuteAtOpen ? "익일시가" : (executionLag === 0 ? "당일종가" : "익일종가"),
+                  execType: rLabel,
                   equityAfter: getPortfolioValuation(gIdx).total,
                 });
-              }
-            }
-          }
-
-          // Execute BUY rules
-          for (let i = 0; i < triggeredBuys.length; i++) {
-            const rule = triggeredBuys[i];
-            const act = rule.action || {};
-            const t = act.targetTicker;
-            if (!t || !marketData.series[t]) continue;
-
-            let val = getPortfolioValuation(gIdx);
-            const sMode = (act.sizingMode || "TOTAL_PCT").toUpperCase();
-            const sVal = Math.max(0, Number(act.sizingValue ?? 20));
-            const funding = act.fundingSource || "CASH_THEN_PRORATA";
-
-            let desiredBuyDollar = 0;
-            if (sMode === "AMOUNT") {
-              desiredBuyDollar = Math.min(val.total, sVal);
-            } else if (sMode === "TOTAL_PCT") {
-              desiredBuyDollar = val.total * Math.min(1.0, sVal / 100.0);
-            } else {
-              if (cash > 1000.0 || funding === "CASH_ONLY") {
-                desiredBuyDollar = cash * Math.min(1.0, sVal / 100.0);
-              } else if (funding !== "CASH_ONLY" && funding !== "CASH_THEN_PRORATA" && val.vals[funding] > 1000) {
-                desiredBuyDollar = val.vals[funding] * Math.min(1.0, sVal / 100.0);
-              } else {
-                desiredBuyDollar = (val.total - (val.vals[t] || 0)) * Math.min(1.0, sVal / 100.0);
-              }
-            }
-
-            if (desiredBuyDollar > cash + 10.0 && funding !== "CASH_ONLY") {
-              const shortfall = desiredBuyDollar - cash;
-              if (funding !== "CASH_THEN_PRORATA" && marketData.series[funding] && funding !== t) {
-                const availFund = val.vals[funding] || 0;
-                const toLiquidate = Math.min(availFund, shortfall / (1 - feeRate));
-                if (toLiquidate > 10.0) {
-                  const pxFKrw = getPriceKrw(funding, gIdx);
-                  const feeF = toLiquidate * feeRate;
-                  shares[funding] = Math.max(0, shares[funding] - toLiquidate / pxFKrw);
-                  cash += toLiquidate - feeF;
-                  totalFeesPaid += feeF;
-                }
-              } else if (funding === "CASH_THEN_PRORATA") {
-                let otherTotal = 0;
-                for (let k = 0; k < trackedTickers.length; k++) {
-                  const ot = trackedTickers[k];
-                  if (ot !== t) otherTotal += val.vals[ot] || 0;
-                }
-                if (otherTotal > 10.0) {
-                  const sellFraction = Math.min(1.0, (shortfall / (1 - feeRate)) / otherTotal);
-                  for (let k = 0; k < trackedTickers.length; k++) {
-                    const ot = trackedTickers[k];
-                    if (ot === t) continue;
-                    const otVal = (val.vals[ot] || 0) * sellFraction;
-                    if (otVal > 10.0) {
-                      const pxOKrw = getPriceKrw(ot, gIdx);
-                      const feeO = otVal * feeRate;
-                      shares[ot] = Math.max(0, shares[ot] - otVal / pxOKrw);
-                      cash += otVal - feeO;
-                      totalFeesPaid += feeO;
-                    }
-                  }
-                }
-              }
-            }
-
-            const actualSpend = Math.min(cash, desiredBuyDollar);
-            if (actualSpend > 100.0) {
-              const px = isExecuteAtOpen ? getOpenRawPrice(t, gIdx) : getRawPrice(t, gIdx);
-              const pxKrw = isExecuteAtOpen ? getOpenPriceKrw(t, gIdx) : getPriceKrw(t, gIdx);
-              const cur = catalogMap[t]?.currency || "USD";
-              const rate = isExecuteAtOpen ? getOpenExchangeRate(gIdx) : getExchangeRate(gIdx);
-              const fee = actualSpend * feeRate;
-              const netBuy = actualSpend - fee;
-              if (pxKrw > 0) {
-                const buySh = netBuy / pxKrw;
-                shares[t] += buySh;
-                cash -= actualSpend;
-                totalFeesPaid += fee;
-                ruleLastFiredIdx.set(rule.id, gIdx);
-                lastRuleTradeIdx = gIdx;
-                ruleTradeCount++;
-
-                if (tradeLogs.length < 1500) {
-                  tradeLogs.push({
-                    date: curDate,
-                    stepIndex: step,
-                    globalIndex: gIdx,
-                    signalDate: dates[sigIdx],
-                    type: "BUY",
-                    ruleName: rule.name || "매수 조건",
-                    ticker: t,
-                    tickerName: catalogMap[t]?.shortName || t,
-                    currency: cur,
-                    rawPrice: px,
-                    rate: rate,
-                    priceKrw: pxKrw,
-                    shares: buySh,
-                    amount: actualSpend,
-                    amountKrw: actualSpend,
-                    feeKrw: fee,
-                    price: px,
-                    execType: isExecuteAtOpen ? "익일시가" : (executionLag === 0 ? "당일종가" : "익일종가"),
-                    equityAfter: getPortfolioValuation(gIdx).total,
-                  });
-                }
               }
             }
           }

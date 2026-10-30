@@ -103,6 +103,8 @@
         <ul>
           <li><strong>익일(T+1) 종가 체결 (Next Close · 실전 표준 권장):</strong> 전일(T-1) 종가로 시그널을 확인한 뒤, 다음 영업일(T) 장중 안정화된 <strong>종가(Close)</strong>에 체결합니다. 아침 동시호가 갭하락 투매와 극심한 슬리피지를 회피할 수 있어 실전 퀀트에서 가장 추천됩니다.</li>
           <li><strong>익일(T+1) 시가 체결 (Next Open · 오전 동시호가):</strong> 전일(T-1) 시그널 확인 후 다음 영업일(T) <strong>장 시작 시가(Open)</strong>에 즉시 매매합니다. 빠른 진입이 가능하지만 갭하락/갭상승에 노출될 수 있습니다.</li>
+          <li><strong>이틀뒤(T+2) 종가 체결 (2 Days Later Close):</strong> 신호 발생 후 2거래일 뒤 장 마감 <strong>종가(Close)</strong>에 체결합니다. 신호 확인 후 여유 있는 주문 집행이나 단기 노이즈를 1거래일 지켜본 후 진입할 때 활용됩니다.</li>
+          <li><strong>이틀뒤(T+2) 시가 체결 (2 Days Later Open):</strong> 신호 발생 후 2거래일 뒤 장 시작 <strong>시가(Open)</strong>에 체결합니다.</li>
           <li><strong>당일(T) 종가 즉시 체결 (Same-day Close · 이론치):</strong> 신호가 발생한 당일 종가에 즉시 체결되는 것으로 가정합니다. 장 마감 직전 동시호가에 주문을 집행할 수 있는 환경에 적합합니다.</li>
         </ul>
       `,
@@ -307,6 +309,7 @@
             action: {
               type: "BUY",
               targetTicker: "KPI200",
+              executionMode: "NEXT_CLOSE",
               sizingMode: "BALANCE_PCT",
               sizingValue: 55,
               fundingSource: "CASH_THEN_PRORATA",
@@ -330,6 +333,7 @@
             action: {
               type: "SELL",
               targetTicker: "KPI200",
+              executionMode: "NEXT_CLOSE",
               sizingMode: "BALANCE_PCT",
               sizingValue: 50,
               fundingSource: "CASH_THEN_PRORATA",
@@ -380,6 +384,7 @@
             action: {
               type: "BUY",
               targetTicker: "NDX",
+              executionMode: "NEXT_CLOSE",
               sizingMode: "BALANCE_PCT",
               sizingValue: 50,
               fundingSource: "CASH_THEN_PRORATA",
@@ -403,6 +408,7 @@
             action: {
               type: "SELL",
               targetTicker: "NDX",
+              executionMode: "NEXT_CLOSE",
               sizingMode: "BALANCE_PCT",
               sizingValue: 50,
               fundingSource: "CASH_THEN_PRORATA",
@@ -1226,6 +1232,10 @@
       execModeVal = "SAME_DAY_CLOSE";
     } else if (currentConfig.executionLag === "NEXT_OPEN") {
       execModeVal = "NEXT_OPEN";
+    } else if (currentConfig.executionLag === "DAY2_CLOSE" || currentConfig.executionLag === 2) {
+      execModeVal = "DAY2_CLOSE";
+    } else if (currentConfig.executionLag === "DAY2_OPEN") {
+      execModeVal = "DAY2_OPEN";
     }
     const lagSelect = document.getElementById("cfgLag");
     if (lagSelect) lagSelect.value = execModeVal;
@@ -1398,6 +1408,19 @@
                 <label class="form-label">대상 매매자산</label>
                 <select class="form-control js-act-ticker" data-ridx="${rIdx}">
                   ${buildTradableAssetOptionsHTML(act.targetTicker)}
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">
+                  주문 조건 (체결 시점·단가)
+                  <button type="button" class="btn-help-inline" data-help="EXECUTION_MODE" title="주문 조건 안내">?</button>
+                </label>
+                <select class="form-control js-act-exec-mode" data-ridx="${rIdx}">
+                  <option value="NEXT_CLOSE" ${(!act.executionMode || act.executionMode === "NEXT_CLOSE") ? "selected" : ""}>익일(T+1) 종가 체결 (Next Close)</option>
+                  <option value="NEXT_OPEN" ${act.executionMode === "NEXT_OPEN" ? "selected" : ""}>익일(T+1) 시가 체결 (Next Open)</option>
+                  <option value="DAY2_CLOSE" ${act.executionMode === "DAY2_CLOSE" ? "selected" : ""}>이틀뒤(T+2) 종가 체결 (2 Days Close)</option>
+                  <option value="DAY2_OPEN" ${act.executionMode === "DAY2_OPEN" ? "selected" : ""}>이틀뒤(T+2) 시가 체결 (2 Days Open)</option>
+                  <option value="SAME_DAY_CLOSE" ${act.executionMode === "SAME_DAY_CLOSE" ? "selected" : ""}>당일(T) 종가 즉시 체결 (Same Close)</option>
                 </select>
               </div>
               <div class="form-group" style="${act.type === "SELL_ALL" ? "display:none;" : ""}">
@@ -1703,6 +1726,12 @@
         checkAndEnforceBtcDateLock(true);
       });
     });
+    container.querySelectorAll(".js-act-exec-mode").forEach((el) => {
+      el.addEventListener("change", (e) => {
+        const rIdx = parseInt(e.target.dataset.ridx, 10);
+        currentConfig.rules[rIdx].action.executionMode = e.target.value;
+      });
+    });
     container.querySelectorAll(".js-act-sizing-mode").forEach((el) => {
       el.addEventListener("change", (e) => {
         const rIdx = parseInt(e.target.dataset.ridx, 10);
@@ -1850,7 +1879,7 @@
     currentConfig.endDate = document.getElementById("cfgEndDate").value || marketData.endDate;
     const rawExec = document.getElementById("cfgLag").value;
     currentConfig.executionMode = rawExec;
-    currentConfig.executionLag = rawExec === "SAME_DAY_CLOSE" || rawExec === "0" ? 0 : 1;
+    currentConfig.executionLag = rawExec === "SAME_DAY_CLOSE" || rawExec === "0" ? 0 : (rawExec.startsWith("DAY2") ? 2 : 1);
     currentConfig.feeRatePct = Math.max(0, parseFloat(document.getElementById("cfgFee").value) || 0);
     currentConfig.cashYieldMode = document.getElementById("cfgCashYield").value;
     currentConfig.benchmarkTicker = document.getElementById("cfgBenchmark").value || "SPX";
@@ -2534,6 +2563,7 @@
                   const amtStr = `₩${Math.round(t.amountKrw || t.amount).toLocaleString()}`;
                   return [
                     `${typeLabel}: ${assetName}`,
+                    ` • 주문조건: ${t.execType || "익일종가"}`,
                     ` • 단가: ${unitPriceStr}`,
                     ` • 수량: ${sharesStr}주`,
                     ` • 체결금액: ${amtStr}`,
@@ -2688,7 +2718,10 @@
         const sharesStr = row.shares ? ` • ${row.shares >= 100 ? row.shares.toFixed(1) : row.shares.toFixed(4)}주` : "";
         return `
         <tr>
-          <td>${row.date}</td>
+          <td>
+            <strong>${row.date}</strong>
+            ${row.execType ? `<div style="font-size:11px;font-weight:700;color:var(--accent);">${escapeHtml(row.execType)}</div>` : ""}
+          </td>
           <td><span class="tag ${badgeClass}">${row.type}</span></td>
           <td>${escapeHtml(row.ruleName || "")}</td>
           <td><strong>${escapeHtml(row.actionLabel || row.tickerName || row.ticker)}</strong><div style="font-size:11px;color:var(--text-muted);">${pxStr}${sharesStr}</div></td>
