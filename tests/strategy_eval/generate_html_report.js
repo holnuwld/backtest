@@ -1092,8 +1092,8 @@ function main() {
   const EXPERIMENT_TABS = [
     {
       key: "exp5_ndx_cash",
-      tabLabel: "🇺🇸 탭 1: 나스닥 100 · 현금 포스트 IMF (익일 종가 체결, 1999~2026 50선)",
-      tabBadge: "신규 · 나스닥100 50선",
+      tabIcon: "🇺🇸",
+      tabLabel: "나스닥 익일종가 (1999-2026)",
       isDefault: true,
       shortName: "실험 #5 (포스트 IMF 1999~2026 나스닥100+현금 익일 종가 50선)",
       badge: "Experiment #5 · NASDAQ 100 + Cash Only · Modern Era (1999.01.04 ~ 2026.10.27, 27.8 Years) · 50 Strategies Tested",
@@ -1144,8 +1144,8 @@ function main() {
     },
     {
       key: "exp4_post_imf_close",
-      tabLabel: "🇰🇷 탭 2: 코스피 · 현금 포스트 IMF (익일 종가 체결, 1999~2026 50선)",
-      tabBadge: "익일 종가 50선",
+      tabIcon: "🇰🇷",
+      tabLabel: "코스피 익일종가 (1999-2026)",
       isDefault: false,
       shortName: "실험 #4 (포스트 IMF 1999~2026 익일 종가 체결 50선)",
       badge: "Experiment #4 · Post-IMF Era with Next-Day Close Execution (1999.01.04 ~ 2026.10.27, 27.8 Years) · 50 Strategies Tested",
@@ -1197,8 +1197,8 @@ function main() {
     },
     {
       key: "exp3_post_imf",
-      tabLabel: "🇰🇷 탭 3: 코스피 · 현금 포스트 IMF (익일 시가 체결, 1999~2026 50선)",
-      tabBadge: "익일 시가 50선",
+      tabIcon: "🇰🇷",
+      tabLabel: "코스피 익일시가 (1999-2026)",
       isDefault: false,
       shortName: "실험 #3 (포스트 IMF 1999~2026 익일 시가 체결 50선)",
       badge: "Experiment #3 · Post-IMF Modern Market Era (1999.01.04 ~ 2026.10.27, 27.8 Years) · 50 Strategies Tested",
@@ -1247,8 +1247,8 @@ function main() {
     },
     {
       key: "exp1_3asset",
-      tabLabel: "🌐 탭 4: 코스피 · 나스닥 · KRX금 3자산 전략 (50선)",
-      tabBadge: "3자산 50선",
+      tabIcon: "🌐",
+      tabLabel: "3자산 배분 (1996-2026)",
       isDefault: false,
       shortName: "실험 #1 (코스피200 + 나스닥100 + KRX금 3자산 50선)",
       badge: "Experiment #1 · KOSPI 200 + NASDAQ 100 + KRX Gold · 50 Strategies Tested",
@@ -1297,8 +1297,8 @@ function main() {
     },
     {
       key: "exp2_kospicash",
-      tabLabel: "🏛️ 탭 5: 코스피 · 현금 30년 전수 (1996~2026 IMF포함 참고용 50선)",
-      tabBadge: "IMF포함 30년 참고",
+      tabIcon: "🏛️",
+      tabLabel: "코스피 30년전수 (1996-2026)",
       isDefault: false,
       shortName: "실험 #2 (1996~2026 IMF포함 코스피+현금 50선)",
       badge: "Experiment #2 · Full Historical Regime (1996.07.01 ~ 2026.10.27, 30.3 Years) · 50 Strategies Tested",
@@ -1344,9 +1344,9 @@ function main() {
 
   const tabsNavHtml = EXPERIMENT_TABS.map(
     (tab) => `
-      <button type="button" class="tab-btn ${tab.isDefault ? "active" : ""}" id="tab-btn-${tab.key}" onclick="switchExperimentTab('${tab.key}')">
-        <span>${tab.tabLabel}</span>
-        <span class="tab-pill">${tab.tabBadge}</span>
+      <button type="button" class="tab-btn ${tab.isDefault ? "active" : ""}" id="tab-btn-${tab.key}" onclick="switchExperimentTab('${tab.key}')" title="${tab.shortName}">
+        <span class="tab-icon">${tab.tabIcon}</span>
+        <span class="tab-title">${tab.tabLabel}</span>
       </button>
     `
   ).join("\n");
@@ -1543,54 +1543,85 @@ function main() {
       transform: scale(1.12);
     }
 
-    /* Tabs Navigation Bar */
+    /* Chrome-style Compact Tabs Navigation Bar */
     .tabs-nav {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 12px;
-      margin-bottom: 22px;
+      gap: 3px;
+      align-items: flex-end;
+      overflow-x: auto;
+      white-space: nowrap;
+      flex-wrap: nowrap;
+      border-bottom: 1px solid #334155;
+      padding: 4px 6px 0 6px;
+      margin-bottom: 16px;
       position: sticky;
       top: 0;
-      z-index: 90;
-      background: rgba(11, 17, 32, 0.94);
-      backdrop-filter: blur(10px);
-      padding-top: 10px;
+      z-index: 100;
+      background: rgba(11, 17, 32, 0.96);
+      backdrop-filter: blur(12px);
+      scrollbar-width: thin;
+      scrollbar-color: #334155 transparent;
+    }
+    .tabs-nav::-webkit-scrollbar {
+      height: 3px;
+    }
+    .tabs-nav::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 2px;
     }
     .tab-btn {
-      background: #111827;
-      color: #cbd5e1;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 11px 18px;
-      font-size: 14px;
-      font-weight: 700;
+      background: rgba(15, 23, 42, 0.65);
+      color: #94a3b8;
+      border: 1px solid rgba(51, 65, 85, 0.5);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 0 13px;
+      height: 34px;
+      font-size: 12.5px;
+      font-weight: 500;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      transition: all 0.18s ease;
+      gap: 6px;
+      position: relative;
+      margin-bottom: -1px;
+      user-select: none;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      flex-shrink: 0;
     }
     .tab-btn:hover {
-      border-color: var(--accent);
-      color: #fff;
-      background: #1e293b;
+      background: rgba(30, 41, 59, 0.85);
+      color: #f1f5f9;
+      border-color: rgba(100, 116, 139, 0.6);
     }
     .tab-btn.active {
-      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
-      color: #fff;
-      border-color: #38bdf8;
-      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+      background: #1e293b;
+      color: #38bdf8;
+      font-weight: 700;
+      border: 1px solid #475569;
+      border-top: 2.5px solid #38bdf8;
+      border-bottom: 1px solid #1e293b;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.35);
+      z-index: 2;
+    }
+    .tab-icon {
+      font-size: 13px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+    }
+    .tab-title {
+      letter-spacing: -0.2px;
     }
     .tab-pill {
       background: rgba(15, 23, 42, 0.55);
       color: #fde047;
       border: 1px solid rgba(253, 224, 71, 0.4);
-      padding: 2px 8px;
+      padding: 1px 6px;
       border-radius: 999px;
-      font-size: 11px;
-      font-weight: 800;
+      font-size: 10px;
+      font-weight: 700;
+      margin-left: 2px;
     }
     .tab-panel {
       display: none;
@@ -2179,8 +2210,9 @@ function main() {
     <!-- MULTI-EXPERIMENT TABS BAR -->
     <nav class="tabs-nav" aria-label="실험 결과 탭 메뉴">
       ${tabsNavHtml}
-      <button type="button" class="tab-btn" id="tab-btn-glossary" onclick="switchExperimentTab('glossary')">
-        <span>📖 탭 6: 퀀트 지표 · 금융 용어 전체 해설집</span>
+      <button type="button" class="tab-btn" id="tab-btn-glossary" onclick="switchExperimentTab('glossary')" title="백테스트 핵심 지표 및 금융·퀀트 용어 백과사전">
+        <span class="tab-icon">📖</span>
+        <span class="tab-title">퀀트 용어 사전</span>
       </button>
     </nav>
 
