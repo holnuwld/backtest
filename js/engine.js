@@ -367,6 +367,7 @@
 
     const tradeLogs = [];
     const ruleLastFiredIdx = new Map();
+    const assetLastTradeIdx = new Map();
     let rebalanceCount = 0;
     let ruleTradeCount = 0;
 
@@ -542,9 +543,18 @@
 
         for (let rIdx = 0; rIdx < rules.length; rIdx++) {
           const rule = rules[rIdx];
+          const ruleKey = rule.id || (`rule_${rIdx}`);
           const cooldown = Math.max(1, Number(rule.cooldownDays ?? 5));
-          const lastFired = ruleLastFiredIdx.get(rule.id);
+          const lastFired = ruleLastFiredIdx.get(ruleKey);
           if (lastFired !== undefined && gIdx - lastFired < cooldown) continue;
+
+          // Cross-rule asset-level cooldown for same action type (e.g. multiple BUY rules for NDX)
+          const actType = (rule.action?.type || "BUY").toUpperCase();
+          const targetTicker = rule.action?.targetTicker;
+          if (targetTicker) {
+            const lastAssetTrade = assetLastTradeIdx.get(targetTicker + "_" + actType);
+            if (lastAssetTrade !== undefined && gIdx - lastAssetTrade < cooldown) continue;
+          }
 
           // Determine rule execution timing & price mode
           const rMode = (rule.action?.executionMode && rule.action.executionMode !== "DEFAULT")
@@ -573,8 +583,14 @@
             const trigItem = { rule, rLag, rAtOpen, rLabel, sigIdx };
             if (actType === "SELL" || actType === "SELL_ALL") {
               triggeredSells.push(trigItem);
+              if (targetTicker) {
+                assetLastTradeIdx.set(targetTicker + "_SELL", gIdx);
+              }
             } else {
               triggeredBuys.push(trigItem);
+              if (targetTicker) {
+                assetLastTradeIdx.set(targetTicker + "_BUY", gIdx);
+              }
             }
           }
         }
@@ -614,7 +630,9 @@
             shares[t] = Math.max(0, shares[t] - sellSh);
             cash += sellDollar - fee;
             totalFeesPaid += fee;
-            ruleLastFiredIdx.set(rule.id, gIdx);
+            const rKey = rule.id || (`rule_${i}`);
+            ruleLastFiredIdx.set(rKey, gIdx);
+            if (t) assetLastTradeIdx.set(t + "_SELL", gIdx);
             lastRuleTradeIdx = gIdx;
             ruleTradeCount++;
 
@@ -720,7 +738,9 @@
               shares[t] += buySh;
               cash -= actualSpend;
               totalFeesPaid += fee;
-              ruleLastFiredIdx.set(rule.id, gIdx);
+              const rKey = rule.id || (`rule_${i}`);
+              ruleLastFiredIdx.set(rKey, gIdx);
+              if (t) assetLastTradeIdx.set(t + "_BUY", gIdx);
               lastRuleTradeIdx = gIdx;
               ruleTradeCount++;
 

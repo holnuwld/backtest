@@ -1685,10 +1685,14 @@
       });
     });
     container.querySelectorAll(".js-rule-cooldown").forEach((el) => {
-      el.addEventListener("input", (e) => {
+      const updateCooldown = (e) => {
         const rIdx = parseInt(e.target.dataset.ridx, 10);
-        currentConfig.rules[rIdx].cooldownDays = Math.max(1, parseInt(e.target.value, 10) || 1);
-      });
+        if (currentConfig.rules && currentConfig.rules[rIdx]) {
+          currentConfig.rules[rIdx].cooldownDays = Math.max(1, parseInt(e.target.value, 10) || 1);
+        }
+      };
+      el.addEventListener("input", updateCooldown);
+      el.addEventListener("change", updateCooldown);
     });
     container.querySelectorAll(".js-add-cond").forEach((el) => {
       el.addEventListener("click", (e) => {
@@ -1902,6 +1906,62 @@
       bandMode: document.getElementById("cfgRebBandMode").value,
       bandThreshold: Math.max(0.5, parseFloat(document.getElementById("cfgRebBandVal").value) || 5),
     };
+
+    // Explicitly sync Allocations from DOM
+    const allocCards = document.querySelectorAll(".alloc-item");
+    if (allocCards.length > 0 && Array.isArray(currentConfig.allocations)) {
+      allocCards.forEach((el) => {
+        const idx = parseInt(el.dataset.idx, 10);
+        if (!isNaN(idx) && currentConfig.allocations[idx]) {
+          const tSel = el.querySelector(".js-alloc-ticker");
+          const wInp = el.querySelector(".js-alloc-weight");
+          if (tSel) currentConfig.allocations[idx].ticker = tSel.value;
+          if (wInp) currentConfig.allocations[idx].weightPct = Math.max(0, parseFloat(wInp.value) || 0);
+        }
+      });
+    }
+
+    // Explicitly sync Rules & Cooldown Days from DOM
+    const ruleCards = document.querySelectorAll(".rule-card");
+    if (ruleCards.length > 0 && Array.isArray(currentConfig.rules)) {
+      ruleCards.forEach((card) => {
+        const rIdx = parseInt(card.dataset.ridx, 10);
+        if (isNaN(rIdx) || !currentConfig.rules[rIdx]) return;
+        const r = currentConfig.rules[rIdx];
+        r.id = r.id || `rule_${rIdx}_${Date.now()}`;
+
+        const enInp = card.querySelector(".js-rule-enable");
+        if (enInp) r.enabled = enInp.checked;
+
+        const nameInp = card.querySelector(".js-rule-name");
+        if (nameInp) r.name = nameInp.value.trim() || `규칙 #${rIdx + 1}`;
+
+        const logicSel = card.querySelector(".js-rule-logic");
+        if (logicSel) r.logic = logicSel.value;
+
+        const cdInp = card.querySelector(".js-rule-cooldown");
+        if (cdInp) r.cooldownDays = Math.max(1, parseInt(cdInp.value, 10) || 1);
+
+        if (!r.action) r.action = {};
+        const actTypeSel = card.querySelector(".js-act-type");
+        if (actTypeSel) r.action.type = actTypeSel.value;
+
+        const actTickerSel = card.querySelector(".js-act-ticker");
+        if (actTickerSel) r.action.targetTicker = actTickerSel.value;
+
+        const execModeSel = card.querySelector(".js-act-exec-mode");
+        if (execModeSel) r.action.executionMode = execModeSel.value;
+
+        const szModeSel = card.querySelector(".js-act-sizing-mode");
+        if (szModeSel) r.action.sizingMode = szModeSel.value;
+
+        const szValInp = card.querySelector(".js-act-sizing-val");
+        if (szValInp) r.action.sizingValue = parseFloat(szValInp.value) || 0;
+
+        const fundSel = card.querySelector(".js-act-funding");
+        if (fundSel) r.action.fundingSource = fundSel.value;
+      });
+    }
   }
 
   function executeCurrentBacktest(saveToBoard = true) {
@@ -3089,10 +3149,17 @@
     }
   }
 
-  function panEquityChart(pct) {
+  function panEquityChart(dir) {
     if (!charts.equity) return;
+    // dir can be "left" (-1) or "right" (+1)
+    // In Chart.js zoom plugin:
+    // Positive delta x moves viewport towards past (older/left labels).
+    // Negative delta x moves viewport towards future (recent/right labels).
+    const isLeft = dir === "left" || (typeof dir === "number" && dir < 0);
+    const pct = 0.2;
     if (typeof charts.equity.pan === "function") {
-      const px = charts.equity.chartArea ? charts.equity.chartArea.width * pct : pct > 0 ? 100 : -100;
+      const w = charts.equity.chartArea ? charts.equity.chartArea.width : 500;
+      const px = isLeft ? w * pct : -w * pct;
       charts.equity.pan({ x: px });
     } else {
       const xScale = charts.equity.scales.x;
@@ -3100,8 +3167,8 @@
       const curMin = xScale.min !== undefined ? xScale.min : 0;
       const curMax = xScale.max !== undefined ? xScale.max : charts.equity.data.labels.length - 1;
       const shift = Math.round((curMax - curMin) * pct);
-      let newMin = curMin + shift;
-      let newMax = curMax + shift;
+      let newMin = isLeft ? curMin - shift : curMin + shift;
+      let newMax = isLeft ? curMax - shift : curMax + shift;
       if (newMin < 0) {
         newMax -= newMin;
         newMin = 0;
@@ -3285,8 +3352,8 @@
     // Equity Chart Zoom & Pan Controls
     document.getElementById("btnZoomIn")?.addEventListener("click", () => zoomEquityChart(1.3));
     document.getElementById("btnZoomOut")?.addEventListener("click", () => zoomEquityChart(0.77));
-    document.getElementById("btnPanLeft")?.addEventListener("click", () => panEquityChart(-0.2));
-    document.getElementById("btnPanRight")?.addEventListener("click", () => panEquityChart(0.2));
+    document.getElementById("btnPanLeft")?.addEventListener("click", () => panEquityChart("left"));
+    document.getElementById("btnPanRight")?.addEventListener("click", () => panEquityChart("right"));
     document.getElementById("btnResetZoom")?.addEventListener("click", resetEquityZoom);
 
     // Equity Range Chips (1Y, 3Y, 5Y, 10Y, ALL)
