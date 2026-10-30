@@ -922,16 +922,18 @@
 
   // Initialize app
   async function initApp() {
-    if (!global.DEFAULT_MARKET_DATA) {
+    const baseData = global.DEFAULT_MARKET_DATA || global.RAW_MARKET_DATA;
+    if (!baseData) {
       showToast("데이터 파일(data/market_data.js)을 찾을 수 없습니다.", "danger");
       return;
     }
 
     // Deep clone base catalog and merge custom series from IndexedDB
     marketData = {
-      ...global.DEFAULT_MARKET_DATA,
-      catalog: [...global.DEFAULT_MARKET_DATA.catalog],
-      series: { ...global.DEFAULT_MARKET_DATA.series },
+      ...baseData,
+      catalog: [...baseData.catalog],
+      series: { ...baseData.series },
+      openSeries: baseData.openSeries ? { ...baseData.openSeries } : {},
     };
 
     const customList = await StorageManager.getAllCustomSeries();
