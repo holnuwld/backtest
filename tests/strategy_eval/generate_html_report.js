@@ -836,7 +836,10 @@ function renderTabSectionHtml(expMeta, expData) {
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🚀 Top 10 전략 vs 벤치마크 누적 수익곡선 (원금=100)</span>
-              <button class="btn-toggle" id="btnScaleToggle_${k}" onclick="toggleEquityScale('${k}')">선형(Linear) 스케일로 보기</button>
+              <div style="display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button class="btn-toggle" id="btnToggleAllEquity_${k}" onclick="toggleAllDatasets('${k}', 'equity')">전체 해제</button>
+                <button class="btn-toggle" id="btnScaleToggle_${k}" onclick="toggleEquityScale('${k}')">선형(Linear) 스케일로 보기</button>
+              </div>
             </div>
             <div class="chart-canvas-wrap">
               <canvas id="equityChart_${k}"></canvas>
@@ -846,6 +849,9 @@ function renderTabSectionHtml(expMeta, expData) {
         <div class="chart-box" style="margin-top: 20px;">
           <div class="chart-header">
             <span class="chart-title">🛡️ Top 5 전략 vs 코스피200 단독 낙폭(Drawdown / Underwater) 비교 (2000 닷컴 · 2008 금융위기 · 2020 코로나 · 2022 금리인상)</span>
+            <div style="display: inline-flex; gap: 6px; align-items: center;">
+              <button class="btn-toggle" id="btnToggleAllDD_${k}" onclick="toggleAllDatasets('${k}', 'drawdown')">전체 해제</button>
+            </div>
           </div>
           <div class="chart-canvas-wrap" style="height: 290px;">
             <canvas id="drawdownChart_${k}"></canvas>
@@ -2416,7 +2422,13 @@ function main() {
           maintainAspectRatio: false,
           interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } } },
+            legend: {
+              labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } },
+              onClick: function (e, legendItem, legend) {
+                Chart.defaults.plugins.legend.onClick.call(this, e, legendItem, legend);
+                syncToggleAllBtn(tabKey, "equity");
+              },
+            },
           },
           scales: {
             x: {
@@ -2457,7 +2469,7 @@ function main() {
         });
       }
 
-      new Chart(ddCtx, {
+      const drawdownChart = new Chart(ddCtx, {
         type: "line",
         data: {
           labels: payload.dates,
@@ -2468,7 +2480,13 @@ function main() {
           maintainAspectRatio: false,
           interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } } },
+            legend: {
+              labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } },
+              onClick: function (e, legendItem, legend) {
+                Chart.defaults.plugins.legend.onClick.call(this, e, legendItem, legend);
+                syncToggleAllBtn(tabKey, "drawdown");
+              },
+            },
           },
           scales: {
             x: {
@@ -2485,7 +2503,48 @@ function main() {
         },
       });
 
-      renderedCharts[tabKey] = { equityChart };
+      renderedCharts[tabKey] = { equityChart, drawdownChart };
+    }
+
+    function toggleAllDatasets(tabKey, chartType) {
+      const cObj = renderedCharts[tabKey];
+      if (!cObj) return;
+      const chart = chartType === "equity" ? cObj.equityChart : cObj.drawdownChart;
+      if (!chart) return;
+
+      const anyVisible = chart.data.datasets.some((ds, idx) => {
+        return typeof chart.isDatasetVisible === "function" ? chart.isDatasetVisible(idx) : !ds.hidden;
+      });
+
+      const targetVisibility = !anyVisible;
+
+      chart.data.datasets.forEach((ds, idx) => {
+        if (typeof chart.setDatasetVisibility === "function") {
+          chart.setDatasetVisibility(idx, targetVisibility);
+        } else {
+          ds.hidden = !targetVisibility;
+        }
+      });
+
+      chart.update();
+      syncToggleAllBtn(tabKey, chartType);
+    }
+
+    function syncToggleAllBtn(tabKey, chartType) {
+      const cObj = renderedCharts[tabKey];
+      if (!cObj) return;
+      const chart = chartType === "equity" ? cObj.equityChart : cObj.drawdownChart;
+      if (!chart) return;
+
+      const anyVisible = chart.data.datasets.some((ds, idx) => {
+        return typeof chart.isDatasetVisible === "function" ? chart.isDatasetVisible(idx) : !ds.hidden;
+      });
+
+      const btnId = chartType === "equity" ? "btnToggleAllEquity_" + tabKey : "btnToggleAllDD_" + tabKey;
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.textContent = anyVisible ? "전체 해제" : "전체 선택";
+      }
     }
 
     function toggleEquityScale(tabKey) {

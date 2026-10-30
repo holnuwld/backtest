@@ -946,7 +946,10 @@
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🚀 Top 10 전략 vs 벤치마크 누적 수익곡선 (원금=100)</span>
-              <button class="btn-toggle" id="btnScaleToggle_exp5_ndx_cash" onclick="toggleEquityScale('exp5_ndx_cash')">선형(Linear) 스케일로 보기</button>
+              <div style="display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button class="btn-toggle" id="btnToggleAllEquity_exp5_ndx_cash" onclick="toggleAllDatasets('exp5_ndx_cash', 'equity')">전체 해제</button>
+                <button class="btn-toggle" id="btnScaleToggle_exp5_ndx_cash" onclick="toggleEquityScale('exp5_ndx_cash')">선형(Linear) 스케일로 보기</button>
+              </div>
             </div>
             <div class="chart-canvas-wrap">
               <canvas id="equityChart_exp5_ndx_cash"></canvas>
@@ -956,6 +959,9 @@
         <div class="chart-box" style="margin-top: 20px;">
           <div class="chart-header">
             <span class="chart-title">🛡️ Top 5 전략 vs 코스피200 단독 낙폭(Drawdown / Underwater) 비교 (2000 닷컴 · 2008 금융위기 · 2020 코로나 · 2022 금리인상)</span>
+            <div style="display: inline-flex; gap: 6px; align-items: center;">
+              <button class="btn-toggle" id="btnToggleAllDD_exp5_ndx_cash" onclick="toggleAllDatasets('exp5_ndx_cash', 'drawdown')">전체 해제</button>
+            </div>
           </div>
           <div class="chart-canvas-wrap" style="height: 290px;">
             <canvas id="drawdownChart_exp5_ndx_cash"></canvas>
@@ -3596,7 +3602,10 @@
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🚀 Top 10 전략 vs 벤치마크 누적 수익곡선 (원금=100)</span>
-              <button class="btn-toggle" id="btnScaleToggle_exp4_post_imf_close" onclick="toggleEquityScale('exp4_post_imf_close')">선형(Linear) 스케일로 보기</button>
+              <div style="display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button class="btn-toggle" id="btnToggleAllEquity_exp4_post_imf_close" onclick="toggleAllDatasets('exp4_post_imf_close', 'equity')">전체 해제</button>
+                <button class="btn-toggle" id="btnScaleToggle_exp4_post_imf_close" onclick="toggleEquityScale('exp4_post_imf_close')">선형(Linear) 스케일로 보기</button>
+              </div>
             </div>
             <div class="chart-canvas-wrap">
               <canvas id="equityChart_exp4_post_imf_close"></canvas>
@@ -3606,6 +3615,9 @@
         <div class="chart-box" style="margin-top: 20px;">
           <div class="chart-header">
             <span class="chart-title">🛡️ Top 5 전략 vs 코스피200 단독 낙폭(Drawdown / Underwater) 비교 (2000 닷컴 · 2008 금융위기 · 2020 코로나 · 2022 금리인상)</span>
+            <div style="display: inline-flex; gap: 6px; align-items: center;">
+              <button class="btn-toggle" id="btnToggleAllDD_exp4_post_imf_close" onclick="toggleAllDatasets('exp4_post_imf_close', 'drawdown')">전체 해제</button>
+            </div>
           </div>
           <div class="chart-canvas-wrap" style="height: 290px;">
             <canvas id="drawdownChart_exp4_post_imf_close"></canvas>
@@ -6245,7 +6257,10 @@
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🚀 Top 10 전략 vs 벤치마크 누적 수익곡선 (원금=100)</span>
-              <button class="btn-toggle" id="btnScaleToggle_exp3_post_imf" onclick="toggleEquityScale('exp3_post_imf')">선형(Linear) 스케일로 보기</button>
+              <div style="display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button class="btn-toggle" id="btnToggleAllEquity_exp3_post_imf" onclick="toggleAllDatasets('exp3_post_imf', 'equity')">전체 해제</button>
+                <button class="btn-toggle" id="btnScaleToggle_exp3_post_imf" onclick="toggleEquityScale('exp3_post_imf')">선형(Linear) 스케일로 보기</button>
+              </div>
             </div>
             <div class="chart-canvas-wrap">
               <canvas id="equityChart_exp3_post_imf"></canvas>
@@ -6255,6 +6270,9 @@
         <div class="chart-box" style="margin-top: 20px;">
           <div class="chart-header">
             <span class="chart-title">🛡️ Top 5 전략 vs 코스피200 단독 낙폭(Drawdown / Underwater) 비교 (2000 닷컴 · 2008 금융위기 · 2020 코로나 · 2022 금리인상)</span>
+            <div style="display: inline-flex; gap: 6px; align-items: center;">
+              <button class="btn-toggle" id="btnToggleAllDD_exp3_post_imf" onclick="toggleAllDatasets('exp3_post_imf', 'drawdown')">전체 해제</button>
+            </div>
           </div>
           <div class="chart-canvas-wrap" style="height: 290px;">
             <canvas id="drawdownChart_exp3_post_imf"></canvas>
@@ -9032,7 +9050,10 @@
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🚀 Top 10 전략 vs 벤치마크 누적 수익곡선 (원금=100)</span>
-              <button class="btn-toggle" id="btnScaleToggle_exp1_3asset" onclick="toggleEquityScale('exp1_3asset')">선형(Linear) 스케일로 보기</button>
+              <div style="display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button class="btn-toggle" id="btnToggleAllEquity_exp1_3asset" onclick="toggleAllDatasets('exp1_3asset', 'equity')">전체 해제</button>
+                <button class="btn-toggle" id="btnScaleToggle_exp1_3asset" onclick="toggleEquityScale('exp1_3asset')">선형(Linear) 스케일로 보기</button>
+              </div>
             </div>
             <div class="chart-canvas-wrap">
               <canvas id="equityChart_exp1_3asset"></canvas>
@@ -9042,6 +9063,9 @@
         <div class="chart-box" style="margin-top: 20px;">
           <div class="chart-header">
             <span class="chart-title">🛡️ Top 5 전략 vs 코스피200 단독 낙폭(Drawdown / Underwater) 비교 (2000 닷컴 · 2008 금융위기 · 2020 코로나 · 2022 금리인상)</span>
+            <div style="display: inline-flex; gap: 6px; align-items: center;">
+              <button class="btn-toggle" id="btnToggleAllDD_exp1_3asset" onclick="toggleAllDatasets('exp1_3asset', 'drawdown')">전체 해제</button>
+            </div>
           </div>
           <div class="chart-canvas-wrap" style="height: 290px;">
             <canvas id="drawdownChart_exp1_3asset"></canvas>
@@ -11734,7 +11758,10 @@
           <div class="chart-box">
             <div class="chart-header">
               <span class="chart-title">🚀 Top 10 전략 vs 벤치마크 누적 수익곡선 (원금=100)</span>
-              <button class="btn-toggle" id="btnScaleToggle_exp2_kospicash" onclick="toggleEquityScale('exp2_kospicash')">선형(Linear) 스케일로 보기</button>
+              <div style="display: inline-flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button class="btn-toggle" id="btnToggleAllEquity_exp2_kospicash" onclick="toggleAllDatasets('exp2_kospicash', 'equity')">전체 해제</button>
+                <button class="btn-toggle" id="btnScaleToggle_exp2_kospicash" onclick="toggleEquityScale('exp2_kospicash')">선형(Linear) 스케일로 보기</button>
+              </div>
             </div>
             <div class="chart-canvas-wrap">
               <canvas id="equityChart_exp2_kospicash"></canvas>
@@ -11744,6 +11771,9 @@
         <div class="chart-box" style="margin-top: 20px;">
           <div class="chart-header">
             <span class="chart-title">🛡️ Top 5 전략 vs 코스피200 단독 낙폭(Drawdown / Underwater) 비교 (2000 닷컴 · 2008 금융위기 · 2020 코로나 · 2022 금리인상)</span>
+            <div style="display: inline-flex; gap: 6px; align-items: center;">
+              <button class="btn-toggle" id="btnToggleAllDD_exp2_kospicash" onclick="toggleAllDatasets('exp2_kospicash', 'drawdown')">전체 해제</button>
+            </div>
           </div>
           <div class="chart-canvas-wrap" style="height: 290px;">
             <canvas id="drawdownChart_exp2_kospicash"></canvas>
@@ -14692,7 +14722,13 @@
           maintainAspectRatio: false,
           interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } } },
+            legend: {
+              labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } },
+              onClick: function (e, legendItem, legend) {
+                Chart.defaults.plugins.legend.onClick.call(this, e, legendItem, legend);
+                syncToggleAllBtn(tabKey, "equity");
+              },
+            },
           },
           scales: {
             x: {
@@ -14733,7 +14769,7 @@
         });
       }
 
-      new Chart(ddCtx, {
+      const drawdownChart = new Chart(ddCtx, {
         type: "line",
         data: {
           labels: payload.dates,
@@ -14744,7 +14780,13 @@
           maintainAspectRatio: false,
           interaction: { mode: "index", intersect: false },
           plugins: {
-            legend: { labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } } },
+            legend: {
+              labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } },
+              onClick: function (e, legendItem, legend) {
+                Chart.defaults.plugins.legend.onClick.call(this, e, legendItem, legend);
+                syncToggleAllBtn(tabKey, "drawdown");
+              },
+            },
           },
           scales: {
             x: {
@@ -14761,7 +14803,48 @@
         },
       });
 
-      renderedCharts[tabKey] = { equityChart };
+      renderedCharts[tabKey] = { equityChart, drawdownChart };
+    }
+
+    function toggleAllDatasets(tabKey, chartType) {
+      const cObj = renderedCharts[tabKey];
+      if (!cObj) return;
+      const chart = chartType === "equity" ? cObj.equityChart : cObj.drawdownChart;
+      if (!chart) return;
+
+      const anyVisible = chart.data.datasets.some((ds, idx) => {
+        return typeof chart.isDatasetVisible === "function" ? chart.isDatasetVisible(idx) : !ds.hidden;
+      });
+
+      const targetVisibility = !anyVisible;
+
+      chart.data.datasets.forEach((ds, idx) => {
+        if (typeof chart.setDatasetVisibility === "function") {
+          chart.setDatasetVisibility(idx, targetVisibility);
+        } else {
+          ds.hidden = !targetVisibility;
+        }
+      });
+
+      chart.update();
+      syncToggleAllBtn(tabKey, chartType);
+    }
+
+    function syncToggleAllBtn(tabKey, chartType) {
+      const cObj = renderedCharts[tabKey];
+      if (!cObj) return;
+      const chart = chartType === "equity" ? cObj.equityChart : cObj.drawdownChart;
+      if (!chart) return;
+
+      const anyVisible = chart.data.datasets.some((ds, idx) => {
+        return typeof chart.isDatasetVisible === "function" ? chart.isDatasetVisible(idx) : !ds.hidden;
+      });
+
+      const btnId = chartType === "equity" ? "btnToggleAllEquity_" + tabKey : "btnToggleAllDD_" + tabKey;
+      const btn = document.getElementById(btnId);
+      if (btn) {
+        btn.textContent = anyVisible ? "전체 해제" : "전체 선택";
+      }
     }
 
     function toggleEquityScale(tabKey) {
