@@ -286,8 +286,19 @@
             <button type="button" id="btnToggleScale" class="btn btn-sm">📐 로그 스케일</button>
           </div>
         </div>
-        <div class="chart-container">
-          <canvas id="chartEquity"></canvas>
+        <div class="equity-chart-layout">
+          <div class="equity-chart-main">
+            <div class="chart-container">
+              <canvas id="chartEquity"></canvas>
+            </div>
+          </div>
+          <div class="equity-trade-panel" id="equityTradeDetailPanel">
+            <div class="trade-panel-empty">
+              <div class="trade-panel-icon">⚡</div>
+              <div class="trade-panel-title">매수·매도 체결 상세</div>
+              <div class="trade-panel-hint">차트 위 🟢매수(↑) 또는 🔴매도(↓) 마커에 마우스를 올리시면 상세 내역이 이곳에 표시됩니다.</div>
+            </div>
+          </div>
         </div>
       </div>
 

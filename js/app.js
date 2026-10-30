@@ -2480,18 +2480,155 @@
     return canvas;
   }
 
+  function renderEquityTradeDetail(trade, fallbackInfo = null) {
+    const panel = document.getElementById("equityTradeDetailPanel");
+    if (!panel) return;
+    if (trade) {
+      const isBuy = trade.type === "BUY";
+      const badgeClass = isBuy ? "tag-asset" : "tag-indicator";
+      const typeLabel = isBuy
+        ? "🟢 매수 체결 (BUY ↑)"
+        : trade.type === "SELL_ALL"
+        ? "🚨 전량 청산 (SELL ALL ↓)"
+        : "🔴 매도 체결 (SELL ↓)";
+      const assetName = trade.tickerName || (catalogMap && catalogMap[trade.ticker]?.name) || trade.ticker;
+      const unitPriceStr =
+        trade.currency === "KRW"
+          ? `₩${Math.round(trade.priceKrw || trade.rawPrice || 0).toLocaleString()}`
+          : `$${Number(trade.rawPrice || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (₩${Math.round(trade.priceKrw || 0).toLocaleString()})`;
+      const sharesStr = trade.shares ? (trade.shares >= 100 ? trade.shares.toFixed(1) : trade.shares.toFixed(4)) : "0";
+      const amtStr = `₩${Math.round(trade.amountKrw || trade.amount || 0).toLocaleString()}`;
+      const eqStr = trade.equityAfter ? `₩${Math.round(trade.equityAfter).toLocaleString()}` : "-";
+
+      panel.innerHTML = `
+        <div class="trade-panel-card">
+          <div class="trade-panel-header">
+            <span class="tag ${badgeClass}" style="font-size:11.5px;font-weight:800;padding:2px 7px;">${typeLabel}</span>
+            <span style="font-size:11px;color:var(--text-muted);font-weight:700;">${trade.date}</span>
+          </div>
+
+          <div class="trade-panel-asset">
+            ${escapeHtml(assetName)} <span class="tag" style="font-size:10px;padding:0 5px;margin-left:3px;">${trade.ticker}</span>
+          </div>
+
+          <div class="trade-panel-info-grid">
+            <div class="trade-info-row">
+              <span class="trade-info-label">주문 조건</span>
+              <span class="trade-info-val text-accent">${escapeHtml(trade.execType || "익일종가")}</span>
+            </div>
+            <div class="trade-info-row">
+              <span class="trade-info-label">체결 단가</span>
+              <span class="trade-info-val">${unitPriceStr}</span>
+            </div>
+            <div class="trade-info-row">
+              <span class="trade-info-label">체결 수량</span>
+              <span class="trade-info-val">${sharesStr}주</span>
+            </div>
+            <div class="trade-info-row">
+              <span class="trade-info-label">체결 금액</span>
+              <span class="trade-info-val" style="color:var(--text-main);font-weight:800;">${amtStr}</span>
+            </div>
+            <div class="trade-info-row">
+              <span class="trade-info-label">체결후 잔고</span>
+              <span class="trade-info-val">${eqStr}</span>
+            </div>
+          </div>
+
+          <div class="trade-panel-reason-box">
+            <div class="trade-reason-label">발동 사유 (조건 규칙)</div>
+            <div class="trade-reason-text">${escapeHtml(trade.ruleName || "조건 규칙")}</div>
+          </div>
+        </div>
+      `;
+    } else if (fallbackInfo) {
+      panel.innerHTML = `
+        <div class="trade-panel-card">
+          <div class="trade-panel-header">
+            <span class="tag" style="font-size:11px;font-weight:700;">포트폴리오 현황</span>
+            <span style="font-size:11px;color:var(--text-muted);font-weight:700;">${fallbackInfo.date}</span>
+          </div>
+          <div style="margin:8px 0 4px 0;">
+            <div style="font-size:10.5px;color:var(--text-muted);">전략 평가액</div>
+            <div style="font-size:15px;font-weight:800;color:#3b82f6;">₩${Math.round(fallbackInfo.equity).toLocaleString()}</div>
+          </div>
+          <div style="margin-bottom:8px;">
+            <div style="font-size:10.5px;color:var(--text-muted);">벤치마크</div>
+            <div style="font-size:12.5px;font-weight:700;color:#94a3b8;">₩${Math.round(fallbackInfo.benchmark).toLocaleString()}</div>
+          </div>
+          <div style="font-size:10.5px;color:var(--text-dim);padding:7px 8px;background:rgba(255,255,255,0.02);border-radius:6px;border:1px dashed var(--border-color);line-height:1.4;">
+            ℹ️ 해당 일자에는 매매 체결이 없습니다. 차트 위 마커(↑/↓)에 마우스를 올리시면 체결 상세 내역이 표시됩니다.
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function renderEquityTradeSummary(trades) {
+    const panel = document.getElementById("equityTradeDetailPanel");
+    if (!panel) return;
+    const buys = trades.filter((t) => t.type === "BUY");
+    const sells = trades.filter((t) => t.type === "SELL" || t.type === "SELL_ALL");
+    const latest = trades.length > 0 ? trades[trades.length - 1] : null;
+
+    if (trades.length === 0) {
+      panel.innerHTML = `
+        <div class="trade-panel-empty">
+          <div class="trade-panel-icon">⚖️</div>
+          <div class="trade-panel-title">체결 내역 없음</div>
+          <div class="trade-panel-hint">현재 전략 조건에서 발동된 매수/매도 주문이 없습니다.</div>
+        </div>
+      `;
+      return;
+    }
+
+    panel.innerHTML = `
+      <div class="trade-panel-card">
+        <div class="trade-panel-header">
+          <span class="tag tag-asset" style="font-size:11px;font-weight:700;">매매 체결 현황</span>
+          <span style="font-size:11px;color:var(--text-muted);">총 ${trades.length}건</span>
+        </div>
+        <div style="margin:6px 0;font-size:11.5px;line-height:1.6;">
+          <div>🟢 <strong>매수 체결:</strong> ${buys.length}건</div>
+          <div>🔴 <strong>매도 체결:</strong> ${sells.length}건</div>
+          ${
+            latest
+              ? `
+            <div style="margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-color);">
+              <div style="font-size:10.5px;color:var(--text-muted);">최근 체결 (${latest.date}):</div>
+              <div style="font-weight:700;font-size:11.5px;color:var(--text-main);">${latest.type === "BUY" ? "🟢 매수" : "🔴 매도"} ${escapeHtml(latest.tickerName || latest.ticker)}</div>
+              <div class="trade-reason-text" style="font-size:11px;color:var(--accent);margin-top:2px;">${escapeHtml(latest.ruleName || "")}</div>
+            </div>
+          `
+              : ""
+          }
+        </div>
+        <div style="font-size:10.5px;color:var(--text-dim);margin-top:auto;padding-top:6px;border-top:1px dashed var(--border-color);line-height:1.4;">
+          💡 차트 위 마커(↑/↓)에 마우스를 올리거나 클릭하시면 체결 상세 내역이 이곳에 표시됩니다.
+        </div>
+      </div>
+    `;
+  }
+
   function renderMainCharts(res) {
     if (!global.Chart) return;
     const benchName = catalogMap[res.metrics.benchmarkTicker]?.shortName || res.metrics.benchmarkTicker;
 
     // Collect trade dates to ensure every trade date is kept during downsampling
     const tradeDateSet = new Set();
+    const tradesByDateMap = new Map();
     const trades = res.tradeLogs || [];
     trades.forEach((t) => {
       if (t.type === "BUY" || t.type === "SELL" || t.type === "SELL_ALL") {
         tradeDateSet.add(t.date);
+        if (!tradesByDateMap.has(t.date)) {
+          tradesByDateMap.set(t.date, []);
+        }
+        tradesByDateMap.get(t.date).push(t);
       }
     });
+
+    // Initialize the right trade detail panel with summary
+    renderEquityTradeSummary(trades);
 
     const rawSeriesMap = {
       equity: res.series.equity,
@@ -2583,6 +2720,48 @@
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: "index", intersect: false },
+        onHover: (evt, activeElements) => {
+          if (!activeElements || activeElements.length === 0) return;
+          // Prioritize trade scatter points
+          const scatterEl = activeElements.find((el) => el.datasetIndex === 2 || el.datasetIndex === 3);
+          if (scatterEl) {
+            const ds = charts.equity.data.datasets[scatterEl.datasetIndex];
+            const pt = ds?.data[scatterEl.index];
+            if (pt && pt.trade) {
+              renderEquityTradeDetail(pt.trade);
+              return;
+            }
+          }
+          // Fallback to indexed date trade or portfolio status
+          const firstEl = activeElements[0];
+          const date = sampled.dates[firstEl.index];
+          const dayTrades = tradesByDateMap.get(date);
+          if (dayTrades && dayTrades.length > 0) {
+            renderEquityTradeDetail(dayTrades[dayTrades.length - 1]);
+          } else {
+            const eqVal = sampled.series.equity[firstEl.index];
+            const bmVal = sampled.series.benchmark[firstEl.index];
+            renderEquityTradeDetail(null, { date, equity: eqVal, benchmark: bmVal });
+          }
+        },
+        onClick: (evt, activeElements) => {
+          if (!activeElements || activeElements.length === 0) return;
+          const scatterEl = activeElements.find((el) => el.datasetIndex === 2 || el.datasetIndex === 3);
+          if (scatterEl) {
+            const ds = charts.equity.data.datasets[scatterEl.datasetIndex];
+            const pt = ds?.data[scatterEl.index];
+            if (pt && pt.trade) {
+              renderEquityTradeDetail(pt.trade);
+              return;
+            }
+          }
+          const firstEl = activeElements[0];
+          const date = sampled.dates[firstEl.index];
+          const dayTrades = tradesByDateMap.get(date);
+          if (dayTrades && dayTrades.length > 0) {
+            renderEquityTradeDetail(dayTrades[dayTrades.length - 1]);
+          }
+        },
         plugins: {
           zoom: {
             pan: {
@@ -2613,22 +2792,10 @@
                 const raw = ctx.raw;
                 if (raw && raw.trade) {
                   const t = raw.trade;
-                  const typeLabel = t.type === "BUY" ? "🟢 매수 (BUY ↑)" : "🔴 매도 (SELL ↓)";
-                  const assetName = t.tickerName || catalogMap[t.ticker]?.name || t.ticker;
-                  const unitPriceStr =
-                    t.currency === "KRW"
-                      ? `₩${Math.round(t.priceKrw).toLocaleString()}`
-                      : `$${t.rawPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (₩${Math.round(t.priceKrw).toLocaleString()})`;
-                  const sharesStr = t.shares ? (t.shares >= 100 ? t.shares.toFixed(1) : t.shares.toFixed(4)) : "0";
-                  const amtStr = `₩${Math.round(t.amountKrw || t.amount).toLocaleString()}`;
-                  return [
-                    `${typeLabel}: ${assetName}`,
-                    ` • 주문조건: ${t.execType || "익일종가"}`,
-                    ` • 단가: ${unitPriceStr}`,
-                    ` • 수량: ${sharesStr}주`,
-                    ` • 체결금액: ${amtStr}`,
-                    ` • 발동사유: ${t.ruleName || ""}`,
-                  ];
+                  const typeLabel = t.type === "BUY" ? "🟢 매수" : "🔴 매도";
+                  const assetName = t.tickerName || (catalogMap && catalogMap[t.ticker]?.name) || t.ticker;
+                  const amtStr = `₩${Math.round(t.amountKrw || t.amount || 0).toLocaleString()}`;
+                  return `${typeLabel}: ${assetName} (${amtStr}) 👉 우측 패널에 상세 보기`;
                 }
                 return `${ctx.dataset.label}: ₩${Math.round(ctx.parsed.y).toLocaleString()}`;
               },
@@ -2769,7 +2936,7 @@
     // Show most recent 250 trades in table for fast DOM rendering
     const slice = logs.slice().reverse().slice(0, 250);
     tbody.innerHTML = slice
-      .map((row) => {
+      .map((row, idx) => {
         const badgeClass =
           row.type === "BUY" ? "tag-asset" : row.type === "SELL" || row.type === "SELL_ALL" ? "tag-indicator" : "";
         const pxStr = row.priceKrw
@@ -2777,7 +2944,7 @@
           : "";
         const sharesStr = row.shares ? ` • ${row.shares >= 100 ? row.shares.toFixed(1) : row.shares.toFixed(4)}주` : "";
         return `
-        <tr>
+        <tr class="trade-log-row" data-trade-idx="${idx}" style="cursor:pointer;" title="클릭 시 차트 우측 패널에 상세 보기">
           <td>
             <strong>${row.date}</strong>
             ${row.execType ? `<div style="font-size:11px;font-weight:700;color:var(--accent);">${escapeHtml(row.execType)}</div>` : ""}
@@ -2791,6 +2958,20 @@
       `;
       })
       .join("");
+
+    tbody.querySelectorAll(".trade-log-row").forEach((tr) => {
+      tr.addEventListener("click", () => {
+        const idx = parseInt(tr.dataset.tradeIdx, 10);
+        const trade = slice[idx];
+        if (trade) {
+          renderEquityTradeDetail(trade);
+          const panel = document.getElementById("equityTradeDetailPanel");
+          if (panel) {
+            panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+        }
+      });
+    });
   }
 
   // Scoreboard Tab Rendering & Multi-Run Comparison
