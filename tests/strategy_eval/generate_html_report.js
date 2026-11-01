@@ -12,6 +12,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const { buildAllAssetsTaxTab } = require("./render_all_assets_tax_tab");
 
 const VAULT_EXP1_PATH = path.join(__dirname, "vault_mapping.json");
 const VAULT_EXP2_PATH = path.join(__dirname, "vault_mapping_kospi_cash.json");
@@ -20,6 +21,7 @@ const VAULT_EXP4_PATH = path.join(__dirname, "vault_mapping_kospi_cash_post_imf_
 const VAULT_EXP5_PATH = path.join(__dirname, "vault_mapping_ndx_cash.json");
 const VAULT_EXP6_PATH = path.join(__dirname, "vault_mapping_kospi_macro.json");
 const BLIND_EXP6_PATH = path.join(__dirname, "blind_evaluation_kospi_macro.json");
+const ALL_ASSETS_TAX_PATH = path.join(__dirname, "all_assets_tax_evaluation.json");
 const OUT_HTML_PATH = path.join(__dirname, "..", "..", "test-result.html");
 
 // Top 10 Blind Reviews for Experiment #6 (Post-IMF: KOSPI + Cash 200 Macro Strategies, Next-Day Close Execution, 1999-01-04 ~ 2026-10-27)
@@ -1716,6 +1718,8 @@ function main() {
   const vaultExp4 = JSON.parse(fs.readFileSync(VAULT_EXP4_PATH, "utf8"));
   const vaultExp5 = JSON.parse(fs.readFileSync(VAULT_EXP5_PATH, "utf8"));
   const vaultExp6 = JSON.parse(fs.readFileSync(VAULT_EXP6_PATH, "utf8"));
+  const allAssetsEval = JSON.parse(fs.readFileSync(ALL_ASSETS_TAX_PATH, "utf8"));
+  const exp7Render = buildAllAssetsTaxTab(allAssetsEval);
 
   const exp1Data = buildExperimentData(vaultExp1, EXP1_TOP10_REVIEWS, "exp1_3asset");
   const exp2Data = buildExperimentData(vaultExp2, EXP2_TOP10_REVIEWS, "exp2_kospicash");
@@ -1737,7 +1741,7 @@ function main() {
       key: "exp6_kospi_macro_200",
       tabIcon: "🇰🇷",
       tabLabel: "코스피 매크로200 (1999-2026)",
-      isDefault: true,
+      isDefault: false,
       shortName: "실험 #6 (포스트 IMF 1999~2026 환율·금리·OECD경기선행 200선)",
       badge: "Experiment #6 · Multi-Macro Indicators (USDKRW / US10Y / T10Y2Y / OECD CLI / SOXX / VIX / WTI) · 200 Strategies Tested",
       title: "🇰🇷 코스피 200 · 현금 다중 거시경제(Macro) 지표 200개 확장 전략 백테스트 (Top 10 / 200)",
@@ -2033,16 +2037,29 @@ function main() {
     },
   ];
 
-  const tabsNavHtml = EXPERIMENT_TABS.map(
-    (tab) => `
+  const exp7TabBtnHtml = `
+      <button type="button" class="tab-btn active" id="tab-btn-exp7_all_assets_tax" onclick="switchExperimentTab('exp7_all_assets_tax')" title="한국 투자 가능 21개 전자산 세후·절세 백테스트 (원금 8억 기준 · 금융소득종합과세 비대상)">
+        <span class="tab-icon">🌏</span>
+        <span class="tab-title">전자산 세후·절세 (8억기준)</span>
+      </button>
+  `;
+
+  const tabsNavHtml =
+    exp7TabBtnHtml +
+    "\n" +
+    EXPERIMENT_TABS.map(
+      (tab) => `
       <button type="button" class="tab-btn ${tab.isDefault ? "active" : ""}" id="tab-btn-${tab.key}" onclick="switchExperimentTab('${tab.key}')" title="${tab.shortName}">
         <span class="tab-icon">${tab.tabIcon}</span>
         <span class="tab-title">${tab.tabLabel}</span>
       </button>
     `
-  ).join("\n");
+    ).join("\n");
 
-  const tabsPanelsHtml = EXPERIMENT_TABS.map((tab) => renderTabSectionHtml(tab, tab.data)).join("\n");
+  const tabsPanelsHtml =
+    exp7Render.panelHtml +
+    "\n" +
+    EXPERIMENT_TABS.map((tab) => renderTabSectionHtml(tab, tab.data)).join("\n");
 
   const glossaryCardsHtml = Object.entries(QUANT_TERMS_DICT)
     .map(
@@ -2058,7 +2075,9 @@ function main() {
     )
     .join("\n");
 
-  const chartPayloadsMap = {};
+  const chartPayloadsMap = {
+    exp7_all_assets_tax: exp7Render.exp7ChartPayload,
+  };
   for (const tab of EXPERIMENT_TABS) {
     chartPayloadsMap[tab.key] = tab.data.chartPayload;
   }
@@ -3153,9 +3172,211 @@ function main() {
       }
     }
 
+    function toggleExtra105Strategies() {
+      const extraRows = document.querySelectorAll(".strat105-extra-row");
+      const btn = document.getElementById("btnToggle105Strat");
+      if (!extraRows.length) return;
+      const isHidden = extraRows[0].style.display === "none";
+      extraRows.forEach((tr) => {
+        tr.style.display = isHidden ? "table-row" : "none";
+      });
+      if (btn) {
+        btn.textContent = isHidden
+          ? "상위 35개 전략만 접어보기"
+          : "전체 105개 전략 모두 펼치기 (+70개 더보기)";
+      }
+    }
+
     function initChartsForTab(tabKey) {
       const payload = CHART_PAYLOADS[tabKey];
       if (!payload) return;
+
+      if (tabKey === "exp7_all_assets_tax") {
+        const scatterCtx = document.getElementById("scatterChart_exp7_all_assets_tax").getContext("2d");
+        const top10Pts = payload.scatterPoints.filter((d) => d.rank !== null);
+        const otherPts = payload.scatterPoints.filter((d) => d.rank === null);
+        const benchPts = payload.benchScatter.map((b) => ({
+          x: b.mddAbs,
+          y: b.afterTaxCagrPct,
+          raw: {
+            id: b.id,
+            name: b.name,
+            afterTaxCagrPct: b.afterTaxCagrPct,
+            mddPct: b.mddPct,
+            finalEok: b.finalEok,
+            calmar: b.calmar,
+          },
+        }));
+
+        new Chart(scatterCtx, {
+          type: "scatter",
+          data: {
+            datasets: [
+              {
+                label: "Top 10 최적 비중 다중자산 포트폴리오 (세후 수익 선정)",
+                data: top10Pts.map((d) => ({ x: d.mddAbs, y: d.afterTaxCagrPct, raw: d })),
+                backgroundColor: "#f59e0b",
+                borderColor: "#fff",
+                borderWidth: 1.5,
+                pointRadius: 7.5,
+                pointHoverRadius: 9.5,
+              },
+              {
+                label: "나머지 20개 다중자산 후보 포트폴리오 (초저낙폭 올웨더 포함)",
+                data: otherPts.map((d) => ({ x: d.mddAbs, y: d.afterTaxCagrPct, raw: d })),
+                backgroundColor: "rgba(56, 189, 248, 0.55)",
+                borderColor: "rgba(56, 189, 248, 0.9)",
+                borderWidth: 1,
+                pointRadius: 5.5,
+              },
+              {
+                label: "단일자산 단독 보유 벤치마크 (세후)",
+                data: benchPts,
+                backgroundColor: "#f43f5e",
+                borderColor: "#fff",
+                pointStyle: "rectRot",
+                pointRadius: 8,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { labels: { color: "#cbd5e1", font: { size: 11.5 } } },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const r = ctx.raw.raw;
+                    const rankStr = r.rank ? "[TOP " + r.rank + "] " : "";
+                    return [
+                      rankStr + "[" + r.id + "] " + r.name,
+                      "• 세후 CAGR: +" + r.afterTaxCagrPct.toFixed(2) + "% | MDD: " + r.mddPct.toFixed(2) + "% (Calmar " + r.calmar.toFixed(3) + ")",
+                      "• 원금 8억 → 세후 최종: " + r.finalEok + "억 원",
+                    ];
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                reverse: true,
+                title: { display: true, text: "최대낙폭 |MDD| (%) — 왼쪽(작을수록)이 안전", color: "#94a3b8" },
+                ticks: { color: "#94a3b8", callback: (v) => "-" + v + "%" },
+                grid: { color: "rgba(51, 65, 85, 0.4)" },
+              },
+              y: {
+                title: { display: true, text: "세후 연평균 복리수익률 After-Tax CAGR (%) — 위쪽이 고수익", color: "#94a3b8" },
+                ticks: { color: "#94a3b8", callback: (v) => v + "%" },
+                grid: { color: "rgba(51, 65, 85, 0.4)" },
+              },
+            },
+          },
+        });
+
+        const eqCtx = document.getElementById("equityChart_exp7_all_assets_tax").getContext("2d");
+        equityScaleModes[tabKey] = true;
+        const eqDatasets = payload.top10Curves.map((t, i) => ({
+          label: "TOP " + t.rank + " " + t.id + " (세후 +" + t.afterTaxCagrPct.toFixed(2) + "%, 8억→" + t.finalEok + "억)",
+          data: t.normEquity,
+          borderColor: palette[i % palette.length],
+          borderWidth: i < 3 ? 2.5 : 1.5,
+          pointRadius: 0,
+          tension: 0.1,
+        }));
+        payload.benchCurves.forEach((b, idx) => {
+          const dashColors = ["#94a3b8", "#eab308", "#f43f5e"];
+          eqDatasets.push({
+            label: "벤치마크: " + b.name,
+            data: b.normEquity,
+            borderColor: dashColors[idx % dashColors.length],
+            borderDash: [5, 4],
+            borderWidth: 1.6,
+            pointRadius: 0,
+          });
+        });
+
+        const equityChart = new Chart(eqCtx, {
+          type: "line",
+          data: { labels: payload.dates, datasets: eqDatasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } },
+                onClick: function (e, legendItem, legend) {
+                  Chart.defaults.plugins.legend.onClick.call(this, e, legendItem, legend);
+                  syncToggleAllBtn(tabKey, "equity");
+                },
+              },
+            },
+            scales: {
+              x: { ticks: { color: "#94a3b8", maxTicksLimit: 10 }, grid: { color: "rgba(51, 65, 85, 0.3)" } },
+              y: {
+                type: "logarithmic",
+                title: { display: true, text: "세후 누적 자산 지수 (원금 8억 = 100, 로그 스케일)", color: "#94a3b8" },
+                ticks: { color: "#94a3b8" },
+                grid: { color: "rgba(51, 65, 85, 0.3)" },
+              },
+            },
+          },
+        });
+
+        const ddCtx = document.getElementById("drawdownChart_exp7_all_assets_tax").getContext("2d");
+        const ddDatasets = payload.top10Curves.map((t, i) => ({
+          label: "TOP " + t.rank + " " + t.id + " (MDD " + t.mddPct.toFixed(1) + "%)",
+          data: t.drawdown,
+          borderColor: palette[i % palette.length],
+          backgroundColor: "transparent",
+          borderWidth: i < 3 ? 2.0 : 1.3,
+          pointRadius: 0,
+        }));
+        payload.benchCurves.forEach((b, idx) => {
+          if (idx === 0 || idx === 2) {
+            ddDatasets.push({
+              label: b.name,
+              data: b.drawdown,
+              borderColor: idx === 0 ? "rgba(148, 163, 184, 0.7)" : "rgba(244, 63, 94, 0.7)",
+              borderDash: [4, 4],
+              borderWidth: 1.4,
+              pointRadius: 0,
+            });
+          }
+        });
+
+        const drawdownChart = new Chart(ddCtx, {
+          type: "line",
+          data: { labels: payload.dates, datasets: ddDatasets },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            plugins: {
+              legend: {
+                labels: { color: "#cbd5e1", boxWidth: 12, font: { size: 11 } },
+                onClick: function (e, legendItem, legend) {
+                  Chart.defaults.plugins.legend.onClick.call(this, e, legendItem, legend);
+                  syncToggleAllBtn(tabKey, "drawdown");
+                },
+              },
+            },
+            scales: {
+              x: { ticks: { color: "#94a3b8", maxTicksLimit: 12 }, grid: { color: "rgba(51, 65, 85, 0.3)" } },
+              y: {
+                max: 0,
+                min: -85,
+                ticks: { color: "#94a3b8", callback: (v) => v + "%" },
+                grid: { color: "rgba(51, 65, 85, 0.3)" },
+              },
+            },
+          },
+        });
+
+        renderedCharts[tabKey] = { equityChart, drawdownChart };
+        return;
+      }
 
       // 1. Scatter Chart (50 Strategies MDD vs CAGR)
       const scatterCtx = document.getElementById("scatterChart_" + tabKey).getContext("2d");
@@ -3423,7 +3644,7 @@ function main() {
 
     // Initialize default active tab charts on load
     window.addEventListener("DOMContentLoaded", () => {
-      initChartsForTab("exp6_kospi_macro_200");
+      initChartsForTab("exp7_all_assets_tax");
     });
   </script>
 </body>
