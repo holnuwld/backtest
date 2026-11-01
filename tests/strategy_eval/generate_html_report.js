@@ -580,6 +580,46 @@ const QUANT_TERMS_DICT = {
       "한국 증시는 수출 및 반도체 비중이 절대적이므로 미국 필라델피아 반도체지수(SOXX) 추세, 원달러환율(USDKRW), VIX를 신호등으로 활용할 때 폭락장 회피력이 극대화됩니다.",
     goodRange: "실험 #3(Post-IMF)에서 닷컴버블과 글로벌 금융위기를 방어하고 CAGR 8.87%를 달성한 핵심 동력입니다.",
   },
+  turnover: {
+    title: "Turnover (연간/주간 회전율 및 매매 빈도)",
+    short: "포트폴리오 자산이 얼마나 자주 교체·매매되었는지 나타내는 마찰비용 측정 지표",
+    formula: "연간 회전율(%) = (연간 총 매도·매수 금액 / 평균 운용 자산) × 100%",
+    detail:
+      "매매가 잦을수록 백테스트에서는 간과하기 쉬운 슬리피지(호가 공백에 따른 불리한 체결)와 증권거래세, 수수료가 누적되어 실제 계좌를 갉아먹습니다. 아무리 이론적 수익률이 높아도 주 5회 이상 매매하는 고빈도 전략은 실전에서 마찰비용으로 인해 마이너스로 전락하기 쉽습니다.",
+    goodRange: "연간 회전율 100~300% 이하(주 1~3회 이하 매매 제한) 또는 월 1회 리밸런싱이 실전 집행에 가장 이상적입니다.",
+  },
+  slippage: {
+    title: "Slippage (슬리피지 · 체결 오차)",
+    short: "주문을 넣으려 했던 가격과 실제로 체결된 가격 사이의 불리한 괴리",
+    formula: "슬리피지(%) = |실제 체결 가격 - 주문 시점 가격| / 주문 시점 가격 × 100%",
+    detail:
+      "특히 시가(Open) 매매 시 밤사이 발생한 해외 증시 충격으로 시초가가 급등락할 때 슬리피지가 크게 발생합니다. 본 연구소는 전일 종가 신호 판정 후 '익일 종가(T Close)' 체결 및 편도 0.05% 슬리피지/수수료를 기본 반영하여 백테스트와 실전의 괴리를 최소화했습니다.",
+    goodRange: "대형 ETF(KODEX 200, QQQ) 기준 편도 0.03~0.05% 수준이며, 슬리피지를 견뎌내는 둔감한 전략이 우수합니다.",
+  },
+  risk_parity: {
+    title: "Risk Parity (리스크 패리티 · 위험 균등 배분)",
+    short: "투자 금액이 아니라 각 자산이 포트폴리오에 미치는 '위험(변동성)'을 동일하게 배분하는 원리",
+    formula: "각 자산 비중 ∝ 1 / 자산 변동성 (변동성이 큰 주식은 적게, 작은 채권은 많이 배분)",
+    detail:
+      "레이 달리오(Ray Dalio)의 올웨더 포트폴리오 근간이 되는 이론입니다. 전통적인 60/40 포트폴리오는 금액으로는 주식이 60%지만 전체 위험의 90% 이상을 주식이 차지합니다. 리스크 패리티는 위험 기여도를 1:1로 맞추어 어떤 경제 위기에도 포트폴리오 전체가 무너지지 않도록 설계합니다.",
+    goodRange: "MDD를 -10~-15% 이내로 철저히 억제하면서 샤프 지수를 0.75~0.90 이상으로 끌어올리는 기관 투자자의 핵심 기법입니다.",
+  },
+  dual_momentum: {
+    title: "Dual Momentum (듀얼 모멘텀 · 상대 + 절대 모멘텀)",
+    short: "가장 강하게 오르는 1등 자산을 고르는 '상대 모멘텀'과 시장 전체 하락 시 현금/채권으로 피하는 '절대 모멘텀'의 결합",
+    formula: "1단계: 최근 12개월 수익률 최고 자산 선정 → 2단계: 해당 자산 12개월 수익률이 무위험금리(현금)보다 높으면 보유, 낮으면 채권 100%",
+    detail:
+      "게리 안토나치(Gary Antonacci)가 정립한 전략으로, 대세 상승장에서는 가장 핫한 자산을 집중 보유하고 대세 하락장(2000년 닷컴버블, 2008년 금융위기)에서는 전액 안전자산으로 피신하여 복리 수익을 극대화합니다.",
+    goodRange: "단일 주식 매수보유 대비 CAGR은 3~5%p 높이고, MDD는 -55%에서 -18% 수준으로 대폭 축소하는 강력한 검증 모델입니다.",
+  },
+  flat_optimum: {
+    title: "Flat Optimum (평탄한 고원 · 과최적화 회피)",
+    short: "전략의 설정값(이동평균 일수, 임계치)을 인근 값으로 조금 바꾸어도 성과가 급락하지 않고 완만하게 유지되는 상태",
+    formula: "파라미터 감도 분석: 파라미터를 ±10~20% 변경 시 샤프/칼마 지수 보존율",
+    detail:
+      "뾰족한 산봉우리(Sharp Peak) 형태의 전략은 과거 특정 데이터에만 억지로 끼워 맞춘 과최적화(Curve-Fitting)일 확률이 높아 미래 실전에서 100% 무너집니다. 반면 넓고 평탄한 고원(Flat Plateau)에 위치한 전략은 미래 시장 환경이 조금 바뀌어도 견고하게 작동합니다.",
+    goodRange: "파라미터 ±15% 교란 시 성과 유지율 85~90% 이상을 유지해야 실전 전략으로 채택할 수 있습니다.",
+  },
 };
 
 function formatKrw(val) {
@@ -1208,6 +1248,466 @@ const OPEN_TOP10_CLOSE_COMPARE_HTML = `
     </div>
   </div>
 `;
+
+function renderGlossaryTabContent(glossaryCardsHtml) {
+  return `
+    <div id="tab-panel-glossary" class="tab-panel">
+      <!-- GLOSSARY QUICK NAV -->
+      <div class="glossary-nav-strip">
+        <span style="font-size:13px; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:6px;">
+          🧭 용어사전 바로가기:
+        </span>
+        <a href="#sec-criteria" class="glossary-nav-btn">🎯 좋은 퀀트 전략의 5대 조건 &amp; 지표 판독 기준</a>
+        <a href="#sec-famous" class="glossary-nav-btn">🏆 전설적인 유명 퀀트 전략 성과 벤치마크</a>
+        <a href="#sec-terms" class="glossary-nav-btn">📖 퀀트 핵심 지표 &amp; 금융 용어 백과사전</a>
+      </div>
+
+      <!-- SECTION 1: 좋은 퀀트 전략의 조건 & 지표별 판독 기준 -->
+      <section class="section-card" id="sec-criteria">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+          <div>
+            <div class="badge-rank" style="background:rgba(56,189,248,0.15); color:#38bdf8; border-color:rgba(56,189,248,0.35);">QUANT AUDIT GUIDE</div>
+            <h2 class="section-title" style="margin-top:4px;">🎯 좋은 퀀트 전략의 조건과 지표별 합격·우수 판독 기준</h2>
+          </div>
+          <span style="font-size:12.5px; color:#94a3b8; background:#0f172a; padding:6px 12px; border-radius:6px; border:1px solid #334155;">
+            💡 "단순 수익률(CAGR)의 환상에 속지 마라 — 생존과 재현성이 1순위다"
+          </span>
+        </div>
+        <p class="section-sub" style="font-size:13.5px; line-height:1.6; color:#cbd5e1; margin-bottom:16px;">
+          많은 초보 투자자가 백테스트 결과에서 <strong>"연평균 복리수익률(CAGR)이 몇 %인가?"</strong>만 보고 전략의 우열을 가립니다.
+          하지만 과거 데이터에 억지로 끼워 맞춘 <strong>과최적화(Curve-Fitting)</strong>, 계좌가 반토막 나는 <strong>최대낙폭(MDD)</strong>,
+          실전에서 호가 공백과 수수료로 계좌를 녹이는 <strong>과도한 회전율</strong>을 통제하지 못하면 실전 계좌는 100% 실패합니다.<br/>
+          글로벌 퀀트 기관과 헤지펀드에서 실제 전략을 심사할 때 사용하는 <strong>지표별 실전 판독 매트릭스</strong>와 <strong>5대 핵심 원칙</strong>을 정리했습니다.
+        </p>
+
+        <!-- CRITERIA TABLE -->
+        <h3 style="font-size:15px; font-weight:800; color:#f8fafc; margin:20px 0 10px; display:flex; align-items:center; gap:8px;">
+          <span>📊</span> 정량 지표별 실전 판독 매트릭스 (Metric Evaluation Matrix)
+        </h3>
+        <div class="table-wrap criteria-table-wrap">
+          <table>
+            <thead>
+              <tr style="background:#0f172a;">
+                <th style="min-width:140px;">평가 지표 (약어/공식)</th>
+                <th style="min-width:130px; text-align:center;">🔴 주의 / 위험 (Caution)</th>
+                <th style="min-width:140px; text-align:center;">🟡 양호 / 실전 합격 (Good)</th>
+                <th style="min-width:140px; text-align:center;">🟢 탁월 / 최상위 (Top-tier)</th>
+                <th style="min-width:320px;">실전 판독 의미 및 퀀트적 시사점</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>CAGR</strong><br/><span style="font-size:11px; color:#94a3b8;">연평균 복리수익률</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; 6.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">7.0% ~ 11.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">12.0% ~ 18.0%+</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  코스피 28년 매수보유 평균이 <strong>+8.56%</strong>입니다. 7% 이상이면 시장과 대등하며, 12% 이상이면 28년 복리 효과로 원금이 20배 이상 폭발합니다. 단, MDD가 함께 통제되지 않는 고수익은 사상누각입니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>MDD</strong><br/><span style="font-size:11px; color:#94a3b8;">최대 낙폭 (손실률)</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; -40.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">-25.0% ~ -35.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">-10.0% ~ -20.0%</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  <strong>-50% 손실 시 원금 회복에 +100% 수익이 필요</strong>합니다(손실 비대칭성). MDD가 -40%를 넘어가면 실전 투자자는 공포에 질려 바닥에서 손절합니다. <strong>MDD를 -25% 안쪽으로 묶는 것이 복리의 최우선 전제조건</strong>입니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Calmar Ratio</strong><br/><span style="font-size:11px; color:#94a3b8;">칼마 지수 (CAGR / |MDD|)</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; 0.20</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">0.25 ~ 0.40</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">0.45 ~ 0.70+</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  헤지펀드가 가장 아끼는 <strong>'수익 대비 고통 가성비'</strong> 지표입니다. 코스피 단독은 0.154에 불과합니다. <strong>0.30 이상</strong>이면 고통 1단위당 충분한 복리를 보장하며, 0.45 이상이면 세계 유수 퀀트 펀드와 견줄 만합니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Sharpe Ratio</strong><br/><span style="font-size:11px; color:#94a3b8;">샤프 지수 (초과수익/변동성)</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; 0.35</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">0.45 ~ 0.75</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">0.80 ~ 1.20+</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  변동성(출렁임) 1단위당 창출한 무위험금리 대비 초과수익입니다. 국내 단일 주식 자산배분 기준 0.50 내외면 우수하며, 1.0 초과는 글로벌 다중자산(주식+채권+금+원자재) 분산에서 주로 나타납니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Sortino Ratio</strong><br/><span style="font-size:11px; color:#94a3b8;">소르티노 지수 (하방위험 대비)</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; 0.50</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">0.60 ~ 0.90</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">1.00 ~ 1.50+</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  샤프 지수와 달리 <strong>'상승할 때의 변동성'에는 벌점을 주지 않고 '하락 충격'만 측정</strong>합니다. 추세추종이나 동적 자산배분 전략의 우수성(상승은 열려있고 하락은 닫혀있음)을 가늠하는 가장 공정한 잣대입니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Ulcer Index</strong><br/><span style="font-size:11px; color:#94a3b8;">궤양 지수 (하락 깊이×기간)</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&gt; 15.0</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">7.0 ~ 14.0</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">&lt; 6.0</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  MDD가 '단 하루의 최저점'만 본다면, 궤양 지수는 <strong>'원금을 회복하지 못하고 물려있던 시간의 고통 총량'</strong>을 뜻합니다. 코스피 단독은 20.88에 달하며, 우수 전략은 6~11 수준으로 투자자의 심리적 고통을 절반 이하로 줄여줍니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>파라미터 안정성</strong><br/><span style="font-size:11px; color:#94a3b8;">±15% 교란 강건성</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; 75.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">80.0% ~ 89.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">90.0% ~ 100.0%</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  이동평균이나 지표 임계치를 ±15% 흔들었을 때 성적이 유지되는 비율입니다. <strong>90% 이상(넓은 평탄한 고원 Flat Optimum)</strong>이어야 과거 특정 주기에 끼워 맞춘 '과최적화 함정'을 피할 수 있습니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>OOS 성과 보존율</strong><br/><span style="font-size:11px; color:#94a3b8;">최근 15.8년 현대장세 검증</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">&lt; 50.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">60.0% ~ 79.0%</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">80.0% ~ 100%+</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  2000년대 초반 신흥국 호황기에만 통하고 최근 15년(2011~2026 박스피 및 알고리즘 장세)에는 알파가 죽어버리는 현상을 걸러냅니다. 최근 구간에서도 과거 성과의 70~80% 이상을 유지해야 실전 신뢰성이 부여됩니다.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>거래 빈도 / 회전율</strong><br/><span style="font-size:11px; color:#94a3b8;">마찰비용(슬리피지·세금) 내구도</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-poor">주 5회+ / 연 200회+</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-good">주 1~3회 이하</span></td>
+                <td style="text-align:center;"><span class="criteria-badge-excellent">월간 / 분기 1회</span></td>
+                <td style="font-size:12.5px; line-height:1.45;">
+                  백테스트에서 슬리피지와 세금을 0으로 잡은 단타 전략은 실전에 들어가면 100% 녹아내립니다. <strong>주 3회 이하 매매 제한 또는 월 1회 리밸런싱</strong>으로 거래 비용을 철저히 통제해야 백테스트와 실전의 일치가 가능합니다.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 5 GOLDEN RULES -->
+        <h3 style="font-size:15px; font-weight:800; color:#f8fafc; margin:28px 0 12px; display:flex; align-items:center; gap:8px;">
+          <span>⭐</span> 좋은 퀀트 전략을 완성하는 5대 핵심 철칙 (The 5 Golden Rules)
+        </h3>
+        <div class="rule-cards-grid">
+          <div class="rule-card">
+            <span class="rule-num-badge">RULE 1</span>
+            <div class="rule-card-title">🛡️ 생존이 먼저, 복리는 그 다음 (MDD ≤ -30%)</div>
+            <div class="rule-card-desc">
+              -50% 손실을 회복하려면 +100%의 수익이 필요하고, -70% 손실은 +233%가 필요합니다.
+              워런 버핏의 제1원칙("절대로 돈을 잃지 마라")처럼, <strong>MDD를 -30% 이내로 제어하는 전략만이 복리라는 거대한 눈덩이를 굴릴 수 있는 자격</strong>을 얻습니다.
+            </div>
+          </div>
+          <div class="rule-card">
+            <span class="rule-num-badge">RULE 2</span>
+            <div class="rule-card-title">⛰️ 넓고 완만한 고원(Flat Optimum)을 찾아라</div>
+            <div class="rule-card-desc">
+              "60일선에서는 최고인데 58일이나 63일선에서는 박살 나는 전략"은 100% 과거에만 맞춘 거짓말(과최적화)입니다.
+              파라미터를 살짝 바꾸어도 성과가 완만하게 유지되는 <strong>넓은 고원 지대</strong>에 위치해야 하며, 조건문이 단순할수록(오컴의 면도날) 미래에도 작동합니다.
+            </div>
+          </div>
+          <div class="rule-card">
+            <span class="rule-num-badge">RULE 3</span>
+            <div class="rule-card-title">🧠 경제학적·구조적 인과관계(Economic Rationale)</div>
+            <div class="rule-card-desc">
+              "비 오는 화요일에 주가가 오른다" 같은 통계적 우연(Data Snooping)은 절대 믿지 마십시오.
+              "경기선행지수가 돌아서면 기업 이익이 늘어난다", "원/달러 환율이 급등하면 외국인 자금이 빠져나간다"처럼 <strong>실제 시장 참여자의 자금 흐름과 경제 구조에 근거</strong>해야 합니다.
+            </div>
+          </div>
+          <div class="rule-card">
+            <span class="rule-num-badge">RULE 4</span>
+            <div class="rule-card-title">🧪 4대 역사적 경제위기 통과력 (Crisis Resilience)</div>
+            <div class="rule-card-desc">
+              최소 20년 이상의 시계열 속에서 <strong>2000년 닷컴버블(-55%), 2008년 글로벌 금융위기(-54%), 2020년 코로나 팬데믹(-35%), 2022년 인플레이션 긴축 충격(-30%)</strong>이라는 4대 위기를 모두 거쳐도 살아남았는지 확인해야 합니다.
+            </div>
+          </div>
+          <div class="rule-card">
+            <span class="rule-num-badge">RULE 5</span>
+            <div class="rule-card-title">⚙️ 실전 체결 실행 가능성 (Execution Feasibility)</div>
+            <div class="rule-card-desc">
+              전일 신호 판정 후 다음날 장 시작 시가(Open)는 갭상승/갭하락으로 요동치며 슬리피지가 폭발합니다.
+              <strong>익일 종가(Close) 체결</strong> 또는 <strong>정기 리밸런싱</strong>을 채택하고 주당 매매 횟수를 제한하여 실전에서 사람이 무리 없이 실행할 수 있어야 합니다.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: 세계적으로 유명한 전설적 퀀트 전략 성과 예시 -->
+      <section class="section-card" id="sec-famous">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+          <div>
+            <div class="badge-rank" style="background:rgba(245,158,11,0.15); color:#f59e0b; border-color:rgba(245,158,11,0.35);">WALL STREET BENCHMARKS</div>
+            <h2 class="section-title" style="margin-top:4px;">🏆 세계적으로 유명한 전설적 퀀트·자산배분 전략 성과 예시</h2>
+          </div>
+          <span style="font-size:12.5px; color:#94a3b8; background:#0f172a; padding:6px 12px; border-radius:6px; border:1px solid #334155;">
+            📚 수십 년간 검증된 월가 대가들의 대표 전략 스펙 비교
+          </span>
+        </div>
+        <p class="section-sub" style="font-size:13.5px; line-height:1.6; color:#cbd5e1; margin-bottom:16px;">
+          수십 년의 역사 속에서 수많은 펀드가 사라지는 동안, <strong>시장 충격을 견디며 살아남아 전 세계 수천조 원의 기관 자금을 운용하는 벤치마크가 된 전설적인 퀀트·자산배분 전략들</strong>입니다.<br/>
+          각 전략이 어떤 자산과 규칙을 사용하는지, 그리고 장기 역사에서 기록한 <strong>CAGR, MDD, Sharpe, Calmar</strong> 수치를 비교해 보십시오.
+        </p>
+
+        <!-- FAMOUS COMPARISON TABLE -->
+        <div class="table-wrap" style="margin:16px 0 24px;">
+          <table>
+            <thead>
+              <tr style="background:#0f172a;">
+                <th>전략명 (창안자 / 기관)</th>
+                <th>핵심 자산 배분 &amp; 매매 규칙</th>
+                <th class="num">역사적 CAGR</th>
+                <th class="num">역사적 MDD</th>
+                <th class="num">Sharpe 지수</th>
+                <th class="num">Calmar 지수</th>
+                <th>전략의 핵심 장점 및 실전 교훈</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>올웨더 포트폴리오</strong><br/><span style="font-size:11px; color:#94a3b8;">레이 달리오 (브리지워터)</span></td>
+                <td>주식 30% / 장기채 40% / 중기채 15% / 금 7.5% / 원자재 7.5% (리스크 패리티)</td>
+                <td class="num pos"><strong>+7.5% ~ +8.2%</strong></td>
+                <td class="num accent"><strong>-12.0% ~ -14.0%</strong></td>
+                <td class="num"><strong>0.75 ~ 0.85</strong></td>
+                <td class="num"><strong>0.55 ~ 0.60</strong></td>
+                <td style="font-size:12px; line-height:1.45;">
+                  <strong>2008년 금융위기 주식 -50% 폭락 시 단 -3.9% 하락</strong>에 그침. 밤에 다리 뻗고 잘 수 있는 극강의 안정성.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>듀얼 모멘텀 (GEM)</strong><br/><span style="font-size:11px; color:#94a3b8;">게리 안토나치 (포트폴리오 관리)</span></td>
+                <td>미국(SPY) vs 선진국(EFA) 중 12개월 모멘텀 승자 보유 → 12개월 수익률 &lt; 미 단기채 시 종합채권(BND) 100% 대피</td>
+                <td class="num pos"><strong>+14.0% ~ +15.2%</strong></td>
+                <td class="num accent"><strong>-18.0% ~ -20.0%</strong></td>
+                <td class="num"><strong>0.82 ~ 0.90</strong></td>
+                <td class="num"><strong>0.75 ~ 0.82</strong></td>
+                <td style="font-size:12px; line-height:1.45;">
+                  대세 상승장에서는 주식 100%를 취하고, <strong>닷컴버블과 2008 금융위기를 채권으로 완벽 회피</strong>한 모멘텀의 정점.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>GTAA (전술적 자산배분)</strong><br/><span style="font-size:11px; color:#94a3b8;">메브 파버 (캠브리아 인베스트)</span></td>
+                <td>글로벌 5~13개 자산군 중 <strong>10개월(200일) 이동평균선 상회 자산만 보유</strong>, 이탈 시 현금 대피 (월 1회)</td>
+                <td class="num pos"><strong>+10.0% ~ +11.5%</strong></td>
+                <td class="num accent"><strong>-14.5% ~ -16.5%</strong></td>
+                <td class="num"><strong>0.76 ~ 0.82</strong></td>
+                <td class="num"><strong>0.65 ~ 0.72</strong></td>
+                <td style="font-size:12px; line-height:1.45;">
+                  단순한 10개월 이평선 규칙 하나만으로 <strong>모든 대형 주식 크래시를 회피</strong>하여 주식 수익률을 초과한 전설적 모델.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>영구 포트폴리오</strong><br/><span style="font-size:11px; color:#94a3b8;">해리 브라운 (1981년 창안)</span></td>
+                <td>주식 25% / 미국 장기국채 25% / 금 25% / 현금 25% (연 1회 정기 리밸런싱)</td>
+                <td class="num pos"><strong>+6.5% ~ +7.5%</strong></td>
+                <td class="num accent"><strong>-12.0% ~ -13.5%</strong></td>
+                <td class="num"><strong>0.62 ~ 0.70</strong></td>
+                <td class="num"><strong>0.50 ~ 0.58</strong></td>
+                <td style="font-size:12px; line-height:1.45;">
+                  50년 역사상 어떤 위기(인플레, 디플레, 침체, 번영)에서도 <strong>2년 이상 침체에 빠진 적이 없는</strong> 궁극의 방어형 전략.
+                </td>
+              </tr>
+              <tr>
+                <td><strong>전통적 60/40 포트폴리오</strong><br/><span style="font-size:11px; color:#94a3b8;">기관 투자자 / 연기금 표준</span></td>
+                <td>미국/글로벌 주식 60% + 미국 중장기 종합채권 40% (분기/반기 리밸런싱)</td>
+                <td class="num pos"><strong>+8.5% ~ +9.2%</strong></td>
+                <td class="num neg"><strong>-30.0% ~ -34.0%</strong></td>
+                <td class="num"><strong>0.52 ~ 0.58</strong></td>
+                <td class="num"><strong>0.25 ~ 0.28</strong></td>
+                <td style="font-size:12px; line-height:1.45;">
+                  수십 년간 기관의 기본 벤치마크였으나, <strong>2008년 금융위기(-30%) 및 2022년 금리인상(-24%)에 주식-채권 동반 폭락</strong> 한계 노출.
+                </td>
+              </tr>
+              <tr style="background:rgba(168,85,247,0.06);">
+                <td><strong>메달리온 펀드 (참고)</strong><br/><span style="font-size:11px; color:#c084fc;">짐 시몬스 (르네상스 테크)</span></td>
+                <td>수학자·물리학자들이 구축한 비선형 통계 패턴 초단타 알고리즘 차익거래</td>
+                <td class="num pos" style="color:#c084fc;"><strong>연 66% (차감 후 39%)</strong></td>
+                <td class="num accent" style="color:#c084fc;"><strong>극소화 (&lt; -5%)</strong></td>
+                <td class="num" style="color:#c084fc;"><strong>2.00 ~ 3.50+</strong></td>
+                <td class="num" style="color:#c084fc;"><strong>5.00+</strong></td>
+                <td style="font-size:12px; line-height:1.45;">
+                  <strong>개인 복제는 불가능(초단타/자산한도 존재)</strong>하지만, 감정을 100% 배제한 순수 통계적 엣지가 어디까지 갈 수 있는지 증명.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- DETAILED STRATEGY CARDS -->
+        <h3 style="font-size:15px; font-weight:800; color:#f8fafc; margin:24px 0 12px; display:flex; align-items:center; gap:8px;">
+          <span>🔍</span> 대표 유명 전략별 심층 프로필 및 퀀트 인사이트
+        </h3>
+        <div class="famous-strat-grid">
+          <!-- CARD 1: ALL WEATHER -->
+          <div class="famous-strat-card">
+            <div class="famous-strat-header">
+              <span class="famous-strat-tag">정적 자산배분 · 리스크 패리티</span>
+              <h4 class="famous-strat-title">레이 달리오의 올웨더 포트폴리오</h4>
+              <div class="famous-strat-author">Ray Dalio · Bridgewater Associates (세계 최대 헤지펀드)</div>
+            </div>
+            <div class="famous-stat-box">
+              <div class="famous-stat-item"><div class="famous-stat-val pos">+7.8%</div><div class="famous-stat-lbl">연복리 CAGR</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val accent">-13.6%</div><div class="famous-stat-lbl">역사적 MDD</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.76</div><div class="famous-stat-lbl">Sharpe 지수</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.57</div><div class="famous-stat-lbl">Calmar 지수</div></div>
+            </div>
+            <div class="famous-strat-body">
+              <strong>• 자산 구성:</strong> 주식 30%, 미국 20년+ 장기국채 40%, 7-10년 중기국채 15%, 금 7.5%, 원자재 7.5%<br/>
+              <strong>• 핵심 메커니즘:</strong> 경제를 '경제성장(상승/하락)'과 '물가상승(인플레/디플레)'의 4개 국면으로 나누고, 각 국면에서 살아남는 자산들에 <strong>위험(변동성 기여도)을 균등 배분</strong>합니다.<br/>
+              <strong>• 실전 교훈:</strong> 2008년 금융위기 당시 코스피와 S&P500이 -50% 이상 반토막 날 때 <strong>올웨더는 -3.9% 하락</strong>에 그치며 1년 만에 전고점을 회복했습니다. 직장인 패시브 투자자에게 가장 이상적인 안전 자산배분 모델입니다.
+            </div>
+            <div class="famous-strat-footer">
+              💡 <strong>한국 시장 적용 팁:</strong> 국내 단독 자산으로는 채권/원자재의 상관관계가 미국과 달라 복제가 어렵지만, 본 리포트의 <strong>코스피+현금 50:50 분기 리밸런싱</strong>이 MDD를 -32%로 낮추는 동일한 원리를 보여줍니다.
+            </div>
+          </div>
+
+          <!-- CARD 2: DUAL MOMENTUM -->
+          <div class="famous-strat-card">
+            <div class="famous-strat-header">
+              <span class="famous-strat-tag" style="background:rgba(245,158,11,0.15); border-color:rgba(245,158,11,0.35); color:#f59e0b;">동적 모멘텀 스위칭</span>
+              <h4 class="famous-strat-title">게리 안토나치의 글로벌 듀얼 모멘텀 (GEM)</h4>
+              <div class="famous-strat-author">Gary Antonacci · Optimal Momentum (2012년 베스트셀러)</div>
+            </div>
+            <div class="famous-stat-box">
+              <div class="famous-stat-item"><div class="famous-stat-val pos">+14.5%</div><div class="famous-stat-lbl">연복리 CAGR</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val accent">-18.2%</div><div class="famous-stat-lbl">역사적 MDD</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.85</div><div class="famous-stat-lbl">Sharpe 지수</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.80</div><div class="famous-stat-lbl">Calmar 지수</div></div>
+            </div>
+            <div class="famous-strat-body">
+              <strong>• 2단계 규칙:</strong><br/>
+              1) <strong>상대 모멘텀:</strong> 최근 12개월 수익률이 미국 주식(SPY)과 선진국 주식(EFA) 중 더 높은 자산을 1등으로 선택.<br/>
+              2) <strong>절대 모멘텀:</strong> 1등 자산의 12개월 수익률이 미국 단기국채(초단기금리 BIL)보다 높으면 해당 주식 보유, 낮으면 <strong>종합채권(BND)으로 100% 대피</strong>.<br/>
+              <strong>• 실전 교훈:</strong> 대세 상승장에서는 주식의 폭발적인 수익률(+14~15%)을 고스란히 흡수하고, 2000년 닷컴버블(-50%)과 2008년 금융위기(-54%) 시기에는 <strong>채권으로 도망쳐 MDD를 -18%로 봉쇄</strong>했습니다.
+            </div>
+            <div class="famous-strat-footer">
+              💡 <strong>한국 시장 적용 팁:</strong> 본 리포트의 <strong>코스피 매크로 1위 <code>M100</code>(OECD 경기선행지수 100 수축탈출 스위처)</strong>과 <strong>4위 <code>M107</code></strong>이 게리 안토나치 모멘텀 원리를 한국 거시지표에 적용하여 <strong>CAGR +10.5% ~ +12.3%, MDD -32% ~ -38%</strong>를 달성한 대표 사례입니다.
+            </div>
+          </div>
+
+          <!-- CARD 3: GTAA -->
+          <div class="famous-strat-card">
+            <div class="famous-strat-header">
+              <span class="famous-strat-tag" style="background:rgba(16,185,129,0.15); border-color:rgba(16,185,129,0.35); color:#10b981;">추세추종 이동평균 전술</span>
+              <h4 class="famous-strat-title">메브 파버의 글로벌 전술적 자산배분 (GTAA)</h4>
+              <div class="famous-strat-author">Mebane Faber · Cambria Investment Management (2007)</div>
+            </div>
+            <div class="famous-stat-box">
+              <div class="famous-stat-item"><div class="famous-stat-val pos">+10.2%</div><div class="famous-stat-lbl">연복리 CAGR</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val accent">-15.5%</div><div class="famous-stat-lbl">역사적 MDD</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.78</div><div class="famous-stat-lbl">Sharpe 지수</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.66</div><div class="famous-stat-lbl">Calmar 지수</div></div>
+            </div>
+            <div class="famous-strat-body">
+              <strong>• 매매 규칙:</strong> 글로벌 5대 자산군(미국주식, 해외주식, 미국장기채, 원자재, 부동산 리츠)에 대해 <strong>매월 말 종가가 10개월(200일) 단순이동평균선 위에 있으면 동일비중(20%) 보유, 아래로 이탈하면 전액 현금화</strong>.<br/>
+              <strong>• 실전 교훈:</strong> '200일 이동평균선'이라는 세상에서 가장 단순한 하나의 규칙만으로 1973년 오일쇼크, 1987년 블랙먼데이, 2008년 금융위기 등 <strong>모든 대형 폭락장을 피하며 주식 단독보다 높은 복리수익</strong>을 증명했습니다.
+            </div>
+            <div class="famous-strat-footer">
+              💡 <strong>한국 시장 적용 팁:</strong> 본 리포트의 <strong>코스피 익일종가 1위 <code>K18</code>(SMA 60일 비대칭 55% 매수/50% 매도)</strong> 및 <strong>나스닥 1위 <code>N03</code>(SMA 60일 60% 비중조절)</strong>이 메브 파버의 이동평균 추세추종 원리를 단일 지수에 접목한 성공적인 예입니다.
+            </div>
+          </div>
+
+          <!-- CARD 4: PERMANENT PORTFOLIO -->
+          <div class="famous-strat-card">
+            <div class="famous-strat-header">
+              <span class="famous-strat-tag" style="background:rgba(234,179,8,0.15); border-color:rgba(234,179,8,0.35); color:#eab308;">4계절 클래식 자산배분</span>
+              <h4 class="famous-strat-title">해리 브라운의 영구 포트폴리오 (Permanent Portfolio)</h4>
+              <div class="famous-strat-author">Harry Browne · 1981년 명저 'Fail-Safe Investing'</div>
+            </div>
+            <div class="famous-stat-box">
+              <div class="famous-stat-item"><div class="famous-stat-val pos">+6.8%</div><div class="famous-stat-lbl">연복리 CAGR</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val accent">-12.4%</div><div class="famous-stat-lbl">역사적 MDD</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.65</div><div class="famous-stat-lbl">Sharpe 지수</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.55</div><div class="famous-stat-lbl">Calmar 지수</div></div>
+            </div>
+            <div class="famous-strat-body">
+              <strong>• 4대 자산 25% 균등 분할:</strong><br/>
+              1) <strong>주식 25%:</strong> 경제 번영기에 강력한 자본 수익 제공<br/>
+              2) <strong>장기국채 25%:</strong> 디플레이션 및 경기 침체 시 금리 하락으로 폭등<br/>
+              3) <strong>금(Gold) 25%:</strong> 화폐 가치 하락 및 극심한 인플레이션 방어<br/>
+              4) <strong>현금 25%:</strong> 유동성 위기 및 금리 상승기 구매력 보존<br/>
+              <strong>• 실전 교훈:</strong> 지난 50년간 단 한 번도 -13% 이상의 MDD를 허용하지 않았으며, 연간 단위로 마이너스를 기록한 해가 손에 꼽힙니다.
+            </div>
+            <div class="famous-strat-footer">
+              💡 <strong>실전 시사점:</strong> 변동성이 높은 코스피 단일 지수에서도 <strong>'현금 25~50%의 상시 확보'</strong>가 위기 시 추가 매수 여력을 제공하여 전체 MDD를 -55%에서 -30% 이하로 낮추는 마법의 원천입니다.
+            </div>
+          </div>
+
+          <!-- CARD 5: TRADITIONAL 60/40 -->
+          <div class="famous-strat-card">
+            <div class="famous-strat-header">
+              <span class="famous-strat-tag" style="background:rgba(99,102,241,0.15); border-color:rgba(99,102,241,0.35); color:#818cf8;">연기금 글로벌 벤치마크</span>
+              <h4 class="famous-strat-title">전통적 60/40 포트폴리오 (Traditional 60/40)</h4>
+              <div class="famous-strat-author">Global Pension Funds &amp; Institutional Benchmark</div>
+            </div>
+            <div class="famous-stat-box">
+              <div class="famous-stat-item"><div class="famous-stat-val pos">+8.6%</div><div class="famous-stat-lbl">연복리 CAGR</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val neg">-32.5%</div><div class="famous-stat-lbl">역사적 MDD</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.55</div><div class="famous-stat-lbl">Sharpe 지수</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val">0.26</div><div class="famous-stat-lbl">Calmar 지수</div></div>
+            </div>
+            <div class="famous-strat-body">
+              <strong>• 자산 구성:</strong> 글로벌 주식 60% + 미국 중장기 종합채권(BND) 40% (분기 1회 리밸런싱)<br/>
+              <strong>• 현대적 한계와 취약점:</strong> 과거 40년간의 금리 인하 사이클에서는 주식과 채권의 역상관성 덕분에 훌륭히 작동했으나, <strong>2022년과 같은 급격한 인플레이션 및 금리 인상기에는 주식과 채권이 동시에 -20% 이상 폭락</strong>하며 MDD가 -30%를 초과하는 충격을 받았습니다.<br/>
+              <strong>• 퀀트적 시사점:</strong> 단순 정적 분산만으로는 '동반 하락 위기'를 막을 수 없으며, <strong>환율/금리/선행지수 등 거시 지표를 활용한 동적 비중 조절(Dynamic Allocation)</strong>이 필수적임을 보여줍니다.
+            </div>
+            <div class="famous-strat-footer">
+              💡 <strong>한국 시장 적용 팁:</strong> 한국 시장은 미국 채권과의 상관관계가 미국 내 자산과 다르므로, 단순 주식+채권보다 <strong>코스피 + 달러환율/반도체 선행지표 연계형 모델(<code>M126</code>, <code>M001</code>)</strong>이 훨씬 강력한 방어력을 냅니다.
+            </div>
+          </div>
+
+          <!-- CARD 6: MEDALLION FUND -->
+          <div class="famous-strat-card">
+            <div class="famous-strat-header">
+              <span class="famous-strat-tag" style="background:rgba(236,72,153,0.15); border-color:rgba(236,72,153,0.35); color:#f472b6;">알고리즘 퀀트의 전설</span>
+              <h4 class="famous-strat-title">짐 시몬스의 르네상스 메달리온 펀드 (Medallion)</h4>
+              <div class="famous-strat-author">Jim Simons · Renaissance Technologies (1988~현재)</div>
+            </div>
+            <div class="famous-stat-box">
+              <div class="famous-stat-item"><div class="famous-stat-val pos" style="color:#f472b6;">연 66%</div><div class="famous-stat-lbl">수수료 차감전</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val pos" style="color:#f472b6;">연 39%</div><div class="famous-stat-lbl">수수료 차감후</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val" style="color:#f472b6;">2.50+</div><div class="famous-stat-lbl">Sharpe 지수</div></div>
+              <div class="famous-stat-item"><div class="famous-stat-val" style="color:#f472b6;">5.00+</div><div class="famous-stat-lbl">Calmar 지수</div></div>
+            </div>
+            <div class="famous-strat-body">
+              <strong>• 운용 방식:</strong> 수학자, 천체물리학자, 컴퓨터 과학자 300명이 수백만 개의 전 세계 금융 데이터를 분석하여 인간의 눈으로는 보이지 않는 <strong>미세한 통계적 비효율성(가격 왜곡)</strong>을 수천 번 거래하여 수익을 축적합니다.<br/>
+              <strong>• 승률의 진실:</strong> 메달리온 펀드의 거래당 승률은 <strong>약 50.75%</strong>에 불과합니다. 그러나 카지노처럼 '수학적으로 약간 앞서는 승률'을 레버리지와 철저한 손절매 규칙으로 수십만 번 반복하여 역사상 최고 수익률을 기록했습니다.<br/>
+              <strong>• 개인 투자자가 얻을 교훈:</strong> 우리는 초단타 알고리즘을 짤 수는 없지만, <strong>"예측이나 감정을 배제하고, 규칙 기반의 객관적 승률과 손익비를 검증하여 철저히 지킨다"</strong>는 퀀트 투자의 본질을 배워야 합니다.
+            </div>
+            <div class="famous-strat-footer">
+              💡 <strong>핵심 요약:</strong> 백테스트란 주관적인 느낌이 아니라, <strong>"수학적 기대값이 양(+)의 영역에 있는가?"</strong>를 확인하는 유일하고도 과학적인 검증 과정입니다.
+            </div>
+          </div>
+        </div>
+
+        <!-- BENCHMARK CONCLUSION BOX -->
+        <div style="margin-top:20px; background:rgba(30,41,59,0.7); border:1px solid rgba(56,189,248,0.3); border-radius:10px; padding:16px 20px;">
+          <h4 style="margin:0 0 8px; font-size:14px; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:8px;">
+            <span>💡</span> 본 리포트의 백테스트 전략들은 글로벌 벤치마크 대비 어느 위치인가?
+          </h4>
+          <p style="margin:0; font-size:13px; line-height:1.6; color:#cbd5e1;">
+            • <strong>수익성 (CAGR):</strong> 코스피 매크로 8위 <code>M104</code>(OECD CLI 가속 추종)는 27.8년간 <strong>CAGR +12.94%</strong>(원금 27.9배)를 기록하여 게리 안토나치의 듀얼모멘텀(+14.5%)이나 메브 파버의 GTAA(+10.2%)에 필적하는 압도적 알파를 증명했습니다.<br/>
+            • <strong>방어력 (MDD &amp; Calmar):</strong> 미국 반도체 지수를 신호등으로 쓴 <code>M126</code> 전략은 2000년 닷컴버블(-55.7% 폭락) 당시 거꾸로 <strong>+21.47%의 역발상 수익</strong>을 달성하며 <strong>MDD -30.26%</strong>, <strong>Sharpe 0.510</strong>, <strong>Calmar 0.321</strong>로 올웨더급의 위기 방어력을 입증했습니다.<br/>
+            • <strong>결론:</strong> 기술적 분석에만 머무르지 않고 <strong>'OECD 경기선행지수'</strong>와 <strong>'미국 반도체 SOXX'</strong>라는 실체적 거시 신호를 결합할 때, 한국 증시에서도 글로벌 전설적 전략들에 뒤지지 않는 강건한 복리 투자가 가능합니다.
+          </p>
+        </div>
+      </section>
+
+      <!-- SECTION 3: 퀀트 용어 백과사전 카드 그리드 -->
+      <section class="section-card" id="sec-terms">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+          <div>
+            <div class="badge-rank" style="background:rgba(16,185,129,0.15); color:#10b981; border-color:rgba(16,185,129,0.35);">DICTIONARY</div>
+            <h2 class="section-title" style="margin-top:4px;">📖 백테스트 핵심 지표 및 금융·퀀트 용어 백과사전</h2>
+          </div>
+          <span style="font-size:12.5px; color:#94a3b8; background:#0f172a; padding:6px 12px; border-radius:6px; border:1px solid #334155;">
+            🔍 표와 카드의 모든 공식, 직관적 의미, 실전 판독 기준
+          </span>
+        </div>
+        <p class="section-sub">표와 카드에 등장하는 모든 정량 지표와 기술적 시그널의 공식, 직관적 의미, 실전 판독 기준을 한눈에 볼 수 있습니다.</p>
+        <div class="glossary-grid">
+          ${glossaryCardsHtml}
+        </div>
+      </section>
+    </div>
+  `;
+}
 
 function main() {
   const vaultExp1 = JSON.parse(fs.readFileSync(VAULT_EXP1_PATH, "utf8"));
@@ -2252,6 +2752,185 @@ function main() {
       border-radius: 6px;
     }
 
+    /* Glossary Tab Enhancements */
+    .glossary-nav-strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .glossary-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg-card-alt);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .glossary-nav-btn:hover {
+      background: #334155;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .criteria-table-wrap {
+      margin: 14px 0 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .criteria-badge-poor {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+    .criteria-badge-good {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fde047;
+    }
+    .criteria-badge-excellent {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #6ee7b7;
+    }
+    .rule-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .rule-card {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+    }
+    .rule-num-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      margin-bottom: 8px;
+    }
+    .rule-card-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+    .rule-card-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.55;
+    }
+    .famous-strat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .famous-strat-card {
+      background: var(--bg-card-alt);
+      border: 1px solid var(--border);
+      border-top: 3px solid #38bdf8;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .famous-strat-header {
+      margin-bottom: 12px;
+    }
+    .famous-strat-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      margin-bottom: 6px;
+    }
+    .famous-strat-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 4px;
+    }
+    .famous-strat-author {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .famous-stat-box {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin: 12px 0;
+      text-align: center;
+    }
+    .famous-stat-val {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .famous-stat-lbl {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .famous-strat-body {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .famous-strat-footer {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(51, 65, 85, 0.5);
+      font-size: 12px;
+      color: #94a3b8;
+    }
+    .famous-strat-footer strong {
+      color: #fde047;
+    }
+
     /* Interactive Modal for ? Help */
     .modal-backdrop {
       position: fixed;
@@ -2396,6 +3075,8 @@ function main() {
       <button type="button" class="term-chip" onclick="openTermModal('disparity')"><span class="q-mark">?</span> 이격도</button>
       <button type="button" class="term-chip" onclick="openTermModal('rsi')"><span class="q-mark">?</span> RSI</button>
       <button type="button" class="term-chip" onclick="openTermModal('bb')"><span class="q-mark">?</span> 볼린저밴드 (%B/폭)</button>
+      <button type="button" class="term-chip" onclick="openTermModal('risk_parity')"><span class="q-mark">?</span> 올웨더·리스크패리티</button>
+      <button type="button" class="term-chip" onclick="openTermModal('dual_momentum')"><span class="q-mark">?</span> 듀얼 모멘텀</button>
     </div>
 
     <!-- MULTI-EXPERIMENT TABS BAR -->
@@ -2411,15 +3092,7 @@ function main() {
     ${tabsPanelsHtml}
 
     <!-- GLOSSARY PANEL -->
-    <div id="tab-panel-glossary" class="tab-panel">
-      <section class="section-card">
-        <h2 class="section-title">📖 백테스트 핵심 지표 및 금융·퀀트 용어 백과사전</h2>
-        <p class="section-sub">표와 카드에 등장하는 모든 정량 지표와 기술적 시그널의 공식, 직관적 의미, 실전 판독 기준을 한눈에 볼 수 있습니다.</p>
-        <div class="glossary-grid">
-          ${glossaryCardsHtml}
-        </div>
-      </section>
-    </div>
+    ${renderGlossaryTabContent(glossaryCardsHtml)}
   </div>
 
   <!-- MODAL FOR ? HELP -->
