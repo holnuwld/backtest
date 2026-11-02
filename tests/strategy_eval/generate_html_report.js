@@ -3251,8 +3251,8 @@ function main() {
                     const rankStr = r.rank ? "[TOP " + r.rank + "] " : "";
                     return [
                       rankStr + "[" + r.id + "] " + r.name,
-                      "• 세후 CAGR: +" + r.afterTaxCagrPct.toFixed(2) + "% | MDD: " + r.mddPct.toFixed(2) + "% (Calmar " + r.calmar.toFixed(3) + ")",
-                      "• 원금 8억 → 세후 최종: " + r.finalEok + "억 원",
+                      "• 1년 후 세후 기대 CAGR: +" + r.afterTaxCagrPct.toFixed(2) + "% | MDD: " + r.mddPct.toFixed(2) + "% (Calmar " + r.calmar.toFixed(3) + ")",
+                      "• 현재 8억 투자 1년 후 세후 순수익: " + r.finalEok,
                     ];
                   },
                 },
@@ -3266,7 +3266,7 @@ function main() {
                 grid: { color: "rgba(51, 65, 85, 0.4)" },
               },
               y: {
-                title: { display: true, text: "세후 연평균 복리수익률 After-Tax CAGR (%) — 위쪽이 고수익", color: "#94a3b8" },
+                title: { display: true, text: "1년 후 세후 기대 수익률 After-Tax CAGR (%) — 위쪽이 고수익", color: "#94a3b8" },
                 ticks: { color: "#94a3b8", callback: (v) => v + "%" },
                 grid: { color: "rgba(51, 65, 85, 0.4)" },
               },
@@ -3277,7 +3277,7 @@ function main() {
         const eqCtx = document.getElementById("equityChart_exp7_all_assets_tax").getContext("2d");
         equityScaleModes[tabKey] = true;
         const eqDatasets = payload.top10Curves.map((t, i) => ({
-          label: "TOP " + t.rank + " " + t.id + " (세후 +" + t.afterTaxCagrPct.toFixed(2) + "%, 8억→" + t.finalEok + "억)",
+          label: "TOP " + t.rank + " " + t.id + " (세후 +" + t.afterTaxCagrPct.toFixed(2) + "%, " + t.finalEok + ")",
           data: t.normEquity,
           borderColor: palette[i % palette.length],
           borderWidth: i < 3 ? 2.5 : 1.5,

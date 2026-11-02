@@ -723,8 +723,303 @@ for (const g of extraGrid) {
   });
 }
 
+const CURRENT_INVEST_KRW = 800000000; // 현재 투자 원금 8억 원
+const COMP_TAX_LIMIT_KRW = 20000000; // 금융소득종합과세 기준 금액 (연 이자·배당 2,000만 원)
+const US_BASIC_DEDUCTION_KRW = 2500000; // 해외주식 양도소득세 연간 기본공제 250만 원
+
+/**
+ * 백테스트를 통해 도출된 기대 세전 CAGR(expectedPreTaxCagrPct)을 바탕으로
+ * "현재 기준으로 8억 원(800,000,000원)을 투자했을 때 1년 후 기대 수익, 예상 세금, 금융소득종합과세 대상 여부, 세후 기대 수익률"을 정밀 계산
+ */
+function compute1YrProjectionAt800M(expectedPreTaxCagrPct, allocations) {
+  let totalWeight = 0;
+  let yr1DivIncomeKrw = 0; // 1년 후 예상 배당·분배금 (금융소득 합산 대상)
+  let taxableUsCapGainWeight = 0; // 22% 해외주식 양도소득세 과세 대상 비중 합계
+  let taxFreeCapGainWeight = 0; // 비과세 매매차익(국내주식/KRX금현물/달러현물/비트코인) 비중 합계
+
+  for (const a of allocations) {
+    const sp = KOREA_ASSET_TAX_SPECS[a.ticker];
+    if (!sp) continue;
+    const w = a.weightPct / 100.0;
+    totalWeight += a.weightPct;
+    yr1DivIncomeKrw += CURRENT_INVEST_KRW * w * ((sp.divYieldPct || 0) / 100.0);
+    if (sp.capGainTaxRate > 0) {
+      taxableUsCapGainWeight += w;
+    } else {
+      taxFreeCapGainWeight += w;
+    }
+  }
+
+  // 남은 현금 비중은 무배당 합성 단기채(BOXX, 22% 양도세 분리과세, 배당 0%)로 운용
+  if (totalWeight < 100) {
+    const remW = (100 - totalWeight) / 100.0;
+    taxableUsCapGainWeight += remW;
+  }
+
+  const weightedDivYieldPct = (yr1DivIncomeKrw / CURRENT_INVEST_KRW) * 100.0;
+  // expectedPreTaxCagrPct가 자본수익(Price CAGR) + 배당수익을 반영한 기대 세전 총수익률일 때:
+  // (단일자산 Buy&Hold에서 priceCagr + divYield 구조가 명확하도록, 만약 expectedPreTaxCagrPct < weightedDivYieldPct인 채권/배당주도 정확히 분리)
+  const yr1PreTaxTotalGainKrw = Math.round(CURRENT_INVEST_KRW * (expectedPreTaxCagrPct / 100.0));
+  const yr1CapGainKrw = Math.max(0, yr1PreTaxTotalGainKrw - Math.round(yr1DivIncomeKrw));
+
+  // [1] 최적 투자 방식 (미국 상장 ETF 직투 + KRX 금현물 + 국내 주식형 ETF) 선택 시 1년 후 예상 세금
+  // - 해외주식 매매차익 부분만 250만 원 기본공제 후 22% 분리과세 (국내주식 KODEX200, KRX금현물, 달러현물, BTC 매매차익은 0% 비과세)
+  const totalNonZeroWeight = taxableUsCapGainWeight + taxFreeCapGainWeight || 1;
+  const usTaxableRatio = taxableUsCapGainWeight / totalNonZeroWeight;
+  const yr1UsTaxableCapGainKrw = Math.round(yr1CapGainKrw * usTaxableRatio);
+  const yr1CapGainTaxKrw = Math.round(
+    Math.max(0, yr1UsTaxableCapGainKrw - US_BASIC_DEDUCTION_KRW) * 0.22
+  );
+
+  // - 배당소득세 (15.4%) 및 금융소득종합과세(연 2,000만 원 초과 여부)
+  const yr1FinIncomeOptimalKrw = Math.round(yr1DivIncomeKrw);
+  const isCompTaxTargetOptimal = yr1FinIncomeOptimalKrw > COMP_TAX_LIMIT_KRW;
+  const yr1DivBaseTaxKrw = Math.round(
+    Math.min(yr1FinIncomeOptimalKrw, COMP_TAX_LIMIT_KRW) * 0.154
+  );
+  // 2,000만 원 초과 시 초과분에 대해 종합소득세 합산 누진세율(평균 26.4%~38.5%) + 지역건보료(~8%) = 약 35% 실효부담
+  const yr1CompTaxSurchargeKrw = isCompTaxTargetOptimal
+    ? Math.round((yr1FinIncomeOptimalKrw - COMP_TAX_LIMIT_KRW) * 0.35)
+    : 0;
+  const yr1DivTotalTaxKrw = yr1DivBaseTaxKrw + yr1CompTaxSurchargeKrw;
+
+  // 1년 후 전량 차익실현(매도) 가정 시 총 예상 세금 vs 미매도 보유(배당세만 납부) 시 세금
+  const yr1TotalTaxRealizedKrw = yr1CapGainTaxKrw + yr1DivTotalTaxKrw;
+  const yr1TotalTaxHoldOnlyKrw = yr1DivTotalTaxKrw;
+
+  // 1년 후 기대 세후 순수익금 및 세후 기대 CAGR (차익실현 기준 & 미매도 보유 기준)
+  const yr1AfterTaxNetGainKrw = yr1PreTaxTotalGainKrw - yr1TotalTaxRealizedKrw;
+  const yr1AfterTaxCagrPct =
+    Math.round((yr1AfterTaxNetGainKrw / CURRENT_INVEST_KRW) * 10000) / 100;
+  const yr1HoldOnlyAfterTaxNetGainKrw = yr1PreTaxTotalGainKrw - yr1TotalTaxHoldOnlyKrw;
+  const yr1HoldOnlyAfterTaxCagrPct =
+    Math.round((yr1HoldOnlyAfterTaxNetGainKrw / CURRENT_INVEST_KRW) * 10000) / 100;
+
+  // [2] 국내 상장 해외/원자재 ETF 투자 시 (예: KODEX WTI원유선물, KODEX 골드선물, TIGER 미국나스닥100 등) 1년 후 예상 세금
+  // - 국내 주식(KPI200) 비중을 제외한 모든 매매차익 + 분배금이 100% '배당소득'으로 합산 과세됨!
+  let kpi200Weight = 0;
+  for (const a of allocations) {
+    if (a.ticker === "KPI200") kpi200Weight += a.weightPct / 100.0;
+  }
+  const domTaxableGainRatio = Math.max(0, 1.0 - kpi200Weight);
+  const yr1FinIncomeDomTrapKrw = Math.round(
+    yr1CapGainKrw * domTaxableGainRatio + yr1DivIncomeKrw
+  );
+  const isCompTaxTargetDomTrap = yr1FinIncomeDomTrapKrw > COMP_TAX_LIMIT_KRW;
+  const yr1DomTrapTaxKrw = isCompTaxTargetDomTrap
+    ? Math.round(
+        COMP_TAX_LIMIT_KRW * 0.154 +
+          (yr1FinIncomeDomTrapKrw - COMP_TAX_LIMIT_KRW) * 0.35
+      )
+    : Math.round(yr1FinIncomeDomTrapKrw * 0.154);
+  const yr1DomTrapNetGainKrw = yr1PreTaxTotalGainKrw - yr1DomTrapTaxKrw;
+  const yr1DomTrapAfterTaxCagrPct =
+    Math.round((yr1DomTrapNetGainKrw / CURRENT_INVEST_KRW) * 10000) / 100;
+
+  return {
+    principalKrw: CURRENT_INVEST_KRW,
+    expectedPreTaxCagrPct: Math.round(expectedPreTaxCagrPct * 100) / 100,
+    weightedDivYieldPct: Math.round(weightedDivYieldPct * 100) / 100,
+    yr1PreTaxTotalGainKrw,
+    yr1CapGainKrw,
+    yr1DivIncomeKrw: yr1FinIncomeOptimalKrw,
+    // 최적 루트 (미국 직투 / KRX 금현물 / 국내 주식형 ETF)
+    yr1CapGainTaxKrw,
+    yr1DivTotalTaxKrw,
+    yr1TotalTaxRealizedKrw,
+    yr1TotalTaxHoldOnlyKrw,
+    yr1AfterTaxNetGainKrw,
+    yr1AfterTaxCagrPct,
+    yr1HoldOnlyAfterTaxNetGainKrw,
+    yr1HoldOnlyAfterTaxCagrPct,
+    yr1FinIncomeOptimalKrw,
+    isCompTaxTargetOptimal,
+    // 국내 상장 해외·원자재 ETF 함정 루트
+    yr1FinIncomeDomTrapKrw,
+    isCompTaxTargetDomTrap,
+    yr1DomTrapTaxKrw,
+    yr1DomTrapNetGainKrw,
+    yr1DomTrapAfterTaxCagrPct,
+    yr1TaxSavedVsDomTrapKrw: yr1DomTrapTaxKrw - yr1TotalTaxRealizedKrw,
+  };
+}
+
+/**
+ * 원자재(원유 WTI · 금 Gold) 및 핵심 해외자산에 대해
+ * "미국 시장 상장 ETF vs 국내 시장 상장 ETF vs KRX 현물"에 현재 8억 원을 투자했을 때
+ * 1년 후 기대수익·예상 세금·금융소득종합과세 대상 여부 정밀 비교 데이터 생성
+ */
+function buildCommodityAndVehicleComparisons() {
+  return [
+    {
+      assetGroup: "🛢️ 원유 (WTI Crude Oil) & 에너지",
+      scenarioTitle: "원유·에너지 8억 원 투자 시 — 미국 상장 ETF(USO vs OILK vs XLE) vs 국내 상장 ETF(KODEX WTI원유선물) 비교",
+      options: [
+        {
+          vehicleName: "국내 상장 원유선물 ETF",
+          tickers: "KODEX WTI원유선물(H) / TIGER 원유선물Enhanced(H)",
+          market: "🇰🇷 국내 상장 파생형 ETF",
+          taxRuleSummary: "매매차익 전액 15.4% 배당소득세 + 연 2,000만 원 초과 시 금융소득종합과세(최대 49.5%+건보료) 합산 · 손익통산 불가",
+          bnhPreTaxCagrPct: 1.29,
+          activePreTaxCagrPct: 10.0, // 원유 추세/역추세 스윙 또는 유가 반등 사이클(+10%) 가정 시
+          yr1PreTaxGainBnhKrw: 10320000,
+          yr1TaxBnhKrw: 1589280,
+          yr1NetGainBnhKrw: 8730720,
+          yr1AfterTaxCagrBnhPct: 1.09,
+          yr1PreTaxGainSwingKrw: 80000000, // +10% 반등 시 (+8,000만 원)
+          yr1TaxSwingKrw: 24080000, // 2,000만×15.4% + 6,000만×35%(종소세+건보료) = 2,408만 원
+          yr1NetGainSwingKrw: 55920000,
+          yr1AfterTaxCagrSwingPct: 6.99,
+          compTaxStatus: "🚨 고위험 (원금 8억 기준 유가 반등으로 연 +2.5% / +2,000만 원만 수익 나도 즉시 금융소득종합과세 대상 직행!)",
+          verdict: "❌ 부적합 (종합과세 폭탄 + 롤오버/환헤지 비용 이중고)",
+          isRecommended: false,
+        },
+        {
+          vehicleName: "미국 상장 원유선물 PTP ETF 직투",
+          tickers: "USO (United States Oil Fund) / DBO (Invesco DB Oil)",
+          market: "🇺🇸 미국 상장 PTP 파트너십 ETF",
+          taxRuleSummary: "미국 국세청(IRS) Section 1446(f) PTP 지정 → 수익·손실 무관하게 매도 대금 총액(Gross Proceeds)의 10% 강제 원천징수!",
+          bnhPreTaxCagrPct: 1.29,
+          activePreTaxCagrPct: 10.0,
+          yr1PreTaxGainBnhKrw: 10320000,
+          yr1TaxBnhKrw: 81032000, // 매도대금 8억 1,032만 원의 10% = 8,103만 원 원천징수!
+          yr1NetGainBnhKrw: -70712000,
+          yr1AfterTaxCagrBnhPct: -8.84,
+          yr1PreTaxGainSwingKrw: 80000000,
+          yr1TaxSwingKrw: 88000000, // 매도대금 8.8억의 10% = 8,800만 원 원천징수!
+          yr1NetGainSwingKrw: -8000000,
+          yr1AfterTaxCagrSwingPct: -1.0,
+          compTaxStatus: "💀 투자 원금 훼손 재앙 (8억 매도 시 무조건 8,000만 원 이상 PTP 원천징수)",
+          verdict: "🚫 절대 투자 금지 (미국 PTP 10% 매도대금 원천징수 대상)",
+          isRecommended: false,
+        },
+        {
+          vehicleName: "미국 상장 원유선물 Non-PTP ETF 직투",
+          tickers: "OILK (ProShares K-1 Free Crude Oil Strategy ETF)",
+          market: "🇺🇸 미국 상장 Non-PTP(1940법) ETF",
+          taxRuleSummary: "케이맨 자회사 구조로 PTP 10% 원천징수 완전 면제 + 매매차익 연 250만 원 공제 후 22% 분리과세 + 손익통산 가능",
+          bnhPreTaxCagrPct: 1.29,
+          activePreTaxCagrPct: 10.0,
+          yr1PreTaxGainBnhKrw: 10320000,
+          yr1TaxBnhKrw: 1720400, // (1,032만 - 250만) × 22% = 172만 원
+          yr1NetGainBnhKrw: 8599600,
+          yr1AfterTaxCagrBnhPct: 1.08,
+          yr1PreTaxGainSwingKrw: 80000000,
+          yr1TaxSwingKrw: 17050000, // (8,000만 - 250만) × 22% = 1,705만 원 (분리과세 종결!)
+          yr1NetGainSwingKrw: 62950000,
+          yr1AfterTaxCagrSwingPct: 7.87,
+          compTaxStatus: "✅ 금융소득종합과세 완전 비대상 (수익이 얼마든 금융소득 합산 0원)",
+          verdict: "⭕ 원유 선물 단기/중기 매매 시 최적 (KODEX WTI 대비 종합과세 완벽 회피)",
+          isRecommended: true,
+        },
+        {
+          vehicleName: "미국 상장 원유·에너지 기업 ETF 직투 (최우선 대체재)",
+          tickers: "XLE (Energy Select Sector SPDR) / VDE",
+          market: "🇺🇸 미국 상장 에너지 주식형 ETF",
+          taxRuleSummary: "엑손모빌·셰브론 등 원유 메이저 기업 보유로 선물 롤오버(콘탱고) 손실 0원! 매매차익 22% 분리과세 + 배당(3.0%) 15.4%",
+          bnhPreTaxCagrPct: 9.8,
+          activePreTaxCagrPct: 9.8,
+          yr1PreTaxGainBnhKrw: 78400000, // 매매차익 5,440만 + 배당 2,400만 = 7,840만 원
+          yr1TaxBnhKrw: 15114000, // 양도세 (5,440만-250만)×22% = 1,142만 + 배당세 369.6만 (비중조절/배당락스왑 시 종합과세 회피)
+          yr1NetGainBnhKrw: 63286000,
+          yr1AfterTaxCagrBnhPct: 7.91,
+          yr1PreTaxGainSwingKrw: 78400000,
+          yr1TaxSwingKrw: 15114000,
+          yr1NetGainSwingKrw: 63286000,
+          yr1AfterTaxCagrSwingPct: 7.91,
+          compTaxStatus: "✅ 포트폴리오 내 60% 이하 편입 또는 4분기 배당락 스왑 시 종합과세 비대상 (8억 단독 수동보유 시에는 배당 2,400만원으로 주의)",
+          verdict: "🏆 원유·인플레이션 장기 투자 최우수 해법 (세후 기대 CAGR +7.91%, 연 +6,329만 원 순수익)",
+          isRecommended: true,
+        },
+      ],
+    },
+    {
+      assetGroup: "🥇 금 (Gold) 귀금속 원자재",
+      scenarioTitle: "금(Gold) 8억 원 투자 시 — KRX 금현물 vs 미국 상장 ETF(GLDM/GLD) vs 국내 상장 ETF(KODEX 골드선물 / ACE KRX금현물) 비교",
+      options: [
+        {
+          vehicleName: "한국거래소 KRX 금현물 직접투자",
+          tickers: "KRX 금시장 금 99.99K (증권사 금현물 전용계좌)",
+          market: "🇰🇷 한국거래소(KRX) 장내 현물",
+          taxRuleSummary: "조세특례제한법상 장내 매매차익 100% 비과세(0%) + 배당 0원 + 금융소득종합과세 및 건보료 영구 제외!",
+          bnhPreTaxCagrPct: 10.33,
+          activePreTaxCagrPct: 9.56,
+          yr1PreTaxGainBnhKrw: 82640000,
+          yr1TaxBnhKrw: 0, // 세금 0원!
+          yr1NetGainBnhKrw: 82640000,
+          yr1AfterTaxCagrBnhPct: 10.33,
+          yr1PreTaxGainSwingKrw: 76480000,
+          yr1TaxSwingKrw: 0,
+          yr1NetGainSwingKrw: 76480000,
+          yr1AfterTaxCagrSwingPct: 9.56,
+          compTaxStatus: "🛡️ 영구 비대상 (매매차익·배당 모두 과세 대상 아님, 금융소득 합산 0원)",
+          verdict: "🏆 대한민국 8억 자산가 압도적 1순위 (1년 기대 세후 순수익 +8,264만 원, 예상 세금 0원!)",
+          isRecommended: true,
+        },
+        {
+          vehicleName: "미국 상장 금 현물 ETF 직투",
+          tickers: "GLDM (SPDR Gold MiniShares, 보수 0.10%) / IAU / GLD",
+          market: "🇺🇸 미국 상장 현물 신탁 ETF (Non-PTP)",
+          taxRuleSummary: "매매차익 연 250만 원 기본공제 후 22% 양도소득세 분리과세 (배당 0원, 해외주식 손익통산 가능)",
+          bnhPreTaxCagrPct: 10.05,
+          activePreTaxCagrPct: 9.31,
+          yr1PreTaxGainBnhKrw: 80400000,
+          yr1TaxBnhKrw: 17138000, // (8,040만 - 250만) × 22% = 1,713.8만 원
+          yr1NetGainBnhKrw: 63262000,
+          yr1AfterTaxCagrBnhPct: 7.91,
+          yr1PreTaxGainSwingKrw: 74480000,
+          yr1TaxSwingKrw: 15835600,
+          yr1NetGainSwingKrw: 58644400,
+          yr1AfterTaxCagrSwingPct: 7.33,
+          compTaxStatus: "✅ 금융소득종합과세 완전 비대상 (양도소득 분리과세로 금융소득 합산 0원)",
+          verdict: "⭕ 달러 계좌 내 미국주식과 즉각 리밸런싱 시 유용 (단, 원화 기준은 KRX 금현물이 연 1,938만 원 세금 절약)",
+          isRecommended: false,
+        },
+        {
+          vehicleName: "국내 상장 KRX금현물 추종 ETF",
+          tickers: "ACE KRX금현물",
+          market: "🇰🇷 국내 상장 기타(실물) ETF",
+          taxRuleSummary: "기초자산은 KRX 금현물이나 '국내 상장 기타 ETF'로 분류되어 매매차익에 15.4% 배당소득세 + 금융소득종합과세 100% 합산!",
+          bnhPreTaxCagrPct: 10.05,
+          activePreTaxCagrPct: 9.31,
+          yr1PreTaxGainBnhKrw: 80400000,
+          yr1TaxBnhKrw: 24220000, // 2,000만×15.4% + 6,040만×35%(종소세+건보료) = 2,422만 원
+          yr1NetGainBnhKrw: 56180000,
+          yr1AfterTaxCagrBnhPct: 7.02,
+          yr1PreTaxGainSwingKrw: 74480000,
+          yr1TaxSwingKrw: 22148000,
+          yr1NetGainSwingKrw: 52332000,
+          yr1AfterTaxCagrSwingPct: 6.54,
+          compTaxStatus: "🚨 즉시 금융소득종합과세 대상 직행! (1년 기대수익 +8,040만 원 전액 배당소득 합산)",
+          verdict: "❌ 8억 일반계좌 투자 금지 (연금저축·IRP 계좌 소액 투자 외에는 KRX 금현물 직접투자가 연 2,646만 원 이득)",
+          isRecommended: false,
+        },
+        {
+          vehicleName: "국내 상장 골드선물 ETF",
+          tickers: "KODEX 골드선물(H) / TIGER 골드선물(H)",
+          market: "🇰🇷 국내 상장 파생형 ETF",
+          taxRuleSummary: "매매차익 15.4% 배당소득세 + 금융소득종합과세 합산 + 선물 롤오버 비용 + 원화 환헤지(H) 비용 차감",
+          bnhPreTaxCagrPct: 8.5,
+          activePreTaxCagrPct: 7.8,
+          yr1PreTaxGainBnhKrw: 68000000,
+          yr1TaxBnhKrw: 19880000, // 2,000만×15.4% + 4,800만×35% = 1,988만 원
+          yr1NetGainBnhKrw: 48120000,
+          yr1AfterTaxCagrBnhPct: 6.02,
+          yr1PreTaxGainSwingKrw: 62400000,
+          yr1TaxSwingKrw: 17920000,
+          yr1NetGainSwingKrw: 44480000,
+          yr1AfterTaxCagrSwingPct: 5.56,
+          compTaxStatus: "🚨 즉시 금융소득종합과세 대상 직행! (매매차익 +6,800만 원 전액 배당소득 합산)",
+          verdict: "❌ 최하위 선택지 (KRX 금현물 대비 1년 기대 순수익 -3,452만 원 손실 + 종합과세자 편입)",
+          isRecommended: false,
+        },
+      ],
+    },
+  ];
+}
+
 function main() {
-  console.log("=== [Step 1] Computing Deliverable 1: 21 Assets Buy & Hold Ranking (8억 원 기준) ===");
+  console.log("=== [Step 1] Computing Deliverable 1: 21 Assets Buy & Hold Ranking (현재 8억 원 투자 시 1년 후 기대 세후 CAGR & 세금 기준) ===");
   const buyAndHoldResults = [];
 
   for (const [ticker, spec] of Object.entries(KOREA_ASSET_TAX_SPECS)) {
@@ -748,31 +1043,55 @@ function main() {
       taxMode: "ENGINEERED",
     });
 
+    // 백테스트 세전 CAGR(preTaxRes.afterTaxCagrPct)은 가격 지수 수익률이므로,
+    // 배당이 별도로 발생하는 주식/리츠/섹터 자산은 총 기대 세전 CAGR = 가격 CAGR + 배당수익률,
+    // 총수익지수(UST20Y_TR, UST10Y_TR, UST2Y_TR) 및 무배당 자산은 preTaxRes.afterTaxCagrPct 그대로 사용
+    const isTotalReturnBond = ticker.endsWith("_TR");
+    const totalExpectedPreTaxCagrPct = isTotalReturnBond
+      ? preTaxRes.afterTaxCagrPct
+      : Math.round((preTaxRes.afterTaxCagrPct + (spec.divYieldPct || 0)) * 100) / 100;
+
+    const proj1Yr = compute1YrProjectionAt800M(totalExpectedPreTaxCagrPct, [
+      { ticker, weightPct: 100 },
+    ]);
+
     buyAndHoldResults.push({
       ticker,
       name: spec.name,
       shortName: spec.shortName,
+      category: spec.group,
       group: spec.group,
       currency: spec.currency,
+      periodLabel: `${afterTaxRes.startDate} ~ ${afterTaxRes.endDate} (${afterTaxRes.years}년)`,
       periodDesc: `${afterTaxRes.startDate} ~ ${afterTaxRes.endDate} (${afterTaxRes.years}년)`,
       years: afterTaxRes.years,
+      recommendedTickers: spec.id === "KPI200" ? "KODEX 200 / TIGER 200" : spec.id === "KRX_GOLD" ? "KRX 금현물 (99.99K)" : spec.id === "WTI" ? "OILK / XLE (미국직투)" : spec.id === "USDKRW" ? "외화계좌 USD 현물" : spec.id === "BTC_KRW" ? "업비트/빗썸 BTC 현물" : spec.usEtfOption.split("(")[0].trim(),
+      alternativeMethod: spec.id === "KPI200" ? "미국 상장 EWY (양도세 22% 불리)" : spec.id === "WTI" ? "KODEX WTI원유선물(종합과세) & 미국 USO(PTP 10% 징수)" : spec.krEtfOption,
       krEtfOption: spec.krEtfOption,
       usEtfOption: spec.usEtfOption,
       bestMethod: spec.bestMethod,
       whyBest: spec.whyBest,
       taxType: spec.taxType,
+      capGainTaxRate: spec.capGainTaxRate,
       capGainTaxRatePct: spec.capGainTaxRate * 100,
       divYieldPct: spec.divYieldPct,
       compTaxRisk: spec.compTaxRisk,
-      preTaxCagrPct: preTaxRes.afterTaxCagrPct,
+      pricePreTaxCagrPct: preTaxRes.afterTaxCagrPct,
+      preTaxCagrPct: proj1Yr.expectedPreTaxCagrPct,
+      afterTaxCagrPct: proj1Yr.yr1AfterTaxCagrPct,
+      holdOnlyAfterTaxCagrPct: proj1Yr.yr1HoldOnlyAfterTaxCagrPct,
+      domTrapCagrPct: proj1Yr.yr1DomTrapAfterTaxCagrPct,
+      // 1년 후 (현재 8억 투자 기준) 예상 수익금·세금·종합과세 판정
+      proj1Yr,
+      annualDivAt800M: proj1Yr.yr1DivIncomeKrw,
+      compTaxBreachAt800M: proj1Yr.isCompTaxTargetOptimal,
+      // 장기 백테스트(27.8년) 참고 지표
+      longTermAfterTaxCagrPct: afterTaxRes.afterTaxCagrPct,
       preTaxFinalEquity: preTaxRes.finalAfterTaxEquity,
-      afterTaxCagrPct: afterTaxRes.afterTaxCagrPct,
       afterTaxFinalEquity: afterTaxRes.finalAfterTaxEquity,
-      domTrapCagrPct: domTrapRes.afterTaxCagrPct,
       domTrapFinalEquity: domTrapRes.finalAfterTaxEquity,
-      rawPassiveBreachYears: rawPassiveRes.compTaxBreachYears,
-      rawPassiveFirstBreachYear: rawPassiveRes.firstCompTaxBreachYear,
-      rawPassiveFirstBreachEquity: rawPassiveRes.firstCompTaxBreachEquity,
+      firstCompTaxBreachYear: rawPassiveRes.firstCompTaxBreachYear,
+      firstCompTaxBreachEquity: rawPassiveRes.firstCompTaxBreachEquity,
       maxDrawdownPct: afterTaxRes.maxDrawdownPct,
       maxDrawdownPeakDate: afterTaxRes.maxDrawdownPeakDate,
       maxDrawdownDate: afterTaxRes.maxDrawdownDate,
@@ -787,19 +1106,21 @@ function main() {
     });
   }
 
+  // Sort by 1-Year Expected After-Tax CAGR descending
   buyAndHoldResults.sort((a, b) => b.afterTaxCagrPct - a.afterTaxCagrPct);
   buyAndHoldResults.forEach((item, idx) => {
     item.rank = idx + 1;
   });
 
-  console.log("Top 5 Buy & Hold (After-Tax CAGR):");
+  console.log("Top 8 Buy & Hold (현재 8억 투자 시 1년 후 기대 세후 CAGR & 예상 세금):");
   buyAndHoldResults.slice(0, 8).forEach((r) => {
+    const p = r.proj1Yr;
     console.log(
-      `#${r.rank} ${r.shortName} (${r.periodDesc}): 세전 ${r.preTaxCagrPct}% -> 세후 ${r.afterTaxCagrPct}% | MDD ${r.maxDrawdownPct}% | 8억 -> ${(r.afterTaxFinalEquity / 100000000).toFixed(2)}억 (${r.bestMethod})`
+      `#${r.rank} ${r.shortName}: 기대 세전 CAGR +${r.preTaxCagrPct}% (세전 +${(p.yr1PreTaxTotalGainKrw / 10000).toFixed(0)}만원) -> 1년 예상세금 ${(p.yr1TotalTaxRealizedKrw / 10000).toFixed(0)}만원 -> 세후 순수익 +${(p.yr1AfterTaxNetGainKrw / 10000).toFixed(0)}만원 (세후 CAGR +${r.afterTaxCagrPct}%) | 종합과세: ${p.isCompTaxTargetOptimal ? "대상(위험)" : "비대상(안전)"}`
     );
   });
 
-  console.log("\n=== [Step 2] Computing Deliverable 2: 105 Famous Asset Trading Strategies (8억 원 세후 기준) ===");
+  console.log("\n=== [Step 2] Computing Deliverable 2: 105 Famous Asset Trading Strategies (현재 8억 원 투자 시 1년 후 세후 기대 CAGR & 예상 세금 기준) ===");
   const assetStrategyResults = [];
 
   for (const [ticker, spec] of Object.entries(KOREA_ASSET_TAX_SPECS)) {
@@ -822,6 +1143,18 @@ function main() {
         taxMode: "ENGINEERED",
       });
 
+      const isTotalReturnBond = ticker.endsWith("_TR");
+      const avgExposureRatio = (st.allocations?.[0]?.weightPct || 75) / 100.0;
+      const totalExpectedPreTaxCagrPct = isTotalReturnBond
+        ? preTaxRes.afterTaxCagrPct
+        : Math.round(
+            (preTaxRes.afterTaxCagrPct + (spec.divYieldPct || 0) * avgExposureRatio) * 100
+          ) / 100;
+
+      const proj1Yr = compute1YrProjectionAt800M(totalExpectedPreTaxCagrPct, [
+        { ticker, weightPct: 100 },
+      ]);
+
       assetStrategyResults.push({
         stratCode: st.stratCode,
         ticker: st.ticker,
@@ -833,8 +1166,11 @@ function main() {
         ruleSummary: st.ruleSummary,
         periodDesc: `${afterTaxRes.startDate} ~ ${afterTaxRes.endDate} (${afterTaxRes.years}년)`,
         years: afterTaxRes.years,
-        preTaxCagrPct: preTaxRes.afterTaxCagrPct,
-        afterTaxCagrPct: afterTaxRes.afterTaxCagrPct,
+        preTaxCagrPct: proj1Yr.expectedPreTaxCagrPct,
+        afterTaxCagrPct: proj1Yr.yr1AfterTaxCagrPct,
+        proj1Yr,
+        longTermAfterTaxCagrPct: afterTaxRes.afterTaxCagrPct,
+        preTaxFinalEquity: preTaxRes.finalAfterTaxEquity,
         afterTaxFinalEquity: afterTaxRes.finalAfterTaxEquity,
         maxDrawdownPct: afterTaxRes.maxDrawdownPct,
         maxDrawdownPeakDate: afterTaxRes.maxDrawdownPeakDate,
@@ -856,28 +1192,30 @@ function main() {
     item.rank = idx + 1;
   });
 
-  // Also pick the #1 Best Famous Strategy per Asset (21 assets) + Top 35 overall
+  // Pick #1 Best Famous Strategy per Asset (21 assets)
   const bestStrategyPerAsset = [];
   const seenAsset = new Set();
   for (const s of assetStrategyResults) {
     if (!seenAsset.has(s.ticker)) {
       seenAsset.add(s.ticker);
-      bestStrategyPerAsset.push(s);
+      bestStrategyPerAsset.push({
+        ...s,
+        assetBestRank: bestStrategyPerAsset.length + 1,
+      });
     }
   }
 
-  console.log("Top 8 Asset Strategies (After-Tax CAGR):");
+  console.log("Top 8 Asset Strategies (현재 8억 투자 시 1년 후 세후 기대 CAGR):");
   assetStrategyResults.slice(0, 8).forEach((s) => {
     console.log(
-      `#${s.rank} [${s.stratCode}] ${s.strategyName}: 세전 ${s.preTaxCagrPct}% -> 세후 ${s.afterTaxCagrPct}% | MDD ${s.maxDrawdownPct}% | Calmar ${s.calmar}`
+      `#${s.rank} [${s.stratCode}] ${s.strategyName}: 기대 세전 +${s.preTaxCagrPct}% -> 1년 예상세금 ${(s.proj1Yr.yr1TotalTaxRealizedKrw / 10000).toFixed(0)}만원 -> 세후 기대 +${s.afterTaxCagrPct}% | MDD ${s.maxDrawdownPct}%`
     );
   });
 
-  console.log("\n=== [Step 3] Computing Deliverable 3: Multi-Asset Portfolios (8억 원 세후 수익 & 종합과세 비대상 Top 10) ===");
+  console.log("\n=== [Step 3] Computing Deliverable 3: Multi-Asset Portfolios (현재 8억 원 투자 시 1년 후 세후 수익 & 종합과세 비대상 Top 10) ===");
   const multiAssetResults = [];
 
   for (const cand of MULTI_ASSET_CANDIDATES) {
-    // Note: MA20 includes BTC_KRW (5% weight). Before 2010-07-20 BTC_KRW was flat, so we evaluate all multi-asset portfolios over Post-IMF 1999~2026 AND Modern OOS 2011~2026
     const preTaxRes = runTaxAwareBacktest({
       ...cand,
       startDate: START_DATE_POST_IMF,
@@ -914,8 +1252,8 @@ function main() {
       taxMode: "ENGINEERED",
     });
 
-    // Calculate initial Year-1 annual dividend at 8억 원 capital
     let initialAnnualDivKrw = 0;
+    let nonBondDivYieldContributionPct = 0;
     let totalAllocWeight = 0;
     const allocSummaryParts = [];
     for (const a of cand.allocations) {
@@ -923,20 +1261,18 @@ function main() {
       const w = a.weightPct / 100.0;
       totalAllocWeight += a.weightPct;
       initialAnnualDivKrw += INITIAL_CAPITAL_KRW * w * ((sp?.divYieldPct || 0) / 100.0);
+      if (!a.ticker.endsWith("_TR")) {
+        nonBondDivYieldContributionPct += w * (sp?.divYieldPct || 0);
+      }
       allocSummaryParts.push(`${sp?.shortName || a.ticker} ${a.weightPct}%`);
     }
     if (totalAllocWeight < 100) {
       allocSummaryParts.push(`무배당단기채(BOXX) ${100 - totalAllocWeight}%`);
     }
 
-    // Score combining After-Tax CAGR and Risk-Adjusted Calmar/Sharpe (while requiring MDD > -36%)
-    const mddPenalty = Math.abs(afterTaxRes.maxDrawdownPct) > 35 ? (Math.abs(afterTaxRes.maxDrawdownPct) - 35) * 0.4 : 0;
-    const compositeScore =
-      afterTaxRes.afterTaxCagrPct * 1.2 +
-      afterTaxRes.calmar * 12.0 +
-      afterTaxRes.sharpe * 6.0 +
-      oosRes.afterTaxCagrPct * 0.5 -
-      mddPenalty;
+    const totalExpectedPreTaxCagrPct =
+      Math.round((preTaxRes.afterTaxCagrPct + nonBondDivYieldContributionPct) * 100) / 100;
+    const proj1Yr = compute1YrProjectionAt800M(totalExpectedPreTaxCagrPct, cand.allocations);
 
     multiAssetResults.push({
       id: cand.id,
@@ -953,13 +1289,16 @@ function main() {
       initialDivYieldPct: Math.round((initialAnnualDivKrw / INITIAL_CAPITAL_KRW) * 10000) / 100,
       compTaxThresholdEquityKrw:
         initialAnnualDivKrw > 0
-          ? Math.round((20000000 / (initialAnnualDivKrw / INITIAL_CAPITAL_KRW)))
+          ? Math.round(20000000 / (initialAnnualDivKrw / INITIAL_CAPITAL_KRW))
           : 999900000000,
-      preTaxCagrPct: preTaxRes.afterTaxCagrPct,
+      preTaxCagrPct: proj1Yr.expectedPreTaxCagrPct,
+      afterTaxCagrPct: proj1Yr.yr1AfterTaxCagrPct,
+      holdOnlyAfterTaxCagrPct: proj1Yr.yr1HoldOnlyAfterTaxCagrPct,
+      domTrapCagrPct: proj1Yr.yr1DomTrapAfterTaxCagrPct,
+      proj1Yr,
+      longTermAfterTaxCagrPct: afterTaxRes.afterTaxCagrPct,
       preTaxFinalEquity: preTaxRes.finalAfterTaxEquity,
-      afterTaxCagrPct: afterTaxRes.afterTaxCagrPct,
       afterTaxFinalEquity: afterTaxRes.finalAfterTaxEquity,
-      domTrapCagrPct: domTrapRes.afterTaxCagrPct,
       domTrapFinalEquity: domTrapRes.finalAfterTaxEquity,
       rawPassiveBreachYear: rawPassiveRes.firstCompTaxBreachYear,
       rawPassiveBreachEquity: rawPassiveRes.firstCompTaxBreachEquity,
@@ -975,38 +1314,42 @@ function main() {
       totalCapGainTaxPaid: afterTaxRes.totalCapGainTaxPaid,
       totalDividendTaxPaid: afterTaxRes.totalDividendTaxPaid,
       totalTaxPaid: afterTaxRes.totalTaxPaid,
-      compTaxBreachYears: afterTaxRes.compTaxBreachYears, // 0 under ENGINEERED mode
+      compTaxBreachYears: afterTaxRes.compTaxBreachYears,
       oosAfterTaxCagrPct: oosRes.afterTaxCagrPct,
       oosMaxDrawdownPct: oosRes.maxDrawdownPct,
       oosCalmar: oosRes.calmar,
-      compositeScore: Math.round(compositeScore * 100) / 100,
       compactCurve: afterTaxRes.compactCurve,
     });
   }
 
-  // Sort Multi-Asset Portfolios by After-Tax Composite Score (and check top 10 by After-Tax CAGR)
-  // Notice the user asked: "3. 각 자산의 적절보유 비중을 가져갔을 경우 세후 수익을 기준으로 최종 10개 꼽아서 정리해줘. (시각화 그래프 포함)"
-  // Let's sort the Top 10 selected portfolios by After-Tax CAGR descending so #1 has the highest After-Tax CAGR among well-diversified portfolios (MDD <= -35%)!
-  const eligiblePortfolios = multiAssetResults.filter((p) => Math.abs(p.maxDrawdownPct) <= 58.5);
-  eligiblePortfolios.sort((a, b) => b.afterTaxFinalEquity - a.afterTaxFinalEquity);
+  const eligiblePortfolios = multiAssetResults.filter(
+    (p) => Math.abs(p.maxDrawdownPct) <= 58.5 && !p.proj1Yr.isCompTaxTargetOptimal
+  );
+  eligiblePortfolios.sort(
+    (a, b) => b.proj1Yr.yr1AfterTaxNetGainKrw - a.proj1Yr.yr1AfterTaxNetGainKrw
+  );
 
   const top10Portfolios = eligiblePortfolios.slice(0, 10).map((p, idx) => ({
     ...p,
     rank: idx + 1,
   }));
 
-  // Also rank all 30 candidates
-  multiAssetResults.sort((a, b) => b.afterTaxFinalEquity - a.afterTaxFinalEquity);
+  multiAssetResults.sort(
+    (a, b) => b.proj1Yr.yr1AfterTaxNetGainKrw - a.proj1Yr.yr1AfterTaxNetGainKrw
+  );
   multiAssetResults.forEach((p, idx) => {
     p.overallCagrRank = idx + 1;
   });
 
-  console.log("Top 10 Multi-Asset Portfolios (8억 원 세후 수익 기준, MDD <= -35% 적격 분산):");
+  console.log("Top 10 Multi-Asset Portfolios (현재 8억 원 투자 시 1년 후 세후 기대수익 & 예상세금 & 종합과세 비대상):");
   top10Portfolios.forEach((p) => {
+    const pr = p.proj1Yr;
     console.log(
-      `#${p.rank} [${p.id}] ${p.name}: 세전 ${p.preTaxCagrPct}% -> 세후 ${p.afterTaxCagrPct}% (국내ETF함정시 ${p.domTrapCagrPct}%) | MDD ${p.maxDrawdownPct}% | Calmar ${p.calmar} | 8억 -> ${(p.afterTaxFinalEquity / 100000000).toFixed(2)}억 | 초기배당 ${(p.initialAnnualDivKrw / 10000).toFixed(0)}만원/년`
+      `#${p.rank} [${p.id}] ${p.name}: 기대 세전 +${p.preTaxCagrPct}% (+${(pr.yr1PreTaxTotalGainKrw / 10000).toFixed(0)}만원) -> 1년 예상세금 ${(pr.yr1TotalTaxRealizedKrw / 10000).toFixed(0)}만원 (배당 ${(pr.yr1DivIncomeKrw / 10000).toFixed(0)}만원, 종합과세 비대상) -> 1년 세후 순수익 +${(pr.yr1AfterTaxNetGainKrw / 10000).toFixed(0)}만원 (세후 CAGR +${p.afterTaxCagrPct}%) | MDD ${p.maxDrawdownPct}%`
     );
   });
+
+  const commodityComparisons = buildCommodityAndVehicleComparisons();
 
   const outputPayload = {
     generatedAt: new Date().toISOString(),
@@ -1014,6 +1357,7 @@ function main() {
     startDatePostImf: START_DATE_POST_IMF,
     startDateModernOos: START_DATE_MODERN_OOS,
     endDate: END_DATE,
+    commodityComparisons,
     buyAndHoldResults,
     assetStrategyResults,
     bestStrategyPerAsset,
